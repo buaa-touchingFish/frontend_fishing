@@ -1,24 +1,38 @@
-<script setup lang="ts">
-
-</script>
-
 <template>
-  <div>
-    <router-view></router-view>
-  </div>
+  <n-config-provider :theme-overrides="themeOverrides">
+    <n-message-provider>
+      <n-notification-provider>
+        <router-view></router-view>
+      </n-notification-provider>
+    </n-message-provider>
+  </n-config-provider>
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+<script setup lang="ts">
+import { NConfigProvider } from 'naive-ui'
+
+/**
+ * js 文件下使用这个做类型提示
+ * @type import('naive-ui').GlobalThemeOverrides
+ */
+const themeOverrides = {
+  common: {
+    primaryColor: '#82cefd',
+    primaryColorHover: '#45b8ff',
+    primaryColorPressed: '#0a9ffc'
+  },
+  Button: {
+    primaryColor: '#45b8ff',
+    primaryColorHover: '#0a9ffc',
+  },
+  Select: {
+    peers: {
+      InternalSelection: {
+      }
+    }
+  }
+  // ...
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+</script>
+
+<style scoped></style>
