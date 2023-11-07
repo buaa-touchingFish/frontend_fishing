@@ -29,12 +29,6 @@
                 <n-form-item path="email" label="邮箱">
                     <n-input v-model:value="registerModel.email" @keydown.enter.prevent placeholder="请输入邮箱" />
                 </n-form-item>
-                <n-form-item path="name" label="真实姓名">
-                    <n-input v-model:value="registerModel.name" @keydown.enter.prevent placeholder="请输入姓名" />
-                </n-form-item>
-                <n-form-item path="phone" label="联系电话">
-                    <n-input v-model:value="registerModel.phone" @keydown.enter.prevent placeholder="请输入电话" />
-                </n-form-item>
                 <n-form-item path="password" label="密码">
                     <n-input v-model:value="registerModel.password" type="password" @keydown.enter.prevent
                         placeholder="请输入密码" />
@@ -165,8 +159,6 @@ interface LoginModelType {
 interface RegisterModelType {
     username: string | null
     email: string | null
-    name: string | null
-    phone: string | null
     password: string | null
     repeatPassword: string | null
     captcha: string | null
@@ -184,20 +176,17 @@ const registerFormRef = ref<FormInst | null>(null)
 const frogetFormRef = ref<FormInst | null>(null)
 const message = useMessage()
 const emailPattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-const phonePattern = /^(?:(?:\+|00)86)?1(?:(?:3[\d])|(?:4[5-79])|(?:5[0-35-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\d])|(?:9[1589]))\d{8}$/
 const formType = ref<string>('login')
 const loginModel = ref<LoginModelType>({
     name: null,
     password: null,
 })
 const registerModel = ref<RegisterModelType>({
-    name: null,
+    username: null,
     email: null,
     password: null,
     repeatPassword: null,
-    captcha: null,
-    username: null,
-    phone: null
+    captcha: null
 })
 const forgetModel = ref<ForgetModelType>({
     email: null,
@@ -224,26 +213,6 @@ const registerRules: FormRules = {
         {
             required: true,
             message: '请输入用户名',
-        },
-    ],
-    phone: [
-        {
-            required: true,
-            validator(_rule: any, value: string) {
-                if (!value) {
-                    return new Error('请输入手机号')
-                } else if (!phonePattern.test(value)) {
-                    return new Error('请输入正确格式的手机号')
-                }
-                return true
-            },
-            trigger: ['input', 'blur', 'delete']
-        },
-    ],
-    name: [
-        {
-            required: true,
-            message: '请输入真实姓名',
         },
     ],
     email: [
@@ -411,8 +380,6 @@ const register = (e: MouseEvent) => {
                 "username": registerModel.value.username,
                 "password": registerModel.value.password,
                 "confirmPassword": registerModel.value.repeatPassword,
-                "phone": registerModel.value.phone,
-                "name": registerModel.value.name,
                 "email": registerModel.value.email,
                 "captcha": registerModel.value.captcha,
             })

@@ -2,14 +2,14 @@
     <div class="login-out-container">
         <div class="login-in-container">
             <div class="login-left">
-                <div class="top">
-                    <div class="title">
-                        <n-h2>融创云开发</n-h2>
-                        <n-h3>人员管理，团队开发</n-h3>
+                <div class="login-left-top">
+                    <div class="login-left-title">
+                        <n-h2>XX学术平台</n-h2>
+                        <n-h3>探索学术海洋</n-h3>
                     </div>
                 </div>
-                <div class="bottom">
-                    <img :src="working" />
+                <div class="login-left-bottom">
+                    <img :src="planet" height="200" style="border-radius: 10px;">
                 </div>
             </div>
             <div class="login-right">
@@ -20,14 +20,15 @@
 </template>
 
 <script setup lang='ts'>
-import working from '@/assets/working.gif'
+import planet from '@/assets/planet.gif'
 import LoginForm from '@/components/LoginForm.vue';
 </script>
 
 <style scoped>
 .login-out-container {
     position: relative;
-    background-image: url('@/assets/background.png');
+    background-image: url('@/assets/bg.jpg');
+    background-size: cover;
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -54,7 +55,7 @@ import LoginForm from '@/components/LoginForm.vue';
             justify-content: center;
             align-items: center;
 
-            .top {
+            .login-left-top {
                 display: flex;
                 flex-direction: column;
                 justify-content: flex-start;
@@ -62,10 +63,12 @@ import LoginForm from '@/components/LoginForm.vue';
                 margin: 40px 0px;
             }
 
-            .bottom img {
+            .login-left-bottom {
                 width: 100%;
                 height: auto;
                 margin: 0px 20px;
+                display: flex;
+                justify-content: center;
             }
         }
 
