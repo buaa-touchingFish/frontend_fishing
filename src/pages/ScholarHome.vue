@@ -18,17 +18,17 @@
                         <span class="infoBoxTitleSpan">被引次数</span>
                         <span class="infoBoxValueSpan">1010</span>
                     </div>
-                    <n-divider vertical="true"></n-divider>
+                    <n-divider vertical></n-divider>
                     <div class="infoDataBoxDiv">
                         <span class="infoBoxTitleSpan">成果数</span>
                         <span class="infoBoxValueSpan">1</span>
                     </div>
-                    <n-divider vertical="true"></n-divider>
+                    <n-divider vertical></n-divider>
                     <div class="infoDataBoxDiv">
                         <span class="infoBoxTitleSpan">被关注数</span>
                         <span class="infoBoxValueSpan">1.3W</span>
                     </div>
-                    <n-divider vertical="true"></n-divider>
+                    <n-divider vertical></n-divider>
                     <div class="infoDataBoxDiv">
                         <span class="infoBoxTitleSpan">热度</span>
                         <span class="infoBoxValueSpan">+∞</span>
@@ -57,7 +57,7 @@
 }
 
 .rootDiv {
-    width: 100%;
+    width: 80%;
     min-width: 720px;
     display: flex;
     flex-direction: column;
