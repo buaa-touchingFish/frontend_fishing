@@ -1,3 +1,4 @@
+import { nextTick } from 'process';
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 
 const routes: Array<RouteRecordRaw> = [
@@ -12,6 +13,10 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: '/scholarHome',
         component: () => import('@/pages/ScholarHome.vue'),
+      },
+      {
+        path: '/claimScholar',
+        component: () => import('@/pages/ClaimScholar.vue'),
       }
     ]
   },
@@ -28,9 +33,16 @@ const router = createRouter({
 const push = router.push;
 router.push = (to) => {
   let doc = document as any;
-  let ret = doc.startViewTransition(() => {
-    push(to);
+  return doc.startViewTransition(async () => {
+    await push(to);
   }).updateCallbackDone
-  return ret;
 }
+// const back = router.back;
+// router.back = () => {
+//   let doc = document as any;
+//   doc.startViewTransition(async () => {
+//     history.back();
+//   })
+// }
+// router.back = back;
 export default router;
