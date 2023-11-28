@@ -20,7 +20,6 @@
 </template>
 
 <script setup lang='ts'>
-import planet from '@/components/earth.vue'
 import LoginForm from '@/components/LoginForm.vue';
 </script>
 
@@ -35,10 +34,10 @@ import LoginForm from '@/components/LoginForm.vue';
     align-items: center;
 
     .login-in-container {
-        width: 874px;
+        width: 80%;
         min-width: 874px;
-        height: 78%;
-        min-height: 600px;
+        height: 60%;
+        min-height: 550px;
         flex-direction: row;
         display: flex;
         justify-content: space-evenly;
