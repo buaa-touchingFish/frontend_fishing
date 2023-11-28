@@ -1,5 +1,8 @@
 <template>
     <div class="login-out-container">
+        <div class="background">
+            <StarBackground></StarBackground>
+        </div>
         <div class="login-in-container">
             <div class="login-left">
                 <div class="login-left-top">
@@ -21,20 +24,27 @@
 
 <script setup lang='ts'>
 import LoginForm from '@/components/LoginForm.vue';
+import StarBackground from '@/components/StarBackground.vue';
 </script>
 
 <style scoped>
 .login-out-container {
     position: relative;
-    background-image: url('@/assets/bg.jpg');
-    background-size: cover;
+    
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
 
+    .background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 0;
+    }
     .login-in-container {
-        width: 80%;
+        z-index: 1;
+        width: 60%;
         min-width: 874px;
         height: 60%;
         min-height: 550px;
@@ -44,7 +54,7 @@ import LoginForm from '@/components/LoginForm.vue';
         border-radius: 10px;
         overflow: hidden;
         background-color: white;
-        box-shadow: 0 0 20px 5px rgba(34, 84, 142, .26);
+        opacity: 0.7;
 
         .login-left {
             width: 50%;
