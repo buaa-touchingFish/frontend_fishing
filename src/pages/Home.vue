@@ -5,18 +5,34 @@
             <n-button class="loginButton" @click="$router.push('/login');" href="/">登录</n-button>
         </div>
         <div class="homeContentDiv">
-            <div class="homeContentLeft">
-                <n-h1 class="slogen">学海无涯苦作舟</n-h1>
+            <div class="homeContentTop">
+                <n-h1 class="slogen">XX</n-h1>
                 <div class="searchDiv">
-                    <n-auto-complete class="searchBar" clear-after-select size="large" placeholder="搜索你想了解的论文"
-                        :options="searchOptions" />
-                    <n-button class="searchButton" @click="$router.push('/search')">搜</n-button>
+                    <n-auto-complete class="searchBar" size="large" placeholder="搜索你想了解的论文" :options="searchOptions" />
+                    <n-button class="searchButton" @click="$router.push('/search')" type="primary">搜索</n-button>
+                    <n-button class="extraButton" @click="changeShowCard" type="primary">高级搜索</n-button>
                 </div>
-                <!--
-                    <n-auto-complete class="autocmp" clear-after-select @select="searchSelected"
-                                v-model:value="searchValue" :options="searchOptions" placeholder="搜索聊天历史记录"
-                                :render-label="renderSearchLabel" size="large" />
-                -->
+                <div class="searchCardDiv" v-show="showCard">
+                    <n-card hoverable>
+                        <n-form ref="formRef" :model="searchCardModel" rules="" label-placement="left" label-width="200">
+                            <n-form-item label="作者" path="author">
+                                <n-input v-model:value="searchCardModel.author" placeholder="" />
+                            </n-form-item>
+                            <n-form-item label="机构" path="institution">
+                                <n-input v-model:value="searchCardModel.institution" placeholder="" />
+                            </n-form-item>
+                            <n-form-item label="出版物" path="publication">
+                                <n-popselect v-model:value="pubValue" :options="pubOptions" trigger="click">
+                                    <n-button>{{ pubValue }}</n-button>
+                                </n-popselect>
+                                <n-input v-model:value="searchCardModel.publication" placeholder="" />
+                            </n-form-item>
+                            <n-form-item label="日期范围" path="timestamp">
+                                <n-date-picker v-model:value="searchCardModel.timestamp" type="monthrange" clearable />
+                            </n-form-item>
+                        </n-form>
+                    </n-card>
+                </div>
             </div>
         </div>
     </div>
@@ -34,10 +50,11 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, watch, onMounted, computed } from 'vue';
+import { ref, watch, onMounted, computed, Ref } from 'vue';
 import Header from '@/components/Header.vue'
 import Menu from '@/components/Menu.vue'
 import { useRoute } from 'vue-router'
+import { FormInst } from 'naive-ui';
 
 const route = useRoute()
 
@@ -57,6 +74,38 @@ const searchOptions = computed(() => {
     result.push("情绪零碎");
     return result;
 });
+
+//高级搜索卡片
+const formRef = ref<FormInst | null>(null)
+const showCard = ref(false)
+const changeShowCard = () => {
+    showCard.value = !showCard.value
+}
+const pubValue = ref<string>("会议")
+const pubOptions = [
+    {
+        label: '会议',
+        value: '会议'
+    },
+    {
+        label: '期刊',
+        value: '期刊'
+    },
+]
+
+interface SearchCardModelType {
+    author: string | null
+    institution: string | null
+    timestamp: Ref<[number, number]>
+    publication: string | null
+}
+
+const searchCardModel = ref<SearchCardModelType>({
+    author: null,
+    institution: null,
+    timestamp: ref<[number, number]>([946656000000, Date.now()]),
+    publication: null,
+})
 </script>
 
 <style scoped>
@@ -94,15 +143,16 @@ const searchOptions = computed(() => {
     display: flex;
     flex-direction: column;
     align-items: center;
+    
 }
 
 .homeHeaderDiv {
     width: 100vw;
     height: 60px;
-    background-color: #fcc;
     display: flex;
     flex-direction: row-reverse;
     align-items: center;
+    
 }
 
 .loginButton {
@@ -114,24 +164,27 @@ const searchOptions = computed(() => {
     height: 400px;
     flex-direction: row;
     align-items: center;
+    background-image: url('@/assets/searchBg.png');
+    background-size: cover;
 }
 
-.homeContentLeft {
-    width: 65%;
+.homeContentTop {
+    width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    background-color: aliceblue;
+    position: relative;
+    
     justify-content: center;
 }
 
 .slogen {
-    margin-left: 40px;
+    margin-left: 40%;
     font-size: 40pt;
+    width: 30%;
 }
 
 .searchBar {
-    width: 100%;
+    margin-left: 20%;
+    width: 60%;
 }
 
 .searchBar :deep(.n-input) {
@@ -142,24 +195,51 @@ const searchOptions = computed(() => {
 }
 
 .searchBar :deep(.n-input__input) {
-    margin-right: 40px;
+    margin-right: 80px;
+    margin-left: 80px;
 }
 
 .searchDiv {
-    width: 90%;
+    width: 100%;
     height: 40px;
-    display: flex;
-    background-color: #fcc;
     align-self: center;
     position: relative;
 }
 
-.searchButton {
-    width: 40px;
+.extraButton {
+    width: 8%;
     height: 40px;
     position: absolute;
     top: 0;
-    right: 0;
+    left: 12%;
+    border-radius: 25% 0 0 25%;
+}
 
+.searchButton {
+    width: 5%;
+    height: 40px;
+    position: absolute;
+    top: 0;
+    right: 15%;
+    border-radius: 0 30% 30% 0;
+}
+
+.searchCardDiv {
+    position: absolute;
+    top: 40%;
+    left: 12%;
+    width: 73%;
+    height: 60%;
+    background-color: rgba(255, 255, 255, 0.9);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.homeContentBottom {
+    display: flex;
+    flex-direction: row;
 }
 </style>

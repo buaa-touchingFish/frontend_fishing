@@ -9,7 +9,7 @@
                     </div>
                 </div>
                 <div class="login-left-bottom">
-                    <img :src="planet" height="200" style="border-radius: 10px;">
+                    
                 </div>
             </div>
             <div class="login-right">
@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang='ts'>
-import planet from '@/assets/planet.gif'
+import planet from '@/components/earth.vue'
 import LoginForm from '@/components/LoginForm.vue';
 </script>
 
