@@ -10,6 +10,7 @@
 
 <script setup lang="ts">
 import { NConfigProvider } from 'naive-ui'
+import './animationStyle.css'
 
 /**
  * js 文件下使用这个做类型提示
