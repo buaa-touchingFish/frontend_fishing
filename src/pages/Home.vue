@@ -62,6 +62,8 @@ const searchOptions = computed(() => {
 <style scoped>
 .mainContainer {
     width: 100%;
+    min-height: 100vh;
+    background-color: rgb(239, 239, 249);
 }
 
 .header {
@@ -73,6 +75,7 @@ const searchOptions = computed(() => {
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 999;
 }
 
 .menu {
