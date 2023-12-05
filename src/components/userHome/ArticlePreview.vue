@@ -30,6 +30,7 @@
 </template>
 <script setup lang="ts">
 import { NButton, Nicon } from 'naive-ui';
+import { } from '@vicons/fluent';
 defineProps({
   title: String,
   authors: Array<String>,
