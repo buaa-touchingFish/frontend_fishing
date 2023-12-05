@@ -17,13 +17,21 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: '/claimScholar',
         component: () => import('@/pages/ClaimScholar.vue'),
+      },
+      {
+        path: '/userCenter',
+        component: () => import('@/pages//user/UserCenter.vue'),
+      },
+      {
+        path: '/collect',
+        component: () => import('@/pages/user/Collect.vue'),
       }
     ]
   },
   {
     path: '/login',
     component: () => import('@/pages/Login.vue'),
-  }
+  },
 ];
 
 const router = createRouter({
