@@ -1,6 +1,6 @@
 <template>
     <div>
-        <n-form ref="formRef" :model="searchCardModel" rules="" label-placement="left" label-width="200">
+        <n-form ref="formRef" :model="searchCardModel" rules="" label-placement="left" label-width="80">
             <n-form-item label="作者" path="author">
                 <n-input v-model:value="searchCardModel.author" placeholder="" />
             </n-form-item>
