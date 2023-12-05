@@ -140,19 +140,20 @@ const searchCardModel = ref<SearchCardModelType>({
 .header {
     height: 57px;
     width: 100%;
-    background-color: red;
+    background-color: white;
     position: sticky;
     top: 0;
     display: flex;
     justify-content: center;
     align-items: center;
+    box-shadow:  0 5px 10px #ccc, 0 -5px 10px #ccc;
     z-index: 999;
 }
 
 .menu {
     width: 30px;
     height: 100%;
-    background-color: blue;
+    /* background-color: blue; */
     position: fixed;
 }
 
