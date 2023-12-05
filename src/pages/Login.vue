@@ -1,14 +1,13 @@
 <template>
     <div class="login-out-container">
         <div class="background">
-            <StarBackground></StarBackground>
+            <!-- <StarBackground /> -->
         </div>
         <div class="login-in-container">
             <div class="login-left">
                 <div class="login-left-top">
                     <div class="login-left-title">
-                        <n-h2>XX学术平台</n-h2>
-                        <n-h3>探索学术海洋</n-h3>
+                        <Earth></Earth>
                     </div>
                 </div>
                 <div class="login-left-bottom">
@@ -25,6 +24,7 @@
 <script setup lang='ts'>
 import LoginForm from '@/components/LoginForm.vue';
 import StarBackground from '@/components/StarBackground.vue';
+import Earth from '@/components/Earth.vue';
 </script>
 
 <style scoped>
@@ -45,7 +45,7 @@ import StarBackground from '@/components/StarBackground.vue';
     .login-in-container {
         z-index: 1;
         width: 60%;
-        min-width: 874px;
+        min-width: 600x;
         height: 60%;
         min-height: 550px;
         flex-direction: row;
@@ -54,7 +54,9 @@ import StarBackground from '@/components/StarBackground.vue';
         border-radius: 10px;
         overflow: hidden;
         background-color: white;
-        opacity: 0.7;
+        opacity: 0.9;
+        box-shadow: 0 0 10px 10px white;;
+        backdrop-filter: blur(50px);
 
         .login-left {
             width: 50%;

@@ -1,50 +1,56 @@
 <template>
-    <div class="homeDiv" v-if="showHome">
-        <div class="homeHeaderDiv">
-            <n-button class="loginButton" @click="$router.push('/scholarHome');" href="/">设置</n-button>
-            <n-button class="loginButton" @click="$router.push('/login');" href="/">登录</n-button>
+    <div class="homeParent">
+        <div class="homeBackground">
+            <lizi></lizi>
         </div>
-        <div class="homeContentDiv">
-            <div class="homeContentTop">
-                <n-h1 class="slogen">XX</n-h1>
-                <div class="searchDiv">
-                    <n-auto-complete class="searchBar" size="large" placeholder="搜索你想了解的论文" :options="searchOptions" />
-                    <n-button class="searchButton" @click="$router.push('/search')" type="primary">搜索</n-button>
-                    <n-button class="extraButton" @click="changeShowCard" type="primary">高级搜索</n-button>
-                </div>
-                <div class="searchCardDiv" v-show="showCard">
-                    <n-card hoverable>
-                        <n-form ref="formRef" :model="searchCardModel" rules="" label-placement="left" label-width="200">
-                            <n-form-item label="作者" path="author">
-                                <n-input v-model:value="searchCardModel.author" placeholder="" />
-                            </n-form-item>
-                            <n-form-item label="机构" path="institution">
-                                <n-input v-model:value="searchCardModel.institution" placeholder="" />
-                            </n-form-item>
-                            <n-form-item label="出版物" path="publication">
-                                <n-popselect v-model:value="pubValue" :options="pubOptions" trigger="click">
-                                    <n-button>{{ pubValue }}</n-button>
-                                </n-popselect>
-                                <n-input v-model:value="searchCardModel.publication" placeholder="" />
-                            </n-form-item>
-                            <n-form-item label="日期范围" path="timestamp">
-                                <n-date-picker v-model:value="searchCardModel.timestamp" type="monthrange" clearable />
-                            </n-form-item>
-                        </n-form>
-                    </n-card>
+        <div class="homeDiv" v-if="showHome">
+            <div class="homeHeaderDiv">
+                <n-button class="loginButton" @click="$router.push('/scholarHome');" href="/">设置</n-button>
+                <n-button class="loginButton" @click="$router.push('/login');" href="/">登录</n-button>
+            </div>
+            <div class="homeContentDiv">
+                <div class="homeContentTop">
+                    <!-- <n-h1 class="slogen">XX</n-h1> -->
+                    <div class="searchDiv">
+                        <n-auto-complete class="searchBar" size="large" placeholder="搜索你想了解的论文" :options="searchOptions" />
+                        <n-button class="searchButton" @click="$router.push('/search')" type="primary">搜索</n-button>
+                        <n-button class="extraButton" @click="changeShowCard" type="primary">高级搜索</n-button>
+                    </div>
+                    <div class="searchCardDiv" v-show="showCard">
+                        <n-card hoverable>
+                            <n-form ref="formRef" :model="searchCardModel" rules="" label-placement="left"
+                                label-width="200">
+                                <n-form-item label="作者" path="author">
+                                    <n-input v-model:value="searchCardModel.author" placeholder="" />
+                                </n-form-item>
+                                <n-form-item label="机构" path="institution">
+                                    <n-input v-model:value="searchCardModel.institution" placeholder="" />
+                                </n-form-item>
+                                <n-form-item label="出版物" path="publication">
+                                    <n-popselect v-model:value="pubValue" :options="pubOptions" trigger="click">
+                                        <n-button>{{ pubValue }}</n-button>
+                                    </n-popselect>
+                                    <n-input v-model:value="searchCardModel.publication" placeholder="" />
+                                </n-form-item>
+                                <n-form-item label="日期范围" path="timestamp">
+                                    <n-date-picker v-model:value="searchCardModel.timestamp" type="monthrange" clearable />
+                                </n-form-item>
+                            </n-form>
+                        </n-card>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="mainContainer" v-else>
-        <div class="header">
-            <Header></Header>
-        </div>
-        <div class="menu">
-            <Menu></Menu>
-        </div>
-        <div class="main">
-            <router-view></router-view>
+        <div class="mainContainer" v-else>
+            <div class="header">
+                <Header></Header>
+            </div>
+            <div class="menu">
+                <Menu></Menu>
+            </div>
+            <div class="main">
+                <router-view></router-view>
+            </div>
         </div>
     </div>
 </template>
@@ -53,6 +59,8 @@
 import { ref, watch, onMounted, computed, Ref } from 'vue';
 import Header from '@/components/Header.vue'
 import Menu from '@/components/Menu.vue'
+import lizi from '@/components/lizi.vue';
+import Pipeline from '@/components/Pipeline.vue';
 import { useRoute } from 'vue-router'
 import { FormInst } from 'naive-ui';
 
@@ -109,6 +117,19 @@ const searchCardModel = ref<SearchCardModelType>({
 </script>
 
 <style scoped>
+.homeParent {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    color: white;
+}
+
+.homeBackground {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
 .mainContainer {
     width: 100%;
 }
@@ -143,7 +164,7 @@ const searchCardModel = ref<SearchCardModelType>({
     display: flex;
     flex-direction: column;
     align-items: center;
-    
+
 }
 
 .homeHeaderDiv {
@@ -152,7 +173,7 @@ const searchCardModel = ref<SearchCardModelType>({
     display: flex;
     flex-direction: row-reverse;
     align-items: center;
-    
+
 }
 
 .loginButton {
@@ -164,15 +185,13 @@ const searchCardModel = ref<SearchCardModelType>({
     height: 400px;
     flex-direction: row;
     align-items: center;
-    background-image: url('@/assets/searchBg.png');
-    background-size: cover;
 }
 
 .homeContentTop {
     width: 100%;
     height: 100%;
     position: relative;
-    
+
     justify-content: center;
 }
 
