@@ -1,15 +1,17 @@
 <template>
     <div class="login-out-container">
+        <div class="background">
+            <!-- <StarBackground /> -->
+        </div>
         <div class="login-in-container">
             <div class="login-left">
-                <div class="top">
-                    <div class="title">
-                        <n-h2>融创云开发</n-h2>
-                        <n-h3>人员管理，团队开发</n-h3>
+                <div class="login-left-top">
+                    <div class="login-left-title">
+                        <Earth></Earth>
                     </div>
                 </div>
-                <div class="bottom">
-                    <img :src="working" />
+                <div class="login-left-bottom">
+                    
                 </div>
             </div>
             <div class="login-right">
@@ -20,31 +22,41 @@
 </template>
 
 <script setup lang='ts'>
-import working from '@/assets/working.gif'
 import LoginForm from '@/components/LoginForm.vue';
+import StarBackground from '@/components/StarBackground.vue';
+import Earth from '@/components/Earth.vue';
 </script>
 
 <style scoped>
 .login-out-container {
     position: relative;
-    background-image: url('@/assets/background.png');
+    
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
 
+    .background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 0;
+    }
     .login-in-container {
-        width: 874px;
-        min-width: 874px;
-        height: 78%;
-        min-height: 600px;
+        z-index: 1;
+        width: 60%;
+        min-width: 600x;
+        height: 60%;
+        min-height: 550px;
         flex-direction: row;
         display: flex;
         justify-content: space-evenly;
         border-radius: 10px;
         overflow: hidden;
         background-color: white;
-        box-shadow: 0 0 20px 5px rgba(34, 84, 142, .26);
+        opacity: 0.9;
+        box-shadow: 0 0 10px 10px white;;
+        backdrop-filter: blur(50px);
 
         .login-left {
             width: 50%;
@@ -54,7 +66,7 @@ import LoginForm from '@/components/LoginForm.vue';
             justify-content: center;
             align-items: center;
 
-            .top {
+            .login-left-top {
                 display: flex;
                 flex-direction: column;
                 justify-content: flex-start;
@@ -62,10 +74,12 @@ import LoginForm from '@/components/LoginForm.vue';
                 margin: 40px 0px;
             }
 
-            .bottom img {
+            .login-left-bottom {
                 width: 100%;
                 height: auto;
                 margin: 0px 20px;
+                display: flex;
+                justify-content: center;
             }
         }
 
