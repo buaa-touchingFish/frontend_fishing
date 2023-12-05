@@ -1,18 +1,11 @@
 <template>
     <div class="login-out-container">
         <div class="background">
-            <!-- <StarBackground /> -->
+            <StarBackground />
         </div>
         <div class="login-in-container">
             <div class="login-left">
-                <div class="login-left-top">
-                    <div class="login-left-title">
-                        <Earth></Earth>
-                    </div>
-                </div>
-                <div class="login-left-bottom">
-                    
-                </div>
+                <Earth></Earth>
             </div>
             <div class="login-right">
                 <LoginForm />
@@ -22,9 +15,9 @@
 </template>
 
 <script setup lang='ts'>
-import LoginForm from '@/components/LoginForm.vue';
-import StarBackground from '@/components/StarBackground.vue';
-import Earth from '@/components/Earth.vue';
+import LoginForm from '@/components/Login/LoginForm.vue';
+import StarBackground from '@/components/Login/StarBackground.vue';
+import Earth from '@/components/Login/Earth.vue';
 </script>
 
 <style scoped>
@@ -59,38 +52,21 @@ import Earth from '@/components/Earth.vue';
         backdrop-filter: blur(50px);
 
         .login-left {
-            width: 50%;
-            padding: 47px 54px;
+            width: 60%;
+            height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-
-            .login-left-top {
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-start;
-                align-items: flex-start;
-                margin: 40px 0px;
-            }
-
-            .login-left-bottom {
-                width: 100%;
-                height: auto;
-                margin: 0px 20px;
-                display: flex;
-                justify-content: center;
-            }
         }
 
         .login-right {
-            width: 50%;
+            width: 40%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 30px;
-
         }
     }
 

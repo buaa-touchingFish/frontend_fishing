@@ -2,14 +2,17 @@
     <div class="homeDiv" v-if="showHome">
         <div class="homeParent">
             <div class="homeBackground">
-                <lizi></lizi>
+                <!-- <StarBackground></StarBackground> -->
             </div>
             <div class="homeHeaderDiv">
                 <n-button class="loginButton" @click="$router.push('/scholarHome');" href="/">设置</n-button>
                 <n-button class="loginButton" @click="$router.push('/login');" href="/">登录</n-button>
             </div>
             <div class="homeContentDiv">
-                <div class="homeContentTop">
+                <div class="homeContentLeft">
+                    <Clock></Clock>
+                </div>
+                <div class="homeContentRight">
                     <!-- <n-h1 class="slogen">XX</n-h1> -->
                     <div class="searchDiv">
                         <n-auto-complete class="searchBar" size="large" placeholder="搜索你想了解的论文" :options="searchOptions" />
@@ -60,8 +63,8 @@
 import { ref, watch, onMounted, computed, Ref } from 'vue';
 import Header from '@/components/Header.vue'
 import Menu from '@/components/Menu.vue'
-import lizi from '@/components/lizi.vue';
-import Pipeline from '@/components/Pipeline.vue';
+import StarBackground from '@/components/Login/StarBackground.vue';
+import Clock from '@/components/Clock.vue';
 import { useRoute } from 'vue-router'
 import { FormInst } from 'naive-ui';
 
@@ -165,9 +168,11 @@ const searchCardModel = ref<SearchCardModelType>({
 
 .homeDiv {
     width: 100%;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
+    background-image: url('../assets/sky.jpg');
 
 }
 
@@ -185,18 +190,25 @@ const searchCardModel = ref<SearchCardModelType>({
 }
 
 .homeContentDiv {
-    width: 100vw;
+    width: 100%;
     height: 400px;
-    flex-direction: row;
-    align-items: center;
+    position: relative;
 }
 
-.homeContentTop {
-    width: 100%;
-    height: 100%;
-    position: relative;
+.homeContentLeft {
+    top: 40%;
+    left: 15%;
+    width: 40%;
+    height: 20%;
+    position: absolute;
+}
 
-    justify-content: center;
+.homeContentRight {
+    top: 45%;
+    left: 60%;
+    width: 40%;
+    height: 10%;
+    position: absolute;
 }
 
 .slogen {
