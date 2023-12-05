@@ -1,9 +1,9 @@
 <template>
-    <div class="homeParent">
-        <div class="homeBackground">
-            <lizi></lizi>
-        </div>
-        <div class="homeDiv" v-if="showHome">
+    <div class="homeDiv" v-if="showHome">
+        <div class="homeParent">
+            <div class="homeBackground">
+                <lizi></lizi>
+            </div>
             <div class="homeHeaderDiv">
                 <n-button class="loginButton" @click="$router.push('/scholarHome');" href="/">设置</n-button>
                 <n-button class="loginButton" @click="$router.push('/login');" href="/">登录</n-button>
@@ -40,17 +40,18 @@
                     </div>
                 </div>
             </div>
+
         </div>
-        <div class="mainContainer" v-else>
-            <div class="header">
-                <Header></Header>
-            </div>
-            <div class="menu">
-                <Menu></Menu>
-            </div>
-            <div class="main">
-                <router-view></router-view>
-            </div>
+    </div>
+    <div class="mainContainer" v-else>
+        <div class="header">
+            <Header></Header>
+        </div>
+        <div class="menu">
+            <Menu></Menu>
+        </div>
+        <div class="main">
+            <router-view></router-view>
         </div>
     </div>
 </template>
