@@ -3,7 +3,7 @@
         <div class="secondarySearch">
             <SecondarySearchCard v-for="(secondarySearch,index) in secondarySearchList" :key="index" :secondarySearch="secondarySearch"></SecondarySearchCard>
         </div>
-        <div class="searchResults">
+        <div class="searchResults" @click="$router.push('/detail');">
             <div class="resultTop">
                 <div class="resultNumber">为您找到{{ resultNumber }}条相关结果</div>
                 <div class="sort">排序</div>
