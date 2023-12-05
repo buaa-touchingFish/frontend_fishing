@@ -44,8 +44,8 @@
 
 <script setup lang='ts'>
 import { ref, watch, onMounted, computed, Ref } from 'vue';
-import Header from '@/components/Header.vue'
-import Menu from '@/components/Menu.vue'
+import Header from '@/components/Home/Header.vue'
+import Menu from '@/components/Home/Menu.vue'
 import StarBackground from '@/components/Login/StarBackground.vue';
 import Clock from '@/components/Clock.vue';
 import { useRoute } from 'vue-router'
