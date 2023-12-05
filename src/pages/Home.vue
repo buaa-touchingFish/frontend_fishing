@@ -153,9 +153,9 @@ const searchCardModel = ref<SearchCardModelType>({
 }
 
 .menu {
-    width: 30px;
+    /* width: 30px; */
     height: 100%;
-    background-color: blue;
+    /* background-color: blue; */
     position: fixed;
 }
 
