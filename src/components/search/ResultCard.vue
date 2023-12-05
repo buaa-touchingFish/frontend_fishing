@@ -68,7 +68,7 @@ const result:resultType = props.result
     margin: 0;
     margin-left: 5px;
     padding: 0;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 400;
     display: flex;
     align-items: center;
