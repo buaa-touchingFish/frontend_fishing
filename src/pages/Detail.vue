@@ -80,10 +80,10 @@
             role="dialog"
             aria-modal="true"
         >
-            <n-card embedded>
+            <n-card embedded id="foo">
                 {{citeContent}}
             </n-card>
-            <n-button tertiary type="info" class="copyCiteButton">复制</n-button>
+            <n-button tertiary type="info" class="copyCiteButton" @click="copy" data-clipboard-target="#foo">复制</n-button>
         </n-card>
     </n-modal>
 </template>
@@ -91,6 +91,8 @@
 <script setup lang='ts'>
 import Comment from '@/components/detail/Comment.vue'
 import { ref } from 'vue'
+import Clipboard from 'clipboard'
+
 type detailType = {
     title:string,
     date:string,
@@ -136,15 +138,26 @@ const fileDetail:detailType = {
         },
     ]
 }
+
 const quoteMask = ref(false)
 function changeQuoteMask(){
     quoteMask.value = !quoteMask.value
 }
+
 const citeContent = ref("[1]刘炜.48例肝内门静脉癌栓的超声诊断价值的探讨[J].中国医药指南, 2013, 11(32):2.DOI:CNKI:SUN:YYXK.0.2013-32-381.")
+
 const newComment = ref("")
 const ifShowCommentInput = ref(false)
 function changeShowCommentInput(){
     ifShowCommentInput.value = !ifShowCommentInput.value
+}
+
+function copy() {
+    const clipboard = new Clipboard('.copyCiteButton');
+    clipboard.on('success', () => {
+        clipboard.destroy()
+        alert("复制成功！");
+    })
 }
 </script>
 
