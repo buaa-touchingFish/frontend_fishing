@@ -212,11 +212,13 @@ onMounted(() => {
     width: 60px;
     height: 100px;
     line-height: 100px;
-    border: solid 1px #000;
+    /* border: solid 1px #000; */
     border-radius: 10px;
-    background: #fff;
+    /* background: #fff; */
+    background-color: #000;
     font-size: 66px;
-    color: #fff;
+    /* color: #fff; */
+    color:#000;
     /* box-shadow: 0 0 6px rgba(0, 0, 0, .5); */
     text-align: center;
     font-family: "Helvetica Neue"
@@ -228,7 +230,8 @@ onMounted(() => {
     position: absolute;
     left: 0;
     right: 0;
-    background: #000;
+    /* background: #000; */
+    background-color: #fff;
     overflow: hidden;
     box-sizing: border-box;
 }
@@ -237,7 +240,7 @@ onMounted(() => {
     top: 0;
     bottom: 50%;
     border-radius: 10px 10px 0 0;
-    border-bottom: solid 1px #666;
+    /* border-bottom: solid 1px #666; */
 }
 
 .flip .digital:after {
@@ -394,7 +397,18 @@ onMounted(() => {
 
 .clock {
     text-align: center;
-    margin-bottom: 200px;
+    animation: shining 2.5s linear infinite;
+}
+@keyframes shining {
+    0%{
+        box-shadow: 0 0 20px 10px white;
+    }
+    50%{
+        box-shadow: 0 0 10px 0px white;
+    }
+    100%{
+        box-shadow: 0 0 20px 10px white;
+    }
 }
 
 .clock em {

@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <!-- <div> -->
     <canvas id="starBg"></canvas>
-  </div>
+  <!-- </div> -->
 </template>
   
 <script setup lang="ts">
@@ -118,5 +118,12 @@ class Star {
 }
 </script>
   
-<style scoped></style>
+<style scoped>
+#starBg{
+  display: block;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+</style>
   

@@ -117,6 +117,9 @@ const fileDetail:detailType = {
     display: flex;
     flex-direction: column;
 }
+/* .detailContainer :deep(.n-card-header__main){
+    view-transition-name: searchResultCardTitle !important;
+} */
 .constFont{
     color: gray;
 }
