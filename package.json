@@ -13,6 +13,7 @@
     "earth-flyline": "^1.2.7",
     "naive-ui": "^2.35.0",
     "pinia": "^2.1.7",
+    "pixi.js": "^7.3.2",
     "three": "^0.158.0",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5"
