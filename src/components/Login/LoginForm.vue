@@ -349,7 +349,7 @@ const registerRules: FormRules = {
             validator(_rule: any, value: string) {
                 if (!value) {
                     return new Error('请输入验证码')
-                } else if (value.length !== 4) {
+                } else if (value.length !== 5) {
                     return new Error('请输入正确格式验证码')
                 }
                 return true
@@ -399,7 +399,7 @@ const forgetRules: FormRules = {
             validator(_rule: any, value: string) {
                 if (!value) {
                     return new Error('请输入验证码')
-                } else if (value.length !== 4) {
+                } else if (value.length !== 5) {
                     return new Error('请输入正确格式验证码')
                 }
                 return true
@@ -416,8 +416,8 @@ const login = (e: MouseEvent) => {
     loginFormRef.value?.validate(async (errors) => {
         if (!errors) {
             let res = await post(message, "/user/login", {
-                "username": registerModel.value.username,
-                "password": registerModel.value.password,
+                "username": loginModel.value.name,
+                "password": loginModel.value.password,
             })
             if (res == false) {
                 return;
@@ -455,8 +455,9 @@ const submitRegisterCaptcha = async () => {
                 }
             }, 1000);
         }
+        let email = registerModel.value.email
         let res = await post(message, "/user/sendCaptcha", {
-            email: registerModel.value.email
+            "email" : email
         })
         if (!res) {
             return;

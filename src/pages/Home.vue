@@ -155,16 +155,16 @@ const changeShowCard = () => {
 
 .homeContentLeft {
     top: 40%;
-    left: 15%;
-    width: 40%;
+    left: 5%;
+    width: 35%;
     height: 20%;
     position: absolute;
 }
 
 .homeContentRight {
     top: 45%;
-    left: 60%;
-    width: 40%;
+    left: 45%;
+    width: 50%;
     height: 10%;
     position: absolute;
 }

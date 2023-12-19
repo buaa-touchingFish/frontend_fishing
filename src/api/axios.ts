@@ -10,6 +10,7 @@ export async function post(message: MessageApiInjection, url: string, props: any
         const res = await request.post(url, props);
         if (res.status === 200) {
             if (res.data.code === 200) {
+                message.success(res.data.message)
                 return res.data.data;
             } else {
                 let code = res.data.code
