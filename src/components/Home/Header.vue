@@ -62,20 +62,30 @@ const searchOptions = ref([
 </script>
 
 <style scoped>
-.headerContainer{
+.headerContainer {
     width: 70%;
     height: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
-.headerLeft{
+
+.headerLeft {
     width: 70%;
     height: 100%;
     display: flex;
     align-items: center;
 }
-.logo{
+
+.headerRight {
+    width: 30%;
+    height: 100%;
+    background-color: blue;
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.logo {
     width: 20%;
     height: 100%;
     display: flex;
@@ -132,14 +142,16 @@ const searchOptions = ref([
     display: flex;
     flex-direction: row-reverse;
 }
-.user{
+
+.user {
     height: 100%;
     width: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
-.setting{
+
+.setting {
     height: 100%;
     width: 50px;
     display: flex;
