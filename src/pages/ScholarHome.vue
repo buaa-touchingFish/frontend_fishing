@@ -4,7 +4,7 @@
             <div class="imageDiv">
                 <n-avatar round :size="128"
                     src="https://x0.ifengimg.com/res/2020/79AF4AE1EC8333953CBE4B3B3D0529A6E1FB6186_size217_w1080_h1171.jpeg" />
-                <n-button @click="claim">我要认领</n-button>
+                <n-button class="claimButton" @click="claim">我要认领</n-button>
             </div>
             <div class="verticalSplitDiv"></div>
             <div class="infoDiv">
@@ -37,15 +37,38 @@
             </div>
         </div>
         <div class="horizontalSplitDiv" />
+        <div class="chartDiv">
+            <Chart class="pieChart" type="pie" :data="chartData" :options="chartOptions" />
+            <Chart class="lineChart" type="line" :data="chartData" :options="chartOptions" />
+        </div>
+        <div class="horizontalSplitDiv" />
     </div>
 </template>
 <script setup lang="ts">
 import router from '@/router';
 import { ref } from 'vue';
+
 const rootDiv = ref();
 const claim = () => {
     router.push('/claimScholar');
 }
+
+
+const chartData = ref({
+    labels: ['论文', '期刊', '会议', '其他'],
+    datasets: [
+        {
+            label: '文章数量',
+            data: [540, 325, 702, 620],
+            backgroundColor: ['rgba(255, 159, 64, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(153, 102, 255, 0.2)'],
+            borderColor: ['rgb(255, 159, 64)', 'rgb(75, 192, 192)', 'rgb(54, 162, 235)', 'rgb(153, 102, 255)'],
+            borderWidth: 1
+        }
+    ]
+});
+const chartOptions = ref({
+
+});
 </script>
 <style scoped>
 .verticalSplitDiv {
@@ -76,12 +99,12 @@ const claim = () => {
 }
 
 .imageDiv {
-    width: 160px;
+    width: 200px;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
-    padding: 40px;
+    padding: 30px;
 }
 
 
@@ -116,6 +139,14 @@ const claim = () => {
     min-width: fit-content;
     margin-left: 300px;
     view-transition-name: scholarID;
+    background-color: #fafafa;
+    border: 1px solid #E6E6E6;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.claimButton {
+    margin-top: 10px;
 }
 
 .infoDataDiv {
@@ -138,4 +169,19 @@ const claim = () => {
 }
 
 .infoBoxValueSpan {}
+
+.chartDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: start;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.pieChart {}
+
+.lineChart {
+    width: 600px;
+}
 </style>
