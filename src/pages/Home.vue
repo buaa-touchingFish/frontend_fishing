@@ -1,8 +1,8 @@
 <template>
     <div class="homeDiv" v-if="showHome">
         <div class="homeParent">
-            <div class="homeBackground">
-                <!-- <StarBackground></StarBackground> -->
+            <div class="homeBackground" id="homeBackground">
+                <StarBackground></StarBackground>
             </div>
             <div class="homeHeaderDiv">
                 <n-button class="loginButton" @click="$router.push('/scholarHome');" href="/">设置</n-button>
@@ -13,16 +13,16 @@
                     <Clock></Clock>
                 </div>
                 <div class="homeContentRight">
-                    <!-- <n-h1 class="slogen">XX</n-h1> -->
-                    <div class="searchDiv">
-                        <n-auto-complete class="searchBar" size="large" placeholder="搜索你想了解的论文" :options="searchOptions" />
-                        <n-button class="searchButton" @click="$router.push('/search')" type="primary">搜索</n-button>
-                        <n-button class="extraButton" @click="changeShowCard" type="primary">高级搜索</n-button>
-                    </div>
-                    <div class="searchCardDiv" v-show="showCard">
-                        <n-card hoverable>
+                    <div class="search">
+                        <div class="searchDiv" :class="{searchRotate : changeCard}">
+                            <n-auto-complete class="searchBar" size="large" placeholder="搜索你想了解的论文" :options="searchOptions" />
+                            <n-button class="searchButton" @click="$router.push('/search')" type="primary">搜索</n-button>
+                            <n-button class="extraButton" @click="changeShowCard" type="primary">高级搜索</n-button>
+                        </div>
+                        <div class="advancedSearchDiv" :class="{advancedSearchRotate : changeCard}">
+                            <n-button class="backButton" @click="changeShowCard">返回</n-button>
                             <AdvancedSearch></AdvancedSearch>
-                        </n-card>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -44,8 +44,8 @@
 
 <script setup lang='ts'>
 import { ref, watch, onMounted, computed, Ref } from 'vue';
-import Header from '@/components/Header.vue'
-import Menu from '@/components/Menu.vue'
+import Header from '@/components/Home/Header.vue'
+import Menu from '@/components/Home/Menu.vue'
 import StarBackground from '@/components/Login/StarBackground.vue';
 import Clock from '@/components/Clock.vue';
 import { useRoute } from 'vue-router'
@@ -62,6 +62,16 @@ onMounted(() => {
     showHome.value = (route.path == '/')
 })
 
+//首页背景
+import * as PIXI from 'pixi.js';
+const app = new PIXI.Application({ background: 'transparent', resizeTo: window });
+document.getElementById("homeBackground")?.appendChild(app.view as any);
+// const container = new PIXI.Container();
+// app.stage.addChild(container);
+const graphics = new PIXI.Graphics();
+app.stage.addChild(graphics);
+
+
 //搜索推荐的地方
 const searchOptions = computed(() => {
     const result: string[] = [];
@@ -71,9 +81,9 @@ const searchOptions = computed(() => {
 });
 
 // Card
-const showCard = ref(false)
+const changeCard = ref(false)
 const changeShowCard = () => {
-    showCard.value = !showCard.value
+    changeCard.value = !changeCard.value
 }
 </script>
 
@@ -87,8 +97,9 @@ const changeShowCard = () => {
 
 .homeBackground {
     position: absolute;
-    top: 0;
-    right: 0;
+    width: 100%;
+    height: 100%;
+    font-size: 0;
 }
 
 .mainContainer {
@@ -111,10 +122,11 @@ const changeShowCard = () => {
 }
 
 .menu {
-    width: 30px;
-    height: 100%;
-    /* background-color: blue; */
+    /* width: 30px; */
+    height: 100vh;
+    background-color: transparent;
     position: fixed;
+    z-index: 998;
 }
 
 .main {
@@ -130,12 +142,13 @@ const changeShowCard = () => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-image: url('../assets/sky.jpg');
+    /* background-image: url('../assets/sky.jpg'); */
+    background-color: aliceblue;
 
 }
 
 .homeHeaderDiv {
-    width: 100vw;
+    width: 100%;
     height: 60px;
     display: flex;
     flex-direction: row-reverse;
@@ -149,24 +162,24 @@ const changeShowCard = () => {
 
 .homeContentDiv {
     width: 100%;
-    height: 400px;
-    position: relative;
+    height: calc(100% - 60px);
+    display: flex;
 }
 
 .homeContentLeft {
-    top: 40%;
-    left: 5%;
-    width: 35%;
-    height: 20%;
-    position: absolute;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .homeContentRight {
-    top: 45%;
-    left: 45%;
     width: 50%;
-    height: 10%;
-    position: absolute;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .slogen {
@@ -192,44 +205,75 @@ const changeShowCard = () => {
     margin-left: 80px;
 }
 
+.search{
+    width: 80%;
+    height: 50%;
+    position: relative;
+    transform-style: preserve-3d;
+    perspective: 700px;
+}
+
 .searchDiv {
     width: 100%;
-    height: 40px;
-    align-self: center;
-    position: relative;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    backface-visibility: hidden;
+    transition: 1s;
 }
 
 .extraButton {
-    width: 8%;
-    height: 40px;
     position: absolute;
-    top: 0;
-    left: 12%;
-    border-radius: 25% 0 0 25%;
+    left: 0;
 }
 
 .searchButton {
-    width: 5%;
-    height: 40px;
-    position: absolute;
-    top: 0;
-    right: 15%;
-    border-radius: 0 30% 30% 0;
 }
 
-.searchCardDiv {
-    position: absolute;
-    top: 40%;
-    left: 12%;
-    width: 73%;
-    height: 60%;
-    background-color: rgba(255, 255, 255, 0.9);
-    z-index: 999;
+.advancedSearchDiv {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    transform: rotateY(180deg);
+    transition: 1s;
+    backface-visibility: hidden;
+    box-shadow: 0 0 20px 10px white;
+
+    animation: shining 2.5s linear infinite;
 }
+@keyframes shining {
+    0%{
+        box-shadow: 0 0 20px 10px white;
+    }
+    50%{
+        box-shadow: 0 0 10px 0px white;
+    }
+    100%{
+        box-shadow: 0 0 20px 10px white;
+    }
+}
+.searchRotate{
+    transform: rotateY(-180deg);
+    transition: 1s;
+}
+.advancedSearchRotate{
+    transform: rotateY(0deg);
+    transition: 1s;
+}
+.backButton{
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
 
 .homeContentBottom {
     display: flex;

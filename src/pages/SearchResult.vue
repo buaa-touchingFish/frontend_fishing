@@ -177,7 +177,7 @@ const recommendList:recommend[] = [
 
 <style scoped>
 .searchRasultContainer{
-    width: 70%;
+    width: 75%;
     margin-top: 20px;
     display: flex;
 }
@@ -188,7 +188,7 @@ const recommendList:recommend[] = [
 .searchResults{
     width: 60%;
     height: 1000px;
-    padding: 0 13px;
+    padding: 0 25px;
     box-sizing: border-box;
 }
 .resultTop{
