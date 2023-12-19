@@ -422,9 +422,9 @@ const login = (e: MouseEvent) => {
             if (res == false) {
                 return;
             }
+            const token = res
             // TODO:加token和userstore保存信息
-            userstore.curUser.value = res.uid
-            axiosStore.updateAuthorizationHeader(res.token)
+            axiosStore.updateAuthorizationHeader(token)
             router.push('/')
 
         } else {
@@ -474,7 +474,6 @@ const register = (e: MouseEvent) => {
             let res = await post(message, '/user/register', {
                 "username": registerModel.value.username,
                 "password": registerModel.value.password,
-                "confirmPassword": registerModel.value.repeatPassword,
                 "email": registerModel.value.email,
                 "captcha": registerModel.value.captcha,
             })
@@ -509,7 +508,7 @@ const submitForgetCaptcha = async () => {
                 }
             }, 1000);
         }
-        let res = await post(message, "/user/sendCaptcha", {
+        let res = await post(message, "/user/findpwd", {
             email: forgetModel.value.email
         })
         if (!res) {

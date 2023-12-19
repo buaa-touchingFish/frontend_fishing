@@ -239,7 +239,7 @@ onMounted(() => {
     top: 0;
     bottom: 50%;
     border-radius: 10px 10px 0 0;
-    /* /* border-bottom: solid 1px #666; */ */
+    /* /* border-bottom: solid 1px #666; */ 
 }
 
 .flip .digital:after {
