@@ -1,23 +1,32 @@
 <template>
     <div class="homeDiv" v-if="showHome">
-        <div class="homeHeaderDiv">
-            <n-button class="loginButton" @click="$router.push('/scholarHome');" href="/">设置</n-button>
-            <n-button class="loginButton" @click="$router.push('/login');" href="/">登录</n-button>
-        </div>
-        <div class="homeContentDiv">
-            <div class="homeContentLeft">
-                <n-h1 class="slogen">学海无涯苦作舟</n-h1>
-                <div class="searchDiv">
-                    <n-auto-complete class="searchBar" clear-after-select size="large" placeholder="搜索你想了解的论文"
-                        :options="searchOptions" />
-                    <n-button class="searchButton" @click="$router.push('/search')">搜</n-button>
-                </div>
-                <!--
-                    <n-auto-complete class="autocmp" clear-after-select @select="searchSelected"
-                                v-model:value="searchValue" :options="searchOptions" placeholder="搜索聊天历史记录"
-                                :render-label="renderSearchLabel" size="large" />
-                -->
+        <div class="homeParent">
+            <div class="homeBackground" id="homeBackground">
+                <StarBackground></StarBackground>
             </div>
+            <div class="homeHeaderDiv">
+                <n-button class="loginButton" @click="$router.push('/scholarHome');" href="/">设置</n-button>
+                <n-button class="loginButton" @click="$router.push('/login');" href="/">登录</n-button>
+            </div>
+            <div class="homeContentDiv">
+                <div class="homeContentLeft">
+                    <Clock></Clock>
+                </div>
+                <div class="homeContentRight">
+                    <div class="search">
+                        <div class="searchDiv" :class="{searchRotate : changeCard}">
+                            <n-auto-complete class="searchBar" size="large" placeholder="搜索你想了解的论文" :options="searchOptions" />
+                            <n-button class="searchButton" @click="$router.push('/search')" type="primary">搜索</n-button>
+                            <n-button class="extraButton" @click="changeShowCard" type="primary">高级搜索</n-button>
+                        </div>
+                        <div class="advancedSearchDiv" :class="{advancedSearchRotate : changeCard}">
+                            <n-button class="backButton" @click="changeShowCard">返回</n-button>
+                            <AdvancedSearch></AdvancedSearch>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
     <div class="mainContainer" v-else>
@@ -34,10 +43,13 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, watch, onMounted, computed } from 'vue';
-import Header from '@/components/Header.vue'
-import Menu from '@/components/Menu.vue'
+import { ref, watch, onMounted, computed, Ref } from 'vue';
+import Header from '@/components/Home/Header.vue'
+import Menu from '@/components/Home/Menu.vue'
+import StarBackground from '@/components/Login/StarBackground.vue';
+import Clock from '@/components/Clock.vue';
 import { useRoute } from 'vue-router'
+import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
 
 const route = useRoute()
 
@@ -50,6 +62,16 @@ onMounted(() => {
     showHome.value = (route.path == '/')
 })
 
+//首页背景
+import * as PIXI from 'pixi.js';
+const app = new PIXI.Application({ background: 'transparent', resizeTo: window });
+document.getElementById("homeBackground")?.appendChild(app.view as any);
+// const container = new PIXI.Container();
+// app.stage.addChild(container);
+const graphics = new PIXI.Graphics();
+app.stage.addChild(graphics);
+
+
 //搜索推荐的地方
 const searchOptions = computed(() => {
     const result: string[] = [];
@@ -57,9 +79,29 @@ const searchOptions = computed(() => {
     result.push("情绪零碎");
     return result;
 });
+
+// Card
+const changeCard = ref(false)
+const changeShowCard = () => {
+    changeCard.value = !changeCard.value
+}
 </script>
 
 <style scoped>
+.homeParent {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    color: white;
+}
+
+.homeBackground {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    font-size: 0;
+}
+
 .mainContainer {
     width: 100%;
     min-height: 100vh;
@@ -69,20 +111,22 @@ const searchOptions = computed(() => {
 .header {
     height: 57px;
     width: 100%;
-    background-color: red;
+    background-color: white;
     position: sticky;
     top: 0;
     display: flex;
     justify-content: center;
     align-items: center;
+    box-shadow:  0 5px 10px #ccc, 0 -5px 10px #ccc;
     z-index: 999;
 }
 
 .menu {
-    width: 30px;
-    height: 100%;
-    background-color: blue;
+    /* width: 30px; */
+    height: 100vh;
+    background-color: transparent;
     position: fixed;
+    z-index: 998;
 }
 
 .main {
@@ -94,18 +138,22 @@ const searchOptions = computed(() => {
 
 .homeDiv {
     width: 100%;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
+    /* background-image: url('../assets/sky.jpg'); */
+    background-color: aliceblue;
+
 }
 
 .homeHeaderDiv {
-    width: 100vw;
+    width: 100%;
     height: 60px;
-    background-color: #fcc;
     display: flex;
     flex-direction: row-reverse;
     align-items: center;
+
 }
 
 .loginButton {
@@ -113,28 +161,36 @@ const searchOptions = computed(() => {
 }
 
 .homeContentDiv {
-    width: 100vw;
-    height: 400px;
-    flex-direction: row;
-    align-items: center;
+    width: 100%;
+    height: calc(100% - 60px);
+    display: flex;
 }
 
 .homeContentLeft {
-    width: 65%;
+    width: 50%;
     height: 100%;
     display: flex;
-    flex-direction: column;
-    background-color: aliceblue;
     justify-content: center;
+    align-items: center;
+}
+
+.homeContentRight {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .slogen {
-    margin-left: 40px;
+    margin-left: 40%;
     font-size: 40pt;
+    width: 30%;
 }
 
 .searchBar {
-    width: 100%;
+    margin-left: 20%;
+    width: 60%;
 }
 
 .searchBar :deep(.n-input) {
@@ -145,24 +201,82 @@ const searchOptions = computed(() => {
 }
 
 .searchBar :deep(.n-input__input) {
-    margin-right: 40px;
+    margin-right: 80px;
+    margin-left: 80px;
+}
+
+.search{
+    width: 80%;
+    height: 50%;
+    position: relative;
+    transform-style: preserve-3d;
+    perspective: 700px;
 }
 
 .searchDiv {
-    width: 90%;
-    height: 40px;
+    width: 100%;
+    height: 100%;
     display: flex;
-    background-color: #fcc;
-    align-self: center;
-    position: relative;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    backface-visibility: hidden;
+    transition: 1s;
+}
+
+.extraButton {
+    position: absolute;
+    left: 0;
 }
 
 .searchButton {
-    width: 40px;
-    height: 40px;
-    position: absolute;
-    top: 0;
-    right: 0;
+}
 
+.advancedSearchDiv {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    transform: rotateY(180deg);
+    transition: 1s;
+    backface-visibility: hidden;
+    box-shadow: 0 0 20px 10px white;
+
+    animation: shining 2.5s linear infinite;
+}
+@keyframes shining {
+    0%{
+        box-shadow: 0 0 20px 10px white;
+    }
+    50%{
+        box-shadow: 0 0 10px 0px white;
+    }
+    100%{
+        box-shadow: 0 0 20px 10px white;
+    }
+}
+.searchRotate{
+    transform: rotateY(-180deg);
+    transition: 1s;
+}
+.advancedSearchRotate{
+    transform: rotateY(0deg);
+    transition: 1s;
+}
+.backButton{
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+
+.homeContentBottom {
+    display: flex;
+    flex-direction: row;
 }
 </style>

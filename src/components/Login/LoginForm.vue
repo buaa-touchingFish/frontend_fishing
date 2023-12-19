@@ -1,102 +1,92 @@
 <template>
     <div class="login-form-container">
-        <n-scrollbar>
-            <n-form v-if="formType === 'login'" ref="loginFormRef" :model="loginModel" :rules="loginRules">
-                <n-form-item path="name" label="用户名">
-                    <n-input v-model:value="loginModel.name" @keydown.enter.prevent placeholder="请输入用户名" />
-                </n-form-item>
-                <n-form-item path="password" label="密码">
-                    <n-input v-model:value="loginModel.password" type="password" @keydown.enter.prevent
-                        placeholder="请输入密码" />
-                </n-form-item>
+        <n-form ref="loginFormRef" :model="loginModel" :rules="loginRules" :style="loginFormStyle">
+            <n-form-item path="name" label="用户名">
+                <n-input v-model:value="loginModel.name" @keydown.enter.prevent placeholder="请输入用户名" />
+            </n-form-item>
+            <n-form-item path="password" label="密码">
+                <n-input v-model:value="loginModel.password" type="password" @keydown.enter.prevent placeholder="请输入密码" />
+            </n-form-item>
 
-                <div class="form-bottom">
-                    <n-button round type="primary" @click="login" style="width: 100%;">
-                        登录
-                    </n-button>
+            <div class="login-form-bottom">
+                <n-button round type="primary" @click="login" style="width: 100%;">
+                    登录
+                </n-button>
 
-                    <div class="links">
-                        <span @click="formType = 'register'">注册</span>
-                        <span @click="formType = 'forget'">找回密码</span>
-                    </div>
+                <div class="links">
+                    <span @click="switchRegister">注册</span>
+                    <span @click="switchForget">找回密码</span>
                 </div>
-            </n-form>
+            </div>
+        </n-form>
 
-            <n-form v-if="formType === 'register'" ref="registerFormRef" :model="registerModel" :rules="registerRules">
-                <n-form-item path="username" label="用户名">
-                    <n-input v-model:value="registerModel.username" @keydown.enter.prevent placeholder="请输入用户名" />
-                </n-form-item>
-                <n-form-item path="email" label="邮箱">
-                    <n-input v-model:value="registerModel.email" @keydown.enter.prevent placeholder="请输入邮箱" />
-                </n-form-item>
-                <n-form-item path="name" label="真实姓名">
-                    <n-input v-model:value="registerModel.name" @keydown.enter.prevent placeholder="请输入姓名" />
-                </n-form-item>
-                <n-form-item path="phone" label="联系电话">
-                    <n-input v-model:value="registerModel.phone" @keydown.enter.prevent placeholder="请输入电话" />
-                </n-form-item>
-                <n-form-item path="password" label="密码">
-                    <n-input v-model:value="registerModel.password" type="password" @keydown.enter.prevent
-                        placeholder="请输入密码" />
-                </n-form-item>
-                <n-form-item path="repeatPassword" label="确认密码">
-                    <n-input v-model:value="registerModel.repeatPassword" type="password" @keydown.enter.prevent
-                        placeholder="请输入密码" />
-                </n-form-item>
-                <n-form-item path="captcha" label="验证码">
-                    <div class="input-with-button">
-                        <n-input v-model:value="registerModel.captcha" @keydown.enter.prevent placeholder="请输入验证码" />
-                        <n-button type="primary" :disabled="isRegisterButtonDisabled" @click="submitRegisterCaptcha"
-                            style="width: 130px;">
-                            {{ registerButtonText }}
-                        </n-button>
-                    </div>
-                </n-form-item>
-
-                <div class="form-bottom">
-                    <n-button round type="primary" @click="register" style="width: 100%;">
-                        注册
+        <n-form ref="registerFormRef" :model="registerModel" :rules="registerRules" :style="registerFormStyle">
+            <n-form-item path="username" label="用户名">
+                <n-input v-model:value="registerModel.username" @keydown.enter.prevent placeholder="请输入用户名" />
+            </n-form-item>
+            <n-form-item path="email" label="邮箱">
+                <n-input v-model:value="registerModel.email" @keydown.enter.prevent placeholder="请输入邮箱" />
+            </n-form-item>
+            <n-form-item path="password" label="密码">
+                <n-input v-model:value="registerModel.password" type="password" @keydown.enter.prevent
+                    placeholder="请输入密码" />
+            </n-form-item>
+            <n-form-item path="repeatPassword" label="确认密码">
+                <n-input v-model:value="registerModel.repeatPassword" type="password" @keydown.enter.prevent
+                    placeholder="请输入密码" />
+            </n-form-item>
+            <n-form-item path="captcha" label="验证码">
+                <div class="input-with-button">
+                    <n-input v-model:value="registerModel.captcha" @keydown.enter.prevent placeholder="请输入验证码" />
+                    <n-button type="primary" :disabled="isRegisterButtonDisabled" @click="submitRegisterCaptcha"
+                        style="width: 130px;">
+                        {{ registerButtonText }}
                     </n-button>
-
-                    <div class="links">
-                        <span @click="formType = 'login'">去登录</span>
-                    </div>
                 </div>
-            </n-form>
+            </n-form-item>
 
-            <n-form v-if="formType === 'forget'" ref="frogetFormRef" :model="forgetModel" :rules="forgetRules">
-                <n-form-item path="email" label="邮箱">
-                    <n-input v-model:value="forgetModel.email" @keydown.enter.prevent placeholder="请输入邮箱" />
-                </n-form-item>
-                <n-form-item path="password" label="密码">
-                    <n-input v-model:value="forgetModel.password" type="password" @keydown.enter.prevent
-                        placeholder="请输入密码" />
-                </n-form-item>
-                <n-form-item path="repeatPassword" label="确认密码">
-                    <n-input v-model:value="forgetModel.repeatPassword" type="password" @keydown.enter.prevent
-                        placeholder="请输入密码" />
-                </n-form-item>
-                <n-form-item path="captcha" label="验证码">
-                    <div class="input-with-button">
-                        <n-input v-model:value="forgetModel.captcha" @keydown.enter.prevent placeholder="请输入验证码" />
-                        <n-button type="primary" :disabled="isForgetButtonDisabled" @click="submitForgetCaptcha"
-                            style="width: 130px;">
-                            {{ forgetButtonText }}
-                        </n-button>
-                    </div>
-                </n-form-item>
+            <div class="form-bottom">
+                <n-button type="primary" @click="register" style="width: 50%;">
+                    注册
+                </n-button>
+                <n-button  @click="switchLogin" style="width: 50%;">
+                    去登录
+                </n-button>
+                
+            </div>
+        </n-form>
 
-                <div class="form-bottom">
-                    <n-button round type="primary" @click="forget" style="width: 100%;">
-                        找回
+        <n-form ref="frogetFormRef" :model="forgetModel" :rules="forgetRules" :style="forgetFormStyle">
+            <n-form-item path="email" label="邮箱">
+                <n-input v-model:value="forgetModel.email" @keydown.enter.prevent placeholder="请输入邮箱" />
+            </n-form-item>
+            <n-form-item path="password" label="密码">
+                <n-input v-model:value="forgetModel.password" type="password" @keydown.enter.prevent placeholder="请输入密码" />
+            </n-form-item>
+            <n-form-item path="repeatPassword" label="确认密码">
+                <n-input v-model:value="forgetModel.repeatPassword" type="password" @keydown.enter.prevent
+                    placeholder="请输入密码" />
+            </n-form-item>
+            <n-form-item path="captcha" label="验证码">
+                <div class="input-with-button">
+                    <n-input v-model:value="forgetModel.captcha" @keydown.enter.prevent placeholder="请输入验证码" />
+                    <n-button type="primary" :disabled="isForgetButtonDisabled" @click="submitForgetCaptcha"
+                        style="width: 130px;">
+                        {{ forgetButtonText }}
                     </n-button>
-
-                    <div class="links">
-                        <span @click="formType = 'login'">去登录</span>
-                    </div>
                 </div>
-            </n-form>
-        </n-scrollbar>
+            </n-form-item>
+
+            <div class="form-bottom">
+                <n-button type="primary" @click="forget" class="leftButton">
+                    找回
+                </n-button>
+                <n-button  @click="switchLogin" class="rightButton">
+                    去登录
+                </n-button>
+            </div>
+        </n-form>
+
     </div>
 </template>
   
@@ -104,8 +94,12 @@
 .login-form-container {
     width: 100%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    overflow-y: scroll;
+    z-index: 2;
+    animation: loginAnimation 1s;
+    animation-fill-mode: forwards;
+    animation-timing-function: ease;
 }
 
 .login-form-container form {
@@ -116,11 +110,27 @@
     display: none;
 }
 
-.form-bottom {
+.login-form-bottom {
     display: flex;
     justify-content: flex-end;
     flex-direction: column;
     margin-top: 5%;
+}
+
+.form-bottom {
+    display: flex;
+    flex-direction: row;
+    margin-top: 5%;
+
+    .leftButton {
+        margin-left: 10%;
+        width: 40%;
+    }
+
+    .rightButton {
+        
+        width: 40%;
+    }
 }
 
 .input-with-button {
@@ -138,13 +148,23 @@
 }
 
 .links span {
-    padding: 5px;
+    padding: 5px 10px ;
     border-radius: 5px;
 }
 
 .links span:hover {
     color: white;
     background-color: rgb(69, 184, 255);
+}
+
+@keyframes loginAnimation {
+    0% {
+        transform: translate(0, 100px);
+    }
+
+    100% {
+        transform: translate(0, 0px);
+    }
 }
 </style>
 
@@ -165,8 +185,6 @@ interface LoginModelType {
 interface RegisterModelType {
     username: string | null
     email: string | null
-    name: string | null
-    phone: string | null
     password: string | null
     repeatPassword: string | null
     captcha: string | null
@@ -182,22 +200,87 @@ interface ForgetModelType {
 const loginFormRef = ref<FormInst | null>(null)
 const registerFormRef = ref<FormInst | null>(null)
 const frogetFormRef = ref<FormInst | null>(null)
+const loginFormStyle = ref({
+    'z-index': '1',
+    'opacity': '1',
+    'width': '80%',
+    'height': '100%',
+    'transform': 'null',
+    'transition': '0.5s'
+});
+
+const registerFormStyle = ref({
+    'z-index': '0',
+    'opacity': '0',
+    'width': '80%',
+    'height': '0',
+    'transform': 'null',
+    'transition': '0.5s'
+})
+
+const forgetFormStyle = ref({
+    'z-index': '0',
+    'opacity': '0',
+    'width': '80%',
+    'height': '0',
+    'transform': 'null',
+    'transition': '0.5s'
+})
+
+const showStyle = {
+    'z-index': '1',
+    'opacity': '1',
+    'width': '80%',
+    'height': '100%',
+    'transform': 'translate(0, 0px)',
+    'transition': '0.5s'
+}
+
+const hideStyle = {
+    'z-index': '0',
+    'opacity': '0',
+    'width': '80%',
+    'height': '0',
+    'transform': 'null',
+    'transition': '0.5s'
+}
+
+const switchRegister = () => {
+    loginFormStyle.value = hideStyle
+    forgetFormStyle.value = hideStyle
+    setTimeout(() => {
+        registerFormStyle.value = showStyle
+    }, 500)
+}
+
+const switchLogin = () => {
+    forgetFormStyle.value = hideStyle
+    registerFormStyle.value = hideStyle
+    setTimeout(() => {
+        loginFormStyle.value = showStyle
+    }, 500)
+}
+
+const switchForget = () => {
+    loginFormStyle.value = hideStyle
+    registerFormStyle.value = hideStyle
+    setTimeout(() => {
+        forgetFormStyle.value = showStyle
+    }, 500)
+}
 const message = useMessage()
 const emailPattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-const phonePattern = /^(?:(?:\+|00)86)?1(?:(?:3[\d])|(?:4[5-79])|(?:5[0-35-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\d])|(?:9[1589]))\d{8}$/
 const formType = ref<string>('login')
 const loginModel = ref<LoginModelType>({
     name: null,
     password: null,
 })
 const registerModel = ref<RegisterModelType>({
-    name: null,
+    username: null,
     email: null,
     password: null,
     repeatPassword: null,
-    captcha: null,
-    username: null,
-    phone: null
+    captcha: null
 })
 const forgetModel = ref<ForgetModelType>({
     email: null,
@@ -224,26 +307,6 @@ const registerRules: FormRules = {
         {
             required: true,
             message: '请输入用户名',
-        },
-    ],
-    phone: [
-        {
-            required: true,
-            validator(_rule: any, value: string) {
-                if (!value) {
-                    return new Error('请输入手机号')
-                } else if (!phonePattern.test(value)) {
-                    return new Error('请输入正确格式的手机号')
-                }
-                return true
-            },
-            trigger: ['input', 'blur', 'delete']
-        },
-    ],
-    name: [
-        {
-            required: true,
-            message: '请输入真实姓名',
         },
     ],
     email: [
@@ -357,13 +420,13 @@ const login = (e: MouseEvent) => {
                 "password": registerModel.value.password,
             })
             if (res == false) {
-                return ;
+                return;
             }
             // TODO:加token和userstore保存信息
             userstore.curUser.value = res.uid
             axiosStore.updateAuthorizationHeader(res.token)
             router.push('/')
-            
+
         } else {
             message.warning("请完善信息")
         }
@@ -411,8 +474,6 @@ const register = (e: MouseEvent) => {
                 "username": registerModel.value.username,
                 "password": registerModel.value.password,
                 "confirmPassword": registerModel.value.repeatPassword,
-                "phone": registerModel.value.phone,
-                "name": registerModel.value.name,
                 "email": registerModel.value.email,
                 "captcha": registerModel.value.captcha,
             })
