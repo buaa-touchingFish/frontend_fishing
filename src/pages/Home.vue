@@ -14,13 +14,29 @@
                 </div>
                 <div class="homeContentRight">
                     <div class="search">
-                        <div class="searchDiv" :class="{searchRotate : changeCard}">
-                            <n-auto-complete class="searchBar" size="large" placeholder="搜索你想了解的论文" :options="searchOptions" />
-                            <n-button class="searchButton" @click="$router.push('/search')" type="primary">搜索</n-button>
-                            <n-button class="extraButton" @click="changeShowCard" type="primary">高级搜索</n-button>
+                        <div class="searchDiv" :class="{ searchRotate: changeCard }">
+                            <n-icon class="searchIcon" size="150" color="white">
+                                <Earth16Regular></Earth16Regular>
+                            </n-icon>                            
+                            <n-auto-complete class="searchBar" v-model:value="searchValue" size="large" :options="searchOptions">
+                                <template #default="{ handleInput, handleBlur, handleFocus, value: slotValue }">
+                                    <n-input class="searchInput" type="text" size="large" 
+                                    placeholder="搜索你想了解的论文"
+                                    :value="slotValue" @input="handleInput" @focus="handleFocus" @blur="handleBlur"
+                                    round>
+                                        <template #prefix>
+                                            <n-button @click="changeShowCard" ghost text>高级搜索</n-button>
+                                        </template>
+                                        <template #suffix>
+                                            <n-icon size="24" color="black" @click="$router.push('/search')" :component="Search12Regular" />
+                                        </template>
+                                    </n-input>
+                                </template>
+                            </n-auto-complete>
+                            
                         </div>
-                        <div class="advancedSearchDiv" :class="{advancedSearchRotate : changeCard}">
-                            <n-button class="backButton" @click="changeShowCard">返回</n-button>
+                        <div class="advancedSearchDiv" :class="{ advancedSearchRotate: changeCard }">
+                            <n-button class="backButton" @click="changeShowCard" text>返回</n-button>
                             <AdvancedSearch></AdvancedSearch>
                         </div>
                     </div>
@@ -50,6 +66,7 @@ import StarBackground from '@/components/Login/StarBackground.vue';
 import Clock from '@/components/Clock.vue';
 import { useRoute } from 'vue-router'
 import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
+import { Search12Regular, Earth16Regular } from "@vicons/fluent";
 
 const route = useRoute()
 
@@ -71,6 +88,7 @@ document.getElementById("homeBackground")?.appendChild(app.view as any);
 const graphics = new PIXI.Graphics();
 app.stage.addChild(graphics);
 
+const searchValue = ref("")
 
 //搜索推荐的地方
 const searchOptions = computed(() => {
@@ -117,7 +135,7 @@ const changeShowCard = () => {
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow:  0 5px 10px #ccc, 0 -5px 10px #ccc;
+    box-shadow: 0 5px 10px #ccc, 0 -5px 10px #ccc;
     z-index: 999;
 }
 
@@ -188,9 +206,24 @@ const changeShowCard = () => {
     width: 30%;
 }
 
+.searchIcon {
+    position: absolute;
+    left: 0;
+    top: 18%;
+    box-shadow: 0 0 20px 10px white;
+    border-radius: 50%;
+    animation: shining 2.5s linear infinite;
+}
+
+.searchInputLeft {
+    width: 40px;
+    height: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
 .searchBar {
-    margin-left: 20%;
-    width: 60%;
+    width: 90%;
 }
 
 .searchBar :deep(.n-input) {
@@ -201,11 +234,12 @@ const changeShowCard = () => {
 }
 
 .searchBar :deep(.n-input__input) {
-    margin-right: 80px;
-    margin-left: 80px;
+    height: 50px;
+    margin-left: 10px;
+    padding-top: 5px;
 }
 
-.search{
+.search {
     width: 80%;
     height: 50%;
     position: relative;
@@ -226,10 +260,34 @@ const changeShowCard = () => {
 
 .extraButton {
     position: absolute;
-    left: 0;
+    left: 10%;
+    height: 15%;
+    border-radius: 15% 0 0 15%;
+    background-color: white;
+    color: #000;
+}
+
+.extraButton:hover {
+    position: absolute;
+    left: 10%;
+    height: 15%;
+    border-radius: 15% 0 0 15%;
+    background-color: white;
+    color: #000;
+    border-color: #000;
+}
+
+.searchDivider {
+    position: absolute;
+    left: 25%;
 }
 
 .searchButton {
+    height: 15%;
+    position: absolute;
+    right: 5%;
+    width: 10%;
+    border-radius: 0 20% 20% 0;
 }
 
 .advancedSearchDiv {
@@ -249,26 +307,32 @@ const changeShowCard = () => {
 
     animation: shining 2.5s linear infinite;
 }
+
 @keyframes shining {
-    0%{
+    0% {
         box-shadow: 0 0 20px 10px white;
     }
-    50%{
+
+    50% {
         box-shadow: 0 0 10px 0px white;
     }
-    100%{
+
+    100% {
         box-shadow: 0 0 20px 10px white;
     }
 }
-.searchRotate{
+
+.searchRotate {
     transform: rotateY(-180deg);
     transition: 1s;
 }
-.advancedSearchRotate{
+
+.advancedSearchRotate {
     transform: rotateY(0deg);
     transition: 1s;
 }
-.backButton{
+
+.backButton {
     position: absolute;
     right: 0;
     top: 0;
