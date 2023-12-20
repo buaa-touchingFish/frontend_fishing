@@ -18,8 +18,7 @@
                             @blur="handleBlur"
                         >
                             <template #prefix>
-                                <div class="advancedSearch">
-                                </div>
+                                <div class="advancedSearch"></div>
                             </template>
                             <template #suffix>
                                 <n-icon size="20" color="blue" :component="Search12Filled" />
@@ -80,7 +79,7 @@ const searchOptions = ref([
 .headerRight {
     width: 30%;
     height: 100%;
-    background-color: blue;
+    /* background-color: blue; */
     display: flex;
     flex-direction: row-reverse;
 }
