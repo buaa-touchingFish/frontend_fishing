@@ -1,8 +1,10 @@
 <template>
     <div class="rootDiv">
-        <span class="titleSpan">正在认证学者:</span>
-        <span class="nameSpan">{{ scholarName }}</span>
-        <p class="idSpan">scholarID : {{ scholarID }}</p>
+        <div class="titleDiv">
+            <span class="titleSpan">正在认证学者:</span>
+            <span class="nameSpan">{{ scholarName }}</span>
+            <p class="idSpan">scholarID : {{ scholarID }}</p>
+        </div>
         <n-divider></n-divider>
         <div class="formDiv">
             <span class="mailSpan">邮箱</span>
@@ -35,9 +37,12 @@ onUnmounted(() => {
 function back() {
     console.log("back");
     let doc = document as any;
-    let pro = new Promise((re, _rj) => {
+    let pro = new Promise((re, rj) => {
         let r = router as any;
         r["re"] = re;
+        setTimeout(() => {
+            rj(123);
+        }, 1000);
     });
     doc.startViewTransition(async () => {
         await pro;
@@ -47,11 +52,24 @@ function back() {
 </script>
 <style scoped>
 .rootDiv {
-    width: 80%;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: left;
+    justify-content: start;
+    align-items: center;
     view-transition-name: horizontalScroll;
+}
+
+.titleDiv {
+    width: 80%;
+    margin-top: 20px;
+    padding: 10px;
+    padding-left: 30px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    view-transition-name: scholarDiv;
 }
 
 .titleSpan {
@@ -77,7 +95,8 @@ function back() {
 .formDiv {
     width: 500px;
     height: 300px;
-    background-color: aliceblue;
+    background-color: white;
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;

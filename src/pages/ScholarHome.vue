@@ -1,64 +1,67 @@
 <template>
     <div class="rootDiv">
-        <div class="scholarDiv">
-            <div class="imageDiv">
-                <n-avatar round :size="128"
-                    src="https://x0.ifengimg.com/res/2020/79AF4AE1EC8333953CBE4B3B3D0529A6E1FB6186_size217_w1080_h1171.jpeg" />
-                <n-button class="claimButton" @click="$router.push({
-                    path: '/claimScholar',
-                    query: {
-                        author_name: scholarName,
-                        author_id: scholarID
-                    }
-                })">我要认证</n-button>
-            </div>
-            <div class="verticalSplitDiv"></div>
-            <div class="infoDiv">
-                <div class="nameDiv">
-                    <p class="nameSpan">
-                        {{ scholarName }}</p>
-                    <span class="idSpan">scholarID :
-                        {{ scholarID }}
-                    </span>
+        <div class="scholarDivBorder">
+            <div class="scholarDiv">
+                <div class="imageDiv">
+                    <n-avatar round :size="128"
+                        src="https://x0.ifengimg.com/res/2020/79AF4AE1EC8333953CBE4B3B3D0529A6E1FB6186_size217_w1080_h1171.jpeg" />
+                    <n-button class="claimButton" @click="$router.push({
+                        path: '/claimScholar',
+                        query: {
+                            author_name: scholarName,
+                            author_id: scholarID
+                        }
+                    })">我要认证</n-button>
                 </div>
-                <n-skeleton v-if="loading" block :width="146" height="30px" :sharp="false" size="small" />
-                <span v-else class="briefInfo">
-                    {{ scholarInfo.author.last_known_institution.display_name }}
-                </span>
-                <div class="infoDataDiv">
-                    <div class="infoDataBoxDiv">
-                        <span class="infoBoxTitleSpan">被引次数</span>
-                        <n-skeleton v-if="loading" width="100%" height="25px" :sharp="false" size="small" />
-                        <span v-else class="infoBoxValueSpan">
-                            {{ scholarInfo.author.cited_by_count }}
+                <div class="verticalSplitDiv"></div>
+                <div class="infoDiv">
+                    <div class="nameDiv">
+                        <p class="nameSpan">
+                            {{ scholarName }}</p>
+                        <span class="idSpan">scholarID :
+                            {{ scholarID }}
                         </span>
                     </div>
-                    <n-divider vertical></n-divider>
-                    <div class="infoDataBoxDiv">
-                        <span class="infoBoxTitleSpan">成果数</span>
+                    <n-skeleton v-if="loading" block :width="146" height="30px" :sharp="false" size="small" />
+                    <span v-else class="briefInfo">
+                        {{ scholarInfo.author.last_known_institution.display_name }}
+                    </span>
+                    <div class="infoDataDiv">
+                        <div class="infoDataBoxDiv">
+                            <span class="infoBoxTitleSpan">被引次数</span>
+                            <n-skeleton v-if="loading" width="100%" height="25px" :sharp="false" size="small" />
+                            <span v-else class="infoBoxValueSpan">
+                                {{ scholarInfo.author.cited_by_count }}
+                            </span>
+                        </div>
+                        <n-divider vertical></n-divider>
+                        <div class="infoDataBoxDiv">
+                            <span class="infoBoxTitleSpan">成果数</span>
 
-                        <n-skeleton v-if="loading" width="100%" height="25px" :sharp="false" size="small" />
-                        <span v-else class="infoBoxValueSpan">
-                            {{ scholarInfo.author.works_count }}
-                        </span>
-                    </div>
-                    <n-divider vertical></n-divider>
-                    <div class="infoDataBoxDiv">
-                        <span class="infoBoxTitleSpan">被关注数</span>
-                        <n-skeleton v-if="loading" width="100%" height="25px" :sharp="false" size="small" />
-                        <span v-else class="infoBoxValueSpan">1.3W</span>
-                    </div>
-                    <n-divider vertical></n-divider>
-                    <div class="infoDataBoxDiv">
-                        <span class="infoBoxTitleSpan">h指数</span>
-                        <n-skeleton v-if="loading" width="100%" height="25px" :sharp="false" size="small" />
-                        <span v-else class="infoBoxValueSpan">
-                            {{ scholarInfo.author.h_index }}
-                        </span>
+                            <n-skeleton v-if="loading" width="100%" height="25px" :sharp="false" size="small" />
+                            <span v-else class="infoBoxValueSpan">
+                                {{ scholarInfo.author.works_count }}
+                            </span>
+                        </div>
+                        <n-divider vertical></n-divider>
+                        <div class="infoDataBoxDiv">
+                            <span class="infoBoxTitleSpan">被关注数</span>
+                            <n-skeleton v-if="loading" width="100%" height="25px" :sharp="false" size="small" />
+                            <span v-else class="infoBoxValueSpan">1.3W</span>
+                        </div>
+                        <n-divider vertical></n-divider>
+                        <div class="infoDataBoxDiv">
+                            <span class="infoBoxTitleSpan">h指数</span>
+                            <n-skeleton v-if="loading" width="100%" height="25px" :sharp="false" size="small" />
+                            <span v-else class="infoBoxValueSpan">
+                                {{ scholarInfo.author.h_index }}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
         <div class="horizontalSplitDiv" />
         <div class="paperDiv">
             <div class="paperListDiv">
@@ -222,12 +225,17 @@ onUnmounted(() => {
 function back() {
     console.log("back");
     let doc = document as any;
-    let pro = new Promise((re, _rj) => {
+    let pro = new Promise((re, rj) => {
+        console.log("promise created");
         let r = router as any;
         r["re"] = re;
+        setTimeout(() => {
+            rj(123);
+        }, 1000);
     });
     doc.startViewTransition(async () => {
         await pro;
+        console.log("promise done");
     })
     router.back();
 }
@@ -256,14 +264,24 @@ function back() {
     align-items: center;
 }
 
-.scholarDiv {
-    height: 260px;
+.scholarDivBorder {
     width: 100%;
-    padding-left: 40px;
+    padding-left: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+}
+
+.scholarDiv {
+    width: 100%;
+    height: 260px;
     padding-right: 150px;
+    margin-top: 20px;
     display: flex;
     flex-direction: row;
     background-color: white;
+    view-transition-name: scholarDiv;
 }
 
 .imageDiv {
