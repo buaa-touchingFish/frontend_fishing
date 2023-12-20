@@ -1,7 +1,8 @@
 <template>
     <div class="homeDiv" v-if="showHome">
+        <Stars></Stars>
         <div class="homeParent">
-            <div class="homeBackground" id="homeBackground">
+            <div id="background" class="homeBackground" >
                 <StarBackground></StarBackground>
             </div>
             <div class="homeHeaderDiv">
@@ -26,7 +27,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
     <div class="mainContainer" v-else>
@@ -50,6 +50,7 @@ import StarBackground from '@/components/Login/StarBackground.vue';
 import Clock from '@/components/Clock.vue';
 import { useRoute } from 'vue-router'
 import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
+import Stars from '@/components/Home/Stars.vue'
 
 const route = useRoute()
 
@@ -61,15 +62,6 @@ watch(() => route.path, (newValue) => {
 onMounted(() => {
     showHome.value = (route.path == '/')
 })
-
-//首页背景
-import * as PIXI from 'pixi.js';
-const app = new PIXI.Application({ background: 'transparent', resizeTo: window });
-document.getElementById("homeBackground")?.appendChild(app.view as any);
-// const container = new PIXI.Container();
-// app.stage.addChild(container);
-const graphics = new PIXI.Graphics();
-app.stage.addChild(graphics);
 
 
 //搜索推荐的地方
@@ -144,7 +136,6 @@ const changeShowCard = () => {
     align-items: center;
     /* background-image: url('../assets/sky.jpg'); */
     background-color: aliceblue;
-
 }
 
 .homeHeaderDiv {
@@ -279,4 +270,5 @@ const changeShowCard = () => {
     display: flex;
     flex-direction: row;
 }
+
 </style>
