@@ -74,7 +74,7 @@ const result:resultType = props.result
     align-items: center;
 
     cursor: pointer;
-    view-transition-name: searchResultCardTitle;
+    /* view-transition-name: searchResultCardTitle; */
 }
 .abstract{
     text-wrap: wrap;
