@@ -2,7 +2,7 @@
   <n-config-provider :theme-overrides="themeOverrides">
     <n-message-provider>
       <n-notification-provider>
-        <router-view></router-view>
+        <router-view :key="route.fullPath"></router-view>
       </n-notification-provider>
     </n-message-provider>
   </n-config-provider>
@@ -11,6 +11,8 @@
 <script setup lang="ts">
 import { NConfigProvider } from 'naive-ui'
 import './animationStyle.css'
+import { useRoute } from 'vue-router';
+const route = useRoute();
 
 /**
  * js 文件下使用这个做类型提示

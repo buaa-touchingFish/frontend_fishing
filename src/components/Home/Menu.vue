@@ -1,10 +1,10 @@
 <template>
     <div class="leftDiv">
         <n-layout class="leftLayout" has-sider>
-            <n-layout-sider bordered collapse-mode="width" :collapsed-width="64" :width="240" :collapsed="collapsed"
-                @collapse="collapsed = true" @expand="collapsed = false"
-                @mouseenter="$setTimeout(() => collapsed = false, 500)"
-                @mouseleave="$setTimeout(() => collapsed = true, 200)">
+            <n-layout-sider :class="{ sisi: collapsed }" bordered collapse-mode="width" :collapsed-width="64" :width="240"
+                :collapsed="collapsed" @collapse="collapsed = true" @expand="collapsed = false"
+                @mouseenter="$setTimeout(() => collapsed = false, 400)"
+                @mouseleave="$setTimeout(() => collapsed = true, 500)">
                 <n-menu :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22" :options="menuOptions" />
             </n-layout-sider>
             <n-layout style="background-color: transparent;">
@@ -23,8 +23,10 @@ import { Search16Regular, Book24Regular, PeopleCheckmark16Regular } from '@vicon
 function renderIcon(icon: Component) {
     return () => h(NIcon, null, { default: () => h(icon) })
 }
+//let lastTimeVal: NodeJS.Timeout | undefined = undefined;
 function $setTimeout(func: () => void, time: number) {
-    setTimeout(func, time)
+    //if (lastTimeVal != undefined) clearTimeout(lastTimeVal);
+    setTimeout(func, time);
 }
 const menuOptions: MenuOption[] = [
     {

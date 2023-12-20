@@ -5,7 +5,13 @@
                 <StarBackground></StarBackground>
             </div>
             <div class="homeHeaderDiv">
-                <n-button class="loginButton" @click="$router.push('/scholarHome');" href="/">设置</n-button>
+                <n-button class="loginButton" @click="$router.push({
+                    path: '/scholarHome',
+                    query: {
+                        author_name: 'J. Russell Ramsay',
+                        author_id: 'A5077915689'
+                    }
+                });" href="/">设置</n-button>
                 <n-button class="loginButton" @click="$router.push('/login');" href="/">登录</n-button>
             </div>
             <div class="homeContentDiv">
@@ -14,12 +20,13 @@
                 </div>
                 <div class="homeContentRight">
                     <div class="search">
-                        <div class="searchDiv" :class="{searchRotate : changeCard}">
-                            <n-auto-complete class="searchBar" size="large" placeholder="搜索你想了解的论文" :options="searchOptions" />
+                        <div class="searchDiv" :class="{ searchRotate: changeCard }">
+                            <n-auto-complete class="searchBar" size="large" placeholder="搜索你想了解的论文"
+                                :options="searchOptions" />
                             <n-button class="searchButton" @click="$router.push('/search')" type="primary">搜索</n-button>
                             <n-button class="extraButton" @click="changeShowCard" type="primary">高级搜索</n-button>
                         </div>
-                        <div class="advancedSearchDiv" :class="{advancedSearchRotate : changeCard}">
+                        <div class="advancedSearchDiv" :class="{ advancedSearchRotate: changeCard }">
                             <n-button class="backButton" @click="changeShowCard">返回</n-button>
                             <AdvancedSearch></AdvancedSearch>
                         </div>
@@ -117,7 +124,7 @@ const changeShowCard = () => {
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow:  0 5px 10px #ccc, 0 -5px 10px #ccc;
+    box-shadow: 0 5px 10px #ccc, 0 -5px 10px #ccc;
     z-index: 999;
 }
 
@@ -205,7 +212,7 @@ const changeShowCard = () => {
     margin-left: 80px;
 }
 
-.search{
+.search {
     width: 80%;
     height: 50%;
     position: relative;
@@ -229,8 +236,7 @@ const changeShowCard = () => {
     left: 0;
 }
 
-.searchButton {
-}
+.searchButton {}
 
 .advancedSearchDiv {
     width: 100%;
@@ -249,26 +255,32 @@ const changeShowCard = () => {
 
     animation: shining 2.5s linear infinite;
 }
+
 @keyframes shining {
-    0%{
+    0% {
         box-shadow: 0 0 20px 10px white;
     }
-    50%{
+
+    50% {
         box-shadow: 0 0 10px 0px white;
     }
-    100%{
+
+    100% {
         box-shadow: 0 0 20px 10px white;
     }
 }
-.searchRotate{
+
+.searchRotate {
     transform: rotateY(-180deg);
     transition: 1s;
 }
-.advancedSearchRotate{
+
+.advancedSearchRotate {
     transform: rotateY(0deg);
     transition: 1s;
 }
-.backButton{
+
+.backButton {
     position: absolute;
     right: 0;
     top: 0;
