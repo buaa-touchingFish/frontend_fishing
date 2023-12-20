@@ -31,8 +31,20 @@
             
             <template #footer>
                 <n-button type="info">收藏</n-button>
-                <n-button type="info" class="button">引用</n-button>
-                <n-button type="info" class="button">评论</n-button>
+                <n-button type="info" class="button" @click="changeQuoteMask">引用</n-button>
+                <n-button type="info" class="button" @click="changeShowCommentInput">评论</n-button>
+                <div class="newComment" v-show="ifShowCommentInput">
+                    <n-input
+                        v-model:value="newComment"
+                        placeholder="请输入评论"
+                        type="textarea"
+                        :autosize="{
+                            minRows: 2,
+                            maxRows: 5
+                        }"
+                    />
+                    <n-button type="info" class="newCommentButton">发布</n-button>
+                </div>
             </template>
         </n-card>
         
@@ -59,10 +71,28 @@
             </n-card>
         </div>
     </div>
+    <n-modal v-model:show="quoteMask">
+        <n-card
+            style="width: 600px"
+            title="引用"
+            :bordered="false"
+            size="huge"
+            role="dialog"
+            aria-modal="true"
+        >
+            <n-card embedded id="foo">
+                {{citeContent}}
+            </n-card>
+            <n-button tertiary type="info" class="copyCiteButton" @click="copy" data-clipboard-target="#foo">复制</n-button>
+        </n-card>
+    </n-modal>
 </template>
 
 <script setup lang='ts'>
 import Comment from '@/components/detail/Comment.vue'
+import { ref } from 'vue'
+import Clipboard from 'clipboard'
+
 type detailType = {
     title:string,
     date:string,
@@ -108,6 +138,27 @@ const fileDetail:detailType = {
         },
     ]
 }
+
+const quoteMask = ref(false)
+function changeQuoteMask(){
+    quoteMask.value = !quoteMask.value
+}
+
+const citeContent = ref("[1]刘炜.48例肝内门静脉癌栓的超声诊断价值的探讨[J].中国医药指南, 2013, 11(32):2.DOI:CNKI:SUN:YYXK.0.2013-32-381.")
+
+const newComment = ref("")
+const ifShowCommentInput = ref(false)
+function changeShowCommentInput(){
+    ifShowCommentInput.value = !ifShowCommentInput.value
+}
+
+function copy() {
+    const clipboard = new Clipboard('.copyCiteButton');
+    clipboard.on('success', () => {
+        clipboard.destroy()
+        alert("复制成功！");
+    })
+}
 </script>
 
 <style scoped>
@@ -149,5 +200,17 @@ const fileDetail:detailType = {
     color: blue;
     font-weight: 1000;
     font-size: large;
+}
+.copyCiteButton{
+    float: right;
+    margin-top: 10px;
+}
+.newComment {
+    display: flex;
+    margin-top: 10px;
+}
+.newCommentButton{
+    margin-left: 10px;
+    height: 55px;
 }
 </style>

@@ -1,8 +1,8 @@
 <template>
     <div class="rootDiv">
         <span class="titleSpan">正在认证学者:</span>
-        <span class="nameSpan">丁真珍珠</span>
-        <p class="idSpan">scholarID:10010</p>
+        <span class="nameSpan">{{ scholarName }}</span>
+        <p class="idSpan">scholarID : {{ scholarID }}</p>
         <n-divider></n-divider>
         <div class="formDiv">
             <span class="mailSpan">邮箱</span>
@@ -18,20 +18,30 @@
 </template>
 <script setup lang="ts">
 import router from '@/router';
-import { onMounted, onUnmounted } from 'vue';
-
+import { onMounted, onUnmounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+const route = useRoute();
+const scholarName = ref(route.query.author_name);
+const scholarID = ref(route.query.author_id);
 onMounted(() => {
     if (window.history) {
         history.pushState(null, "", document.URL)
         window.addEventListener('popstate', back, false);
     }
 });
-
 onUnmounted(() => {
     window.removeEventListener('popstate', back, false);
 })
 function back() {
     console.log("back");
+    let doc = document as any;
+    let pro = new Promise((re, _rj) => {
+        let r = router as any;
+        r["re"] = re;
+    });
+    doc.startViewTransition(async () => {
+        await pro;
+    })
     router.back();
 }
 </script>

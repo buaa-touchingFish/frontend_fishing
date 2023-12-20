@@ -219,7 +219,6 @@ onMounted(() => {
     font-size: 66px;
     /* color: #fff; */
     color:#000;
-    /* box-shadow: 0 0 6px rgba(0, 0, 0, .5); */
     text-align: center;
     font-family: "Helvetica Neue"
 }
@@ -240,7 +239,7 @@ onMounted(() => {
     top: 0;
     bottom: 50%;
     border-radius: 10px 10px 0 0;
-    /* border-bottom: solid 1px #666; */
+    /* /* border-bottom: solid 1px #666; */ 
 }
 
 .flip .digital:after {
@@ -269,7 +268,7 @@ onMounted(() => {
 .flip.down.go .front:before {
     transform-origin: 50% 100%;
     animation: frontFlipDown 0.6s ease-in-out both;
-    box-shadow: 0 -2px 6px rgba(255, 255, 255, 0.3);
+    /* box-shadow: 0 -2px 6px rgba(255, 255, 255, 0.3); */
     backface-visibility: hidden;
 }
 

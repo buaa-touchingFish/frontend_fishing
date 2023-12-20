@@ -22,7 +22,7 @@ onMounted(() => {
         config: {
             R: 140,
             earth: {
-                color: "black",
+                color: "blue",
             },
             bgStyle: {
                 color: "#040D21",
@@ -36,7 +36,7 @@ onMounted(() => {
                 color: "#797eff"
             },
             pathStyle: {
-                color: "#cd79ff",
+                color: "black",
             },
             flyLineStyle: {
                 color: "#cd79ff",
@@ -108,6 +108,6 @@ onMounted(() => {
 <style scoped>
 #earthContainer {
     width: 80%;
-    height: 50%;
+    height: 60%;
 }
 </style>
