@@ -457,8 +457,8 @@ const submitRegisterCaptcha = async () => {
         }
         let email = registerModel.value.email
         let res = await post(message, "/user/sendCaptcha", {
-            "email" : email
-        })
+            email: registerModel.value.email
+        }) 
         if (!res) {
             return;
         }

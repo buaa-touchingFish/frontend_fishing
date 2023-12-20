@@ -5,7 +5,13 @@
                 <StarBackground></StarBackground>
             </div>
             <div class="homeHeaderDiv">
-                <n-button class="loginButton" @click="$router.push('/scholarHome');" href="/">设置</n-button>
+                <n-button class="loginButton" @click="$router.push({
+                    path: '/scholarHome',
+                    query: {
+                        author_name: 'J. Russell Ramsay',
+                        author_id: 'A5077915689'
+                    }
+                });" href="/">设置</n-button>
                 <n-button class="loginButton" @click="$router.push('/login');" href="/">登录</n-button>
             </div>
             <div class="homeContentDiv">
@@ -15,28 +21,13 @@
                 <div class="homeContentRight">
                     <div class="search">
                         <div class="searchDiv" :class="{ searchRotate: changeCard }">
-                            <n-icon class="searchIcon" size="150" color="white">
-                                <Earth16Regular></Earth16Regular>
-                            </n-icon>                            
-                            <n-auto-complete class="searchBar" v-model:value="searchValue" size="large" :options="searchOptions">
-                                <template #default="{ handleInput, handleBlur, handleFocus, value: slotValue }">
-                                    <n-input class="searchInput" type="text" size="large" 
-                                    placeholder="搜索你想了解的论文"
-                                    :value="slotValue" @input="handleInput" @focus="handleFocus" @blur="handleBlur"
-                                    round>
-                                        <template #prefix>
-                                            <n-button @click="changeShowCard" ghost text>高级搜索</n-button>
-                                        </template>
-                                        <template #suffix>
-                                            <n-icon size="24" color="black" @click="$router.push('/search')" :component="Search12Regular" />
-                                        </template>
-                                    </n-input>
-                                </template>
-                            </n-auto-complete>
-                            
+                            <n-auto-complete class="searchBar" size="large" placeholder="搜索你想了解的论文"
+                                :options="searchOptions" />
+                            <n-button class="searchButton" @click="$router.push('/search')" type="primary">搜索</n-button>
+                            <n-button class="extraButton" @click="changeShowCard" type="primary">高级搜索</n-button>
                         </div>
                         <div class="advancedSearchDiv" :class="{ advancedSearchRotate: changeCard }">
-                            <n-button class="backButton" @click="changeShowCard" text>返回</n-button>
+                            <n-button class="backButton" @click="changeShowCard">返回</n-button>
                             <AdvancedSearch></AdvancedSearch>
                         </div>
                     </div>
@@ -282,13 +273,7 @@ const changeShowCard = () => {
     left: 25%;
 }
 
-.searchButton {
-    height: 15%;
-    position: absolute;
-    right: 5%;
-    width: 10%;
-    border-radius: 0 20% 20% 0;
-}
+.searchButton {}
 
 .advancedSearchDiv {
     width: 100%;

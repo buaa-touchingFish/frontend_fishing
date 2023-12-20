@@ -1,4 +1,3 @@
-import { nextTick } from 'process';
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 
 const routes: Array<RouteRecordRaw> = [
@@ -41,12 +40,24 @@ router.push = (to) => {
     await push(to);
   }).updateCallbackDone
 }
-// const back = router.back;
-// router.back = () => {
+// router.beforeEach(() => {
+//   let pro = new Promise((re) => {
+//     let r = router as any;
+//     r["re"] = re;
+//   });
 //   let doc = document as any;
 //   doc.startViewTransition(async () => {
-//     history.back();
-//   })
-// }
-// router.back = back;
+//     await pro;
+//   });
+// })
+router.afterEach(() => {
+  let r = router as any;
+  if (r["re"] != undefined) {
+    r["re"]();
+    r["re"] = undefined;
+  }
+})
+
+
+
 export default router;

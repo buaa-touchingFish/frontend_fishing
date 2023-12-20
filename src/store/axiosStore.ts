@@ -5,7 +5,8 @@ export const useAxiosStore = defineStore('axiosStore', {
     state: () => ({
         persist: true,
         axiosInstance: axios.create({
-            baseURL: ' http://121.36.81.4:8088',
+            // TODO:补充后端接口
+            baseURL: 'http://121.36.81.4:8088',
             timeout: 5000,
             headers: {
                 'Authorization': localStorage.getItem('token') || '',
