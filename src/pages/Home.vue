@@ -72,13 +72,13 @@ onMounted(() => {
 })
 
 //首页背景
-import * as PIXI from 'pixi.js';
-const app = new PIXI.Application({ background: 'transparent', resizeTo: window });
-document.getElementById("homeBackground")?.appendChild(app.view as any);
-// const container = new PIXI.Container();
-// app.stage.addChild(container);
-const graphics = new PIXI.Graphics();
-app.stage.addChild(graphics);
+// import * as PIXI from 'pixi.js';
+// const app = new PIXI.Application({ background: 'transparent', resizeTo: window });
+// document.getElementById("homeBackground")?.appendChild(app.view as any);
+// // const container = new PIXI.Container();
+// // app.stage.addChild(container);
+// const graphics = new PIXI.Graphics();
+// app.stage.addChild(graphics);
 
 const searchValue = ref("")
 
