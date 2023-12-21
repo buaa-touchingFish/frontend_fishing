@@ -1,5 +1,5 @@
 <template>
-    <div class="resultCardContainer shadow">
+    <div class="resultCardContainer shadow" @click="$router.push('/detail');">
         <h1 class="title">
             {{ result.title }}
         </h1>
@@ -8,7 +8,7 @@
         </div>
         <div class="cardBottom">
             <div class="otherInfo">
-                {{ result.author }} - {{ result.publication }} - {{ result.publishTime }}
+                {{ result.authorships[0].author.display_name }} - {{ result.publisher.display_name }} - {{ result.publication_date }}
             </div>
             <div class="option">
                 <n-button strong secondary round type="info" class="optionButton">全文下载</n-button>
@@ -23,16 +23,13 @@
 
 <script setup lang='ts'>
 import { ref } from 'vue';
+import { Paper } from '@/models/model'
 
-const props = defineProps(['result'])
-type resultType = {
-    title:string,
-    abstract:string,
-    author:string,
-    publication:string,
-    publishTime:string
-}
-const result:resultType = props.result
+const props = defineProps<{
+    result:Paper
+}>()
+
+const result:Paper = props.result
 
 </script>
 

@@ -21,7 +21,8 @@
                                 <div class="advancedSearch"></div>
                             </template>
                             <template #suffix>
-                                <n-icon size="20" color="blue" :component="Search12Filled" />
+                                <div class="selectPlaceHolder"></div>
+                                <n-icon style="cursor: pointer;" size="20" color="blue" :component="Search12Filled" @click="search"/>
                             </template>
                         </n-input>
                     </template>
@@ -34,6 +35,9 @@
                         <AdvancedSearch></AdvancedSearch>
                     </div>
                 </n-popover>
+                <div class="selectAddition">
+                    <n-select class="additionSelector" v-model:value="additionValue" :options="options" size="small" :show-arrow="false" :show-checkmark="false" />
+                </div>
             </div>
         </div>
         <div class="headerRight">
@@ -48,15 +52,42 @@
 </template>
 
 <script setup lang='ts'>
-import { ref } from 'vue';
+import { computed,ref } from 'vue';
 import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
 import { Search12Filled, Person32Filled, Settings32Filled } from '@vicons/fluent';
+import emitter from '@/eventBus/eventBus';
+import router from '@/router'
+
 
 // 输入框
 const searchValue = ref("")
-const searchOptions = ref([
-'@gmail.com', '@163.com', '@qq.com'
-])
+const searchOptions = computed(() => {
+    return ['@gmail.com', '@163.com', '@qq.com'].map((suffix) => {
+          const prefix = searchValue.value
+          return {
+            label: prefix + suffix,
+            value: prefix + suffix
+          }
+    })
+})
+const additionValue = ref("文章")
+const options = [
+    {label:'文章',value:'文章'},
+    {label:'作者',value:'作者'},
+    {label:'期刊',value:'期刊'},
+    {label:'机构',value:'机构'},
+]
+const currentSearchResultPageNumber = ref(0)
+emitter.on("currentSearchResultPageNumber", (data:any) => currentSearchResultPageNumber.value = data)
+const search = async () => {
+    router.push({
+        path:'/search',
+        query:{
+            wd:searchValue.value,
+            ad:additionValue.value
+        }
+    })
+}
 
 </script>
 
@@ -112,6 +143,24 @@ const searchOptions = ref([
         margin: 0 8px;
         background-color: #ccc;
     }
+}
+.selectPlaceHolder{
+    height: 100%;
+    width: 65px;
+}
+.selectAddition{
+    height: 100%;
+    width: 55px;
+    position: absolute;
+    top: 17%;
+    right: 27%;
+}
+.additionSelector{
+    width: 100%;
+    height: 100%;
+}
+.additionSelector :deep(.n-base-selection-input){
+    width: fit-content;
 }
 .advancedSearchButton{
     width: 72px;
