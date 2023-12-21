@@ -107,7 +107,7 @@ const changeShowCard = () => {
     width: 100%;
     min-height: 100vh;
     height: fit-content;
-    background-color: rgb(239, 239, 249);
+    background-color: var(--bg-rendering);
 }
 
 .header {

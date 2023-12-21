@@ -8,7 +8,6 @@ import Button from 'primevue/button'
 import Chart from 'primevue/chart'
 import Dock from 'primevue/dock'
 import Dropdown from 'primevue/dropdown';
-import 'primevue/resources/themes/lara-light-green/theme.css'
 
 const app = createApp(App);
 const pinia = createPinia();
