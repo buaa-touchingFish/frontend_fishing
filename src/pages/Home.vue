@@ -123,7 +123,6 @@ const changeShowCard = () => {
 }
 
 .menu {
-    /* width: 30px; */
     height: 100vh;
     background-color: transparent;
     position: fixed;
@@ -204,6 +203,7 @@ const changeShowCard = () => {
     justify-content: flex-end;
     align-items: center;
 }
+
 .searchBar {
     width: 90%;
 }
