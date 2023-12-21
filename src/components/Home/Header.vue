@@ -45,15 +45,42 @@
 </template>
 
 <script setup lang='ts'>
-import { ref } from 'vue';
+import { computed,ref } from 'vue';
 import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
 import { Search12Filled, Person32Filled, Settings32Filled } from '@vicons/fluent';
+import emitter from '@/eventBus/eventBus';
+import router from '@/router'
+
 
 // 输入框
 const searchValue = ref("")
-const searchOptions = ref([
-    '@gmail.com', '@163.com', '@qq.com'
-])
+const searchOptions = computed(() => {
+    return [    '@gmail.com', '@163.com', '@qq.com'].map((suffix) => {
+          const prefix = searchValue.value
+          return {
+            label: prefix + suffix,
+            value: prefix + suffix
+          }
+    })
+})
+const additionValue = ref("文章")
+const options = [
+    {label:'文章',value:'文章'},
+    {label:'作者',value:'作者'},
+    {label:'期刊',value:'期刊'},
+    {label:'机构',value:'机构'},
+]
+const currentSearchResultPageNumber = ref(0)
+emitter.on("currentSearchResultPageNumber", (data:any) => currentSearchResultPageNumber.value = data)
+const search = async () => {
+    router.push({
+        path:'/search',
+        query:{
+            wd:searchValue.value,
+            ad:additionValue.value
+        }
+    })
+}
 const title = ref("")
 
 </script>
@@ -127,8 +154,25 @@ const title = ref("")
         background-color: #ccc;
     }
 }
-
-.advancedSearchButton {
+.selectPlaceHolder{
+    height: 100%;
+    width: 65px;
+}
+.selectAddition{
+    height: 100%;
+    width: 55px;
+    position: absolute;
+    top: 17%;
+    right: 27%;
+}
+.additionSelector{
+    width: 100%;
+    height: 100%;
+}
+.additionSelector :deep(.n-base-selection-input){
+    width: fit-content;
+}
+.advancedSearchButton{
     width: 72px;
     height: 100%;
     cursor: pointer;

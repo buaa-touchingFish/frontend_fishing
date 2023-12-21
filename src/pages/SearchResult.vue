@@ -3,7 +3,7 @@
         <div class="secondarySearch">
             <SecondarySearchCard v-for="(secondarySearch,index) in secondarySearchList" :key="index" :secondarySearch="secondarySearch"></SecondarySearchCard>
         </div>
-        <div class="searchResults" @click="$router.push('/detail');">
+        <div class="searchResults">
             <div class="resultTop">
                 <div class="resultNumber">为您找到{{ resultNumber }}条相关结果</div>
                 <div class="sort">排序</div>
@@ -11,56 +11,62 @@
             <div class="resultCardsContainer">
                 <ResultCard v-for="(result,index) in resultList" :key="index" :result="result"></ResultCard>
             </div>
+            <div class="paginator shadow">
+                <n-pagination v-model:page="page" :page-count="pageCount" :page-slot="7" />
+            </div>
         </div>
         <div class="recommend">
             <ReconmmendCard :recommend="recommendList"></ReconmmendCard>
         </div>
+        <n-back-top :right="100" />
     </div>
 </template>
 
 <script setup lang='ts'>
-import { ref } from 'vue';
+import { onMounted,watch,ref,Ref } from 'vue';
 import ResultCard from '@/components/search/ResultCard.vue'
 import SecondarySearchCard from '@/components/search/SecondarySearchCard.vue'
 import ReconmmendCard from '@/components/search/RecommendCard.vue'
+import emitter from '@/eventBus/eventBus'
+import { Paper } from '@/models/model'
+import { useRoute } from 'vue-router'
+import { post } from '@/api/axios';
+import { useMessage } from 'naive-ui';
+
+const message = useMessage()
+const route = useRoute()
 
 // 结果数量
 const resultNumber = ref(0)
+const page = ref(1)
+const pageCount = ref(100)
+
+watch(page,(newValue) => {
+    emitter.emit("currentSearchResultPageNumber",newValue)
+})
+
 
 // 排序
 
 
-// 搜索结果
-type resultType = {
-    title:string,
-    abstract:string,
-    author:string,
-    publication:string,
-    publishTime:string
-}
-const resultList:resultType[] = [
-    {
-        title:'题目提明天明天明天明天明天明天',
-        abstract:'摘要诉法夫阿萨撒回复啊好烦安是uohau区丰华哦是封杀和uahsuoh神佛安徽撒火放获哈搜狐发撒活佛案说法和撒行u偶是发货u欧福卅或和复赛oh撒行u发撒和u哦方式偶啊是哦发',
-        author:'作者',
-        publication:'刊物',
-        publishTime:'发布时间：2019-6'
-    },
-    {
-        title:'题目提明天明天明天明天明天明天',
-        abstract:'是你的能否接受你姐夫难得看见你附件是当年的身份那是对你附件是电脑JFK送到你家附近十多年飞机速度能否接受的你尽快发你说的哦怕我都啊我的娃到我的哦萨婆菩萨佛萨麻烦看看里面',
-        author:'作者',
-        publication:'刊物',
-        publishTime:'发布时间：2019-6'
-    },
-    {
-        title:'题目提明天明天明天明天明天明天',
-        abstract:'看看教程NSA参加快男撒娇内存卡洒出你就撒开承诺捐款年轻人你拉萨的那块兰芳',
-        author:'作者',
-        publication:'刊物',
-        publishTime:'发布时间：2019-6'
-    },
-]
+// 搜索
+const resultList:Ref<Paper[]> = ref([]);
+onMounted(async () => {
+    const additionValue = route.query.ad;
+    const searchValue = route.query.wd;
+    const res = await post(
+        message,"/paper/search",
+        {
+            "pageNum": page.value,
+            "keyword": additionValue == '文章' ? searchValue : "",
+            "author": additionValue == '作者' ? searchValue : "",
+            "institution": additionValue == '机构' ? searchValue : "",
+            "publisher": additionValue == '期刊' ? searchValue : "",
+        }
+    )
+    resultList.value = res
+    console.log(resultList.value);
+})
 
 //二级搜索
 type secondarySearch = {
@@ -176,6 +182,9 @@ const recommendList:recommend[] = [
 </script>
 
 <style scoped>
+.shadow{
+    box-shadow: 0 0 5px 3px #ddd;
+}
 .searchRasultContainer{
     width: 75%;
     margin-top: 20px;
@@ -214,5 +223,12 @@ const recommendList:recommend[] = [
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+.paginator{
+    width: fit-content;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: white;
+    margin: 0 auto;
 }
 </style>

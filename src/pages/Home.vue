@@ -71,15 +71,6 @@ onMounted(() => {
     showHome.value = (route.path == '/')
 })
 
-//首页背景
-// import * as PIXI from 'pixi.js';
-// const app = new PIXI.Application({ background: 'transparent', resizeTo: window });
-// document.getElementById("homeBackground")?.appendChild(app.view as any);
-// // const container = new PIXI.Container();
-// // app.stage.addChild(container);
-// const graphics = new PIXI.Graphics();
-// app.stage.addChild(graphics);
-
 const searchValue = ref("")
 
 //搜索推荐的地方
