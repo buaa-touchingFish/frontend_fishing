@@ -1,7 +1,5 @@
 <template>
-  <!-- <div> -->
     <canvas id="starBg"></canvas>
-  <!-- </div> -->
 </template>
   
 <script setup lang="ts">
