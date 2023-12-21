@@ -5,17 +5,19 @@
                 logo
             </div>
             <div class="searchInput">
-                <n-auto-complete v-model:value="searchValue" :options="searchOptions">
-                    <template #default="{ handleInput, handleBlur, handleFocus, value: slotValue }">
+                <!-- <n-auto-complete v-model:value="searchValue" :options="searchOptions">
+                    <template #default="{ handleInput, handleBlur, handleFocus, value: slotValue }"> -->
+                <n-popover :show="showComplete" placement="bottom" trigger="manual" :show-arrow="false" raw>
+                    <template #trigger>
                         <n-input
                             class="searchInput"
                             type="text"
                             placeholder=""
                             size="large"
-                            :value="slotValue"
-                            @input="handleInput"
-                            @focus="handleFocus"
-                            @blur="handleBlur"
+                            v-model:value="searchValue"
+                            @focus="searchComplete"
+                            @blur="showComplete = false"
+                            @keydown.Up.naive=""
                         >
                             <template #prefix>
                                 <div class="advancedSearch"></div>
@@ -25,8 +27,15 @@
                                 <n-icon style="cursor: pointer;" size="20" color="blue" :component="Search12Filled" @click="search"/>
                             </template>
                         </n-input>
+                    <!-- </template>
+                </n-auto-complete> -->
                     </template>
-                </n-auto-complete>
+                    <div class="completeSearch">
+                        <div v-for="(completeSearchOption,index) in completeSearchOptions" :key="index" class="completeSearchOption">
+                            {{ completeSearchOption.label }}
+                        </div>
+                    </div>
+                </n-popover>
                 <n-popover trigger="click" :show-arrow="false" placement="bottom-start" raw>
                     <template #trigger>
                         <div class="advancedSearchButton">高级搜索</div>
@@ -61,8 +70,14 @@ import router from '@/router'
 
 // 输入框
 const searchValue = ref("")
-const searchOptions = computed(() => {
-    return ['@gmail.com', '@163.com', '@qq.com'].map((suffix) => {
+const showComplete = ref(false)
+const searchComplete = () => {
+
+    showComplete.value = true;
+}
+const completeSearchOptionsSuffix = ref(['@gmail.com', '@163.com', '@qq.com'])
+const completeSearchOptions = computed(() => {
+    return completeSearchOptionsSuffix.value.map((suffix) => {
           const prefix = searchValue.value
           return {
             label: prefix + suffix,
@@ -128,6 +143,28 @@ const search = async () => {
     width: 80%;
     border-radius: 10px;
     position: relative;
+}
+.completeSearch{
+    width: calc(100vw * 0.7 * 0.7 * 0.8 * 0.8);
+    padding: 5px 10px;
+    border-radius: 7px;
+    background-color: white;
+}
+.completeSearchOption{
+    width: 100%;
+    border-radius: 5px;
+    padding: 5px 7px;
+    margin-top: 5px;
+    cursor: pointer;
+    transition: 200ms all linear;
+
+    &:first-child{
+        margin-top: 0;
+    }
+    &:hover{
+        background-color: #ccc;
+        transition: 200ms all linear;
+    }
 }
 .advancedSearch{
     width: 80px;

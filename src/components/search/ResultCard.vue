@@ -1,14 +1,14 @@
 <template>
-    <div class="resultCardContainer shadow" @click="$router.push('/detail');">
+    <div class="resultCardContainer shadow" @click="$router.push('/detail/'+result.id);">
         <h1 class="title">
-            {{ result.title }}
+            <div class="ellipsis">{{ result.title }}</div>
         </h1>
         <div class="abstract">
             {{ result.abstract.length>=70 ? result.abstract.substring(0,70)+"..." : result.abstract }}
         </div>
         <div class="cardBottom">
             <div class="otherInfo">
-                {{ result.authorships[0].author.display_name }} - {{ result.publisher.display_name }} - {{ result.publication_date }}
+                {{ result.authorships[0].author.display_name }} -  - {{ result.publication_date }}
             </div>
             <div class="option">
                 <n-button strong secondary round type="info" class="optionButton">全文下载</n-button>
@@ -16,7 +16,6 @@
                 <n-button strong secondary round type="info" class="optionButton">收藏</n-button>
             </div>
         </div>
-        
     </div>
 
 </template>
@@ -36,6 +35,11 @@ const result:Paper = props.result
 <style scoped>
 .shadow{
     box-shadow: 0 0 5px 3px #eee;
+}
+.ellipsis{
+    white-space:nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 .resultCardContainer{
     width: 95%;
@@ -64,7 +68,7 @@ const result:Paper = props.result
     height: 50px;
     margin: 0;
     margin-left: 5px;
-    padding: 0;
+    padding: 0 10px 0 0;
     font-size: 20px;
     font-weight: 400;
     display: flex;
