@@ -1,5 +1,5 @@
 <template>
-    <div class="rootDiv">
+    <div class="rootDiv" id="rootDiv">
         <div class="scholarDivBorder">
             <div class="scholarDiv">
                 <div class="imageDiv">
@@ -16,7 +16,7 @@
                 <div class="verticalSplitDiv"></div>
                 <div class="infoDiv">
                     <div class="nameDiv">
-                        <p class="nameSpan">
+                        <p class="nameSpan" id="authorName">
                             {{ scholarName }}</p>
                         <span class="idSpan">scholarID :
                             {{ scholarID }}
@@ -24,14 +24,14 @@
                     </div>
                     <n-skeleton v-if="loading" block :width="146" height="30px" :sharp="false" size="small" />
                     <span v-else class="briefInfo">
-                        {{ scholarInfo.author.last_known_institution.display_name }}
+                        {{ scholarInfo?.author.last_known_institution.display_name }}
                     </span>
                     <div class="infoDataDiv">
                         <div class="infoDataBoxDiv">
                             <span class="infoBoxTitleSpan">被引次数</span>
                             <n-skeleton v-if="loading" width="100%" height="25px" :sharp="false" size="small" />
                             <span v-else class="infoBoxValueSpan">
-                                {{ scholarInfo.author.cited_by_count }}
+                                {{ scholarInfo?.author.cited_by_count }}
                             </span>
                         </div>
                         <n-divider vertical></n-divider>
@@ -40,7 +40,7 @@
 
                             <n-skeleton v-if="loading" width="100%" height="25px" :sharp="false" size="small" />
                             <span v-else class="infoBoxValueSpan">
-                                {{ scholarInfo.author.works_count }}
+                                {{ scholarInfo?.author.works_count }}
                             </span>
                         </div>
                         <n-divider vertical></n-divider>
@@ -54,33 +54,44 @@
                             <span class="infoBoxTitleSpan">h指数</span>
                             <n-skeleton v-if="loading" width="100%" height="25px" :sharp="false" size="small" />
                             <span v-else class="infoBoxValueSpan">
-                                {{ scholarInfo.author.h_index }}
+                                {{ scholarInfo?.author.h_index }}
                             </span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="informationDiv">
+            <div class="leftInsfDiv">
+                <div class="infoChartDiv">
+                    <span style="font-size: large;">数据统计</span>
+                    <n-skeleton v-if="loading" width="100%" style="margin-top: 5px;" height="220px" :sharp="false" />
+                    <div v-else class="chartDiv">
+                        <Chart class="pieChart" type="pie" :data="paperDataByType" />
+                        <Chart class="lineChart" type="line" :data="paperDataByYear" />
+                    </div>
+                </div>
+                <div class="papersDiv">
+                    <span style="font-size: large;">文献统计</span>
+                    <div class="filterDI">
+                        <n-select class="selectStyle" v-model:value="yearFilter" size="small" :options="yearFilterOption" />
+                        <n-select class="selectStyle" v-model:value="typeFilter" size="small" :options="typeFilterOption" />
+                        <n-select class="selectStyle" v-model:value="cityOrTimeFilter" size="small"
+                            :options="cityOrTimeFilterOption" />
+                    </div>
+                    <n-skeleton v-if="loading" width="100%" style="margin-top: 5px;" height="220px" :sharp="false" />
 
-        <div class="horizontalSplitDiv" />
-        <div class="paperDiv">
-            <div class="paperListDiv">
-                <span style="font-size: large;">数据统计</span>
-                <n-skeleton v-if="loading" width="100%" style="margin-top: 5px;" height="220px" :sharp="false" />
-                <div v-else class="chartDiv">
-                    <Chart class="pieChart" type="pie" :data="paperDataByType" />
-                    <Chart class="lineChart" type="line" :data="paperDataByYear" />
                 </div>
             </div>
             <div class="coScholarListDiv">
                 <span style="font-size: large;">合作学者</span>
                 <n-skeleton v-if="loading" width="100%" :sharp="false" height="100px" style="margin-top: 10px;" />
-                <div v-else v-for="(sch, index) in  scholarInfo.co_authors " :key="index" class="coScholarDiv">
+                <div v-else v-for="(sch, index) in  scholarInfo?.co_authors " :key="index" class="coScholarDiv">
                     <n-avatar round :size="48" style="margin: 5px;" class="schoAva"
                         src="https://x0.ifengimg.com/res/2020/79AF4AE1EC8333953CBE4B3B3D0529A6E1FB6186_size217_w1080_h1171.jpeg" />
                     <div class="verticalSplitDiv" />
                     <div class="coScholarInfoDiv">
-                        <n-ellipsis style="max-width: 250px;">
+                        <n-ellipsis style="max-width: calc(100%);">
                             <router-link class="coScholarName" :to="{
                                 path: '/scholarHome',
                                 query: {
@@ -91,10 +102,10 @@
                                 {{ sch.display_name }}
                             </router-link>
                         </n-ellipsis>
-                        <n-ellipsis style="max-width: 250px; margin-bottom: 5px; display: block;" tooltip="false">
+                        <n-ellipsis style="max-width: calc(100%); margin-bottom: 5px; display: block;" :tooltip="false">
                             {{ sch.last_known_institution_display_name }}
                         </n-ellipsis>
-                        <div class="horizontalSplitDiv" />
+                        <div class="horizontalSplitDiv" style="width: calc(100%);" />
                     </div>
                 </div>
             </div>
@@ -108,6 +119,15 @@ import { useRoute } from 'vue-router';
 import { get } from '@/api/axios'
 import { useMessage } from 'naive-ui'
 import { Author, CoAuthor, Paper } from '@/models/model'
+import emitter from '@/eventBus/eventBus';
+const io = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting)
+        emitter.emit("titleChange", "");
+    else
+        emitter.emit("titleChange", scholarName.value);
+}, {
+    rootMargin: "-70px"
+});
 const message = useMessage();
 const route = useRoute();
 const transLabelName = new Map<string, string>([
@@ -156,8 +176,30 @@ const paperDataByYear: Ref<{
 });
 const scholarName = ref(route.query.author_name);
 const scholarID = ref(route.query.author_id);
-let scholarInfo: Ref<{ author: Author, papers: Paper[], co_authors: CoAuthor[] }>;
+let scholarInfo: Ref<{ author: Author, papers: Paper[], co_authors: CoAuthor[] } | undefined> = ref();
 const loading = ref(true);
+
+const yearFilterOption = ref([{
+    label: "全部年份",
+    value: "全部年份"
+}]);
+const yearFilter = ref("全部年份");
+
+const typeFilterOption = ref([{
+    label: "全部类型",
+    value: "全部类型"
+}]);
+const typeFilter = ref("全部类型");
+
+const cityOrTimeFilterOption = ref([{
+    label: "按年份降序",
+    value: "按年份降序"
+}, {
+    label: "按引用降序",
+    value: "按引用降序"
+}]);
+const cityOrTimeFilter = ref("按年份降序");
+
 import { onMounted, onUnmounted } from 'vue';
 
 onMounted(async () => {
@@ -165,13 +207,13 @@ onMounted(async () => {
         history.pushState(null, "", document.URL)
         window.addEventListener('popstate', back, false);
     }
-
+    io.observe(document.getElementById("authorName")!);
     const data = await get(message, "/author", { "author_id": route.query.author_id });
-    if (data != false) {
-        scholarInfo = ref(data);
+    if (data) {
+        scholarInfo.value = data;
         const typeMap = new Map<string, number>();
         const dateMap = new Map<number, number>();
-        scholarInfo.value.papers.forEach((paper) => {
+        scholarInfo.value?.papers.forEach((paper) => {
             const name = transLabelName.get(paper.type) ?? '';
             typeMap.set(name, (typeMap.get(name) ?? 0) + 1);
             const year = new Date(paper.publication_date).getFullYear();
@@ -204,8 +246,8 @@ onMounted(async () => {
         } = {
             label: '文章数量',
             data: [],
-            backgroundColor: ['rgba(255, 159, 64, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(153, 102, 255, 0.2)'],
-            borderColor: ['rgb(255, 159, 64)', 'rgb(75, 192, 192)', 'rgb(54, 162, 235)', 'rgb(153, 102, 255)'],
+            backgroundColor: [getComputedStyle(document.documentElement).getPropertyValue('--primary-100')],
+            borderColor: [getComputedStyle(document.documentElement).getPropertyValue('--primary-100')],
             borderWidth: 1
         }
         dateMap.forEach((val, key) => {
@@ -213,20 +255,19 @@ onMounted(async () => {
             yearVals.data.push(val);
         });
         paperDataByYear.value.datasets.push(yearVals);
-    }
-    setTimeout(() => {
         loading.value = false;
-    }, 0);
+    }
 
 });
 onUnmounted(() => {
     window.removeEventListener('popstate', back, false);
+    emitter.emit("titleChange", "");
+    io.disconnect();
 })
 function back() {
     console.log("back");
     let doc = document as any;
     let pro = new Promise((re, rj) => {
-        console.log("promise created");
         let r = router as any;
         r["re"] = re;
         setTimeout(() => {
@@ -235,7 +276,6 @@ function back() {
     });
     doc.startViewTransition(async () => {
         await pro;
-        console.log("promise done");
     })
     router.back();
 }
@@ -258,7 +298,7 @@ function back() {
 
 .rootDiv {
     width: 100%;
-    min-width: 800px;
+    min-width: 1000px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -266,7 +306,6 @@ function back() {
 
 .scholarDivBorder {
     width: 100%;
-    padding-left: 60px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -276,7 +315,6 @@ function back() {
 .scholarDiv {
     width: 100%;
     height: 260px;
-    padding-right: 150px;
     margin-top: 20px;
     display: flex;
     flex-direction: row;
@@ -319,6 +357,7 @@ function back() {
     font-weight: bold;
     view-transition-name: scholarName;
     position: sticky;
+
 }
 
 .idSpan {
@@ -334,6 +373,8 @@ function back() {
 
 .briefInfo {
     height: 30px;
+    font-size: medium;
+    color: var(--primary-100);
 }
 
 .claimButton {
@@ -381,7 +422,7 @@ function back() {
     height: fit-content;
 }
 
-.paperDiv {
+.informationDiv {
     width: 80%;
     display: flex;
     flex-direction: row;
@@ -389,8 +430,13 @@ function back() {
     margin: 20px;
 }
 
-.paperListDiv {
-    width: calc(90% - 350px);
+.leftInsfDiv {
+    display: flex;
+    flex-direction: column;
+}
+
+.infoChartDiv {
+    width: 750px;
     height: fit-content;
     background-color: white;
     padding: 30px;
@@ -398,8 +444,29 @@ function back() {
 
 }
 
+.papersDiv {
+    width: 750px;
+    margin-top: 40px;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+}
+
+.filterDI {
+    display: flex;
+
+}
+
+.selectStyle {
+    width: 150px;
+    margin: 10px;
+}
+
 .coScholarListDiv {
-    width: 350px;
+    width: calc(90% - 700px);
     height: fit-content;
     display: flex;
     flex-direction: column;
@@ -412,7 +479,7 @@ function back() {
 }
 
 .coScholarDiv {
-    width: 100%;
+    width: calc(100%);
     margin-top: 10px;
     display: flex;
     flex-direction: row;
@@ -425,12 +492,12 @@ function back() {
 
 .coScholarInfoDiv {
     margin: 5px;
-    width: 100%;
+    width: calc(100% - 48px);
 }
 
 .coScholarName {
     font-size: medium;
-    color: blue;
+    color: var(--primary-100);
     text-decoration: none;
     display: block;
 }
