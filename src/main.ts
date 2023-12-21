@@ -7,6 +7,7 @@ import PrimeVue from 'primevue/config'
 import Button from 'primevue/button'
 import Chart from 'primevue/chart'
 import Dock from 'primevue/dock'
+import Dropdown from 'primevue/dropdown';
 import 'primevue/resources/themes/lara-light-green/theme.css'
 
 const app = createApp(App);
@@ -18,4 +19,5 @@ app.use(pinia)
 app.component("PButton", Button)
     .component("Chart", Chart)
     .component("Dock", Dock)
+    .component("Dropdown",Dropdown)
     .mount('#app')
