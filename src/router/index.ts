@@ -18,7 +18,7 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/pages/ClaimScholar.vue'),
       },
       {
-        path: '/detail',
+        path: '/detail/:id',
         component: () => import('@/pages/Detail.vue'),
       }
     ]

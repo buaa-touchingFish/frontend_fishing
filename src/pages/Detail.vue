@@ -55,10 +55,10 @@
                         <Comment v-for="(comment, index) in fileDetail.comments" :key=index :comment=comment></Comment>
                     </n-tab-pane>
                     <n-tab-pane name="相似文献" tab="相似文献">
-                        Hey Jude
+                        <PaperItem v-for="(paperItem, index) in similarPapers" :key=index :paperItem=paperItem></PaperItem>
                     </n-tab-pane>
                     <n-tab-pane name="引用文献" tab="引用文献">
-                        七里香
+                        <PaperItem v-for="(paperItem, index) in quotePapers" :key=index :paperItem=paperItem></PaperItem>
                     </n-tab-pane>
                 </n-tabs>
             </n-card>
@@ -100,17 +100,23 @@
 
 <script setup lang='ts'>
 import Comment from '@/components/detail/Comment.vue'
+import PaperItem from '@/components/detail/PaperItem.vue'
 import { ref, onMounted } from 'vue'
 import Clipboard from 'clipboard'
 import { post } from '@/api/axios'
-import { useMessage } from 'naive-ui';
+import { useMessage } from 'naive-ui'
+import { useRoute } from 'vue-router'
 
-const message = useMessage()
+const message = useMessage();
+const route = useRoute();
+
 onMounted(async () => {
+    const paperId = route.params.id;
+    console.log(paperId)
     const res = await post(
         message,"/paper/single",
         {
-            "id": "W100001231"
+            "id":paperId
         }
     )
     console.log(res);
@@ -178,7 +184,7 @@ const similarPapers:paperItemType[] = [
     },
     {
         title:"计算机视觉中摄像机定标综述",
-        abstract:"回顾了摄影测量学和计算机视觉中的各种摄像机定标方法,对各种方法进行了分析,比较,并讨论了摄像机定标方法应用于计算机视觉中的特点.目的:探讨超声对肝门静脉癌栓的诊断价值,提高肝癌的诊断率.方法回顾性分析了48例肝内静脉内实质团块患者超声检查资料,重点观察肝癌的部位及门静脉内 部回声,血流特点,并与临床最后证实有肝癌存在的结果进行对比分析.结果48例门静脉癌栓患者,42例经CT,MRI确诊,6例经手术病理证实,诊断符合 率100%.结论二维超声联合CDFI检查肝内门静脉系统癌栓有较高的诊断价值.",
+        abstract:"回顾了摄影测量病理证实,诊断符合 率100%.结论二维超声联合CDFI检查肝内门静脉系统癌栓有较高的诊断价值.",
         authors:["tom","mary","jack"],
         date:"2002-10-10",
         quotedNum:54,

@@ -1,52 +1,52 @@
 <template>
-    <div class="userInfo">
-        <n-avatar
-            round
-            size="medium"
-            src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"
-        />
-        <div class="nameAndDate">
-            <n-space>
-                {{ comment.userName }}
-                <span class="constFont">
-                    发布于
-                </span> 
-                {{comment.date}}
-            </n-space>
-        </div>
+    <div>
+        <span class="title">
+            {{ paperItem.title }}
+        </span>
     </div>
-    <div class="commentContent">
-        {{ comment.content }}
+    <div>
+        {{ paperItem.abstract.length>=70 ? paperItem.abstract.substring(0,70)+"..." : paperItem.abstract }}
+    </div>
+    <div class="author">
+        <span v-for="(author, index) in paperItem.authors" :key=index>
+            {{ author }}
+            <span></span>
+        </span>
+    </div>
+    <div class="foot">
+        <n-space>
+            <span>引用量：{{ paperItem.quotedNum }}</span>
+            <span>发布时间：{{ paperItem.date }}</span>
+        </n-space>
     </div>
     <n-divider/>
 </template>
 
 <script setup lang='ts'>
-const props = defineProps(['comment'])
-type commentType = {
-    userName:string,
+const props = defineProps(['paperItem'])
+
+type paperItemType = {
+    title:string,
+    abstract:string,
+    authors:string[],
     date:string,
-    content:string
+    quotedNum:number,
 }
-const comment:commentType = props.comment
+const paperItem:paperItemType = props.paperItem
 </script>
 
 <style scoped>
-.constFont{
+.title{
+    font-size: large;
+    color: blue;
+}
+.title:hover{
+    cursor: pointer;
+}
+.author{
+    color: blue;
+}
+.foot{
     color: gray;
-}
-.userInfo{
-    display:flex;
-}
-.nameAndDate{
-    margin-left:10px;
-    display:flex;
-    align-items:center;
-}
-.commentContent{
-    width:90%;
-    float:right;
-    margin-right:20px;
-    margin-bottom:10px;
 }
 </style>
