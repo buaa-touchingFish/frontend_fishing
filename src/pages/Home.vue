@@ -2,7 +2,7 @@
     <div class="homeDiv" v-if="showHome">
         <Stars></Stars>
         <div class="homeParent">
-            <div id="background" class="homeBackground" >
+            <div id="background" class="homeBackground">
                 <StarBackground></StarBackground>
             </div>
             <div class="homeHeaderDiv">
@@ -328,5 +328,4 @@ const changeShowCard = () => {
     display: flex;
     flex-direction: row;
 }
-
 </style>
