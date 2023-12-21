@@ -9,7 +9,7 @@
                 <div class="sort">排序</div>
             </div>
             <div class="resultCardsContainer">
-                <ResultCard v-for="(result,index) in resultList" :key="index" :result="result"></ResultCard>
+                <ResultCard v-for="(result) in resultList" :key="result.id" :result="result"></ResultCard>
             </div>
             <div class="paginator shadow">
                 <n-pagination v-model:page="page" :page-count="pageCount" :page-slot="7" />
@@ -42,9 +42,9 @@ const page = ref(1)
 const pageCount = ref(10)
 
 watch(page,(newValue) => {
-    console.log(newValue);
     
-    resultList.value = totalresultList.value.slice(newValue*10,newValue*10+10)
+    resultList.value = totalresultList.value.slice((newValue-1)*10,(newValue-1)*10+10)
+    console.log(resultList);
 })
 
 // 排序
@@ -59,7 +59,7 @@ onMounted(async () => {
     const res = await post(
         message,"/paper/search",
         {
-            "pageNum": page.value,
+            "pageNum": page.value-1,
             "keyword": additionValue == '文章' ? searchValue : "",
             "author": additionValue == '作者' ? searchValue : "",
             "institution": additionValue == '机构' ? searchValue : "",
@@ -68,6 +68,8 @@ onMounted(async () => {
     )
     totalresultList.value = res
     resultList.value = totalresultList.value.slice(0,10)
+    console.log(totalresultList.value);
+    
 })
 
 //二级搜索
