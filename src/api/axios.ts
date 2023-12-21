@@ -29,6 +29,7 @@ export async function get(message: MessageApiInjection, url: string, params: any
     catch {
         console.log('请求错误：' + url);
         console.log(params);
+        return false;
     }
 }
 
