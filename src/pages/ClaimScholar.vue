@@ -1,8 +1,10 @@
 <template>
     <div class="rootDiv">
-        <span class="titleSpan">正在认证学者:</span>
-        <span class="nameSpan">丁真珍珠</span>
-        <p class="idSpan">scholarID:10010</p>
+        <div class="titleDiv">
+            <span class="titleSpan">正在认证学者:</span>
+            <span class="nameSpan">{{ scholarName }}</span>
+            <p class="idSpan">scholarID : {{ scholarID }}</p>
+        </div>
         <n-divider></n-divider>
         <div class="formDiv">
             <span class="mailSpan">邮箱</span>
@@ -18,30 +20,56 @@
 </template>
 <script setup lang="ts">
 import router from '@/router';
-import { onMounted, onUnmounted } from 'vue';
-
+import { onMounted, onUnmounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+const route = useRoute();
+const scholarName = ref(route.query.author_name);
+const scholarID = ref(route.query.author_id);
 onMounted(() => {
     if (window.history) {
         history.pushState(null, "", document.URL)
         window.addEventListener('popstate', back, false);
     }
 });
-
 onUnmounted(() => {
     window.removeEventListener('popstate', back, false);
 })
 function back() {
     console.log("back");
+    let doc = document as any;
+    let pro = new Promise((re, rj) => {
+        let r = router as any;
+        r["re"] = re;
+        setTimeout(() => {
+            rj(123);
+        }, 1000);
+    });
+    doc.startViewTransition(async () => {
+        await pro;
+    })
     router.back();
 }
 </script>
 <style scoped>
 .rootDiv {
-    width: 80%;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: left;
+    justify-content: start;
+    align-items: center;
     view-transition-name: horizontalScroll;
+}
+
+.titleDiv {
+    width: 80%;
+    margin-top: 20px;
+    padding: 10px;
+    padding-left: 30px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    view-transition-name: scholarDiv;
 }
 
 .titleSpan {
@@ -67,7 +95,8 @@ function back() {
 .formDiv {
     width: 500px;
     height: 300px;
-    background-color: aliceblue;
+    background-color: white;
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;

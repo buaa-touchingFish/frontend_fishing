@@ -1,46 +1,39 @@
 <template>
     <div class="homeDiv" v-if="showHome">
+        <Stars></Stars>
         <div class="homeParent">
-            <div class="homeBackground">
-                <lizi></lizi>
+            <div id="background" class="homeBackground">
+                <StarBackground></StarBackground>
             </div>
             <div class="homeHeaderDiv">
-                <n-button class="loginButton" @click="$router.push('/scholarHome');" href="/">设置</n-button>
+                <n-button class="loginButton" @click="$router.push({
+                    path: '/scholarHome',
+                    query: {
+                        author_name: 'J. Russell Ramsay',
+                        author_id: 'A5077915689'
+                    }
+                });" href="/">设置</n-button>
                 <n-button class="loginButton" @click="$router.push('/login');" href="/">登录</n-button>
             </div>
             <div class="homeContentDiv">
-                <div class="homeContentTop">
-                    <!-- <n-h1 class="slogen">XX</n-h1> -->
-                    <div class="searchDiv">
-                        <n-auto-complete class="searchBar" size="large" placeholder="搜索你想了解的论文" :options="searchOptions" />
-                        <n-button class="searchButton" @click="$router.push('/search')" type="primary">搜索</n-button>
-                        <n-button class="extraButton" @click="changeShowCard" type="primary">高级搜索</n-button>
-                    </div>
-                    <div class="searchCardDiv" v-show="showCard">
-                        <n-card hoverable>
-                            <n-form ref="formRef" :model="searchCardModel" rules="" label-placement="left"
-                                label-width="200">
-                                <n-form-item label="作者" path="author">
-                                    <n-input v-model:value="searchCardModel.author" placeholder="" />
-                                </n-form-item>
-                                <n-form-item label="机构" path="institution">
-                                    <n-input v-model:value="searchCardModel.institution" placeholder="" />
-                                </n-form-item>
-                                <n-form-item label="出版物" path="publication">
-                                    <n-popselect v-model:value="pubValue" :options="pubOptions" trigger="click">
-                                        <n-button>{{ pubValue }}</n-button>
-                                    </n-popselect>
-                                    <n-input v-model:value="searchCardModel.publication" placeholder="" />
-                                </n-form-item>
-                                <n-form-item label="日期范围" path="timestamp">
-                                    <n-date-picker v-model:value="searchCardModel.timestamp" type="monthrange" clearable />
-                                </n-form-item>
-                            </n-form>
-                        </n-card>
+                <div class="homeContentLeft">
+                    <Clock></Clock>
+                </div>
+                <div class="homeContentRight">
+                    <div class="search">
+                        <div class="searchDiv" :class="{ searchRotate: changeCard }">
+                            <n-auto-complete class="searchBar" size="large" placeholder="搜索你想了解的论文"
+                                :options="searchOptions" />
+                            <n-button class="searchButton" @click="$router.push('/search')" type="primary">搜索</n-button>
+                            <n-button class="extraButton" @click="changeShowCard" type="primary">高级搜索</n-button>
+                        </div>
+                        <div class="advancedSearchDiv" :class="{ advancedSearchRotate: changeCard }">
+                            <n-button class="backButton" @click="changeShowCard">返回</n-button>
+                            <AdvancedSearch></AdvancedSearch>
+                        </div>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
     <div class="mainContainer" v-else>
@@ -58,12 +51,14 @@
 
 <script setup lang='ts'>
 import { ref, watch, onMounted, computed, Ref } from 'vue';
-import Header from '@/components/Header.vue'
-import Menu from '@/components/Menu.vue'
-import lizi from '@/components/lizi.vue';
-import Pipeline from '@/components/Pipeline.vue';
+import Header from '@/components/Home/Header.vue'
+import Menu from '@/components/Home/Menu.vue'
+import StarBackground from '@/components/Login/StarBackground.vue';
+import Clock from '@/components/Clock.vue';
 import { useRoute } from 'vue-router'
-import { FormInst } from 'naive-ui';
+import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
+import Stars from '@/components/Home/Stars.vue'
+import { Search12Regular, Earth16Regular } from "@vicons/fluent";
 
 const route = useRoute()
 
@@ -76,6 +71,8 @@ onMounted(() => {
     showHome.value = (route.path == '/')
 })
 
+const searchValue = ref("")
+
 //搜索推荐的地方
 const searchOptions = computed(() => {
     const result: string[] = [];
@@ -84,37 +81,11 @@ const searchOptions = computed(() => {
     return result;
 });
 
-//高级搜索卡片
-const formRef = ref<FormInst | null>(null)
-const showCard = ref(false)
+// Card
+const changeCard = ref(false)
 const changeShowCard = () => {
-    showCard.value = !showCard.value
+    changeCard.value = !changeCard.value
 }
-const pubValue = ref<string>("会议")
-const pubOptions = [
-    {
-        label: '会议',
-        value: '会议'
-    },
-    {
-        label: '期刊',
-        value: '期刊'
-    },
-]
-
-interface SearchCardModelType {
-    author: string | null
-    institution: string | null
-    timestamp: Ref<[number, number]>
-    publication: string | null
-}
-
-const searchCardModel = ref<SearchCardModelType>({
-    author: null,
-    institution: null,
-    timestamp: ref<[number, number]>([946656000000, Date.now()]),
-    publication: null,
-})
 </script>
 
 <style scoped>
@@ -127,37 +98,41 @@ const searchCardModel = ref<SearchCardModelType>({
 
 .homeBackground {
     position: absolute;
-    top: 0;
-    right: 0;
+    width: 100%;
+    height: 100%;
+    font-size: 0;
 }
 
 .mainContainer {
     width: 100%;
     min-height: 100vh;
-    background-color: rgb(239, 239, 249);
+    height: fit-content;
+    background-color: var(--bg-rendering);
 }
 
 .header {
     height: 57px;
     width: 100%;
-    background-color: red;
+    background-color: white;
     position: sticky;
     top: 0;
     display: flex;
     justify-content: center;
     align-items: center;
+    box-shadow: 0 5px 10px #ccc, 0 -5px 10px #ccc;
     z-index: 999;
 }
 
 .menu {
-    width: 30px;
-    height: 100%;
-    background-color: blue;
+    height: 100vh;
+    background-color: transparent;
     position: fixed;
+    z-index: 998;
 }
 
 .main {
     width: 100%;
+    height: fit-content;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -165,14 +140,16 @@ const searchCardModel = ref<SearchCardModelType>({
 
 .homeDiv {
     width: 100%;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-
+    /* background-image: url('../assets/sky.jpg'); */
+    background-color: aliceblue;
 }
 
 .homeHeaderDiv {
-    width: 100vw;
+    width: 100%;
     height: 60px;
     display: flex;
     flex-direction: row-reverse;
@@ -185,18 +162,25 @@ const searchCardModel = ref<SearchCardModelType>({
 }
 
 .homeContentDiv {
-    width: 100vw;
-    height: 400px;
-    flex-direction: row;
+    width: 100%;
+    height: calc(100% - 60px);
+    display: flex;
+}
+
+.homeContentLeft {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
     align-items: center;
 }
 
-.homeContentTop {
-    width: 100%;
+.homeContentRight {
+    width: 50%;
     height: 100%;
-    position: relative;
-
+    display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 .slogen {
@@ -205,9 +189,25 @@ const searchCardModel = ref<SearchCardModelType>({
     width: 30%;
 }
 
+.searchIcon {
+    position: absolute;
+    left: 0;
+    top: 18%;
+    box-shadow: 0 0 20px 10px white;
+    border-radius: 50%;
+    animation: shining 2.5s linear infinite;
+}
+
+.searchInputLeft {
+    width: 40px;
+    height: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
 .searchBar {
-    margin-left: 20%;
-    width: 60%;
+    width: 90%;
 }
 
 .searchBar :deep(.n-input) {
@@ -218,48 +218,104 @@ const searchCardModel = ref<SearchCardModelType>({
 }
 
 .searchBar :deep(.n-input__input) {
-    margin-right: 80px;
-    margin-left: 80px;
+    height: 50px;
+    margin-left: 10px;
+    padding-top: 5px;
+}
+
+.search {
+    width: 80%;
+    height: 50%;
+    position: relative;
+    transform-style: preserve-3d;
+    perspective: 700px;
 }
 
 .searchDiv {
     width: 100%;
-    height: 40px;
-    align-self: center;
-    position: relative;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    backface-visibility: hidden;
+    transition: 1s;
 }
 
 .extraButton {
-    width: 8%;
-    height: 40px;
     position: absolute;
-    top: 0;
-    left: 12%;
-    border-radius: 25% 0 0 25%;
+    left: 10%;
+    height: 15%;
+    border-radius: 15% 0 0 15%;
+    background-color: white;
+    color: #000;
 }
 
-.searchButton {
-    width: 5%;
-    height: 40px;
+.extraButton:hover {
     position: absolute;
-    top: 0;
-    right: 15%;
-    border-radius: 0 30% 30% 0;
+    left: 10%;
+    height: 15%;
+    border-radius: 15% 0 0 15%;
+    background-color: white;
+    color: #000;
+    border-color: #000;
 }
 
-.searchCardDiv {
+.searchDivider {
     position: absolute;
-    top: 40%;
-    left: 12%;
-    width: 73%;
-    height: 60%;
-    background-color: rgba(255, 255, 255, 0.9);
-    z-index: 999;
+    left: 25%;
+}
+
+.searchButton {}
+
+.advancedSearchDiv {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    transform: rotateY(180deg);
+    transition: 1s;
+    backface-visibility: hidden;
+    box-shadow: 0 0 20px 10px white;
+
+    animation: shining 2.5s linear infinite;
 }
+
+@keyframes shining {
+    0% {
+        box-shadow: 0 0 20px 10px white;
+    }
+
+    50% {
+        box-shadow: 0 0 10px 0px white;
+    }
+
+    100% {
+        box-shadow: 0 0 20px 10px white;
+    }
+}
+
+.searchRotate {
+    transform: rotateY(-180deg);
+    transition: 1s;
+}
+
+.advancedSearchRotate {
+    transform: rotateY(0deg);
+    transition: 1s;
+}
+
+.backButton {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
 
 .homeContentBottom {
     display: flex;

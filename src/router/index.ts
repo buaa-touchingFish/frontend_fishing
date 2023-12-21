@@ -1,4 +1,3 @@
-import { nextTick } from 'process';
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 
 const routes: Array<RouteRecordRaw> = [
@@ -23,6 +22,10 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/pages//user/UserCenter.vue'),
       },
       {
+        path: '/detail',
+        component: () => import('@/pages/Detail.vue'),
+      },
+      {
         path: '/collect',
         component: () => import('@/pages/user/Collect.vue'),
       }
@@ -32,6 +35,10 @@ const routes: Array<RouteRecordRaw> = [
     path: '/login',
     component: () => import('@/pages/Login.vue'),
   },
+  {
+    path: '/test',
+    component: () => import('@/pages/test.vue')
+  }
 ];
 
 const router = createRouter({
@@ -45,12 +52,24 @@ router.push = (to) => {
     await push(to);
   }).updateCallbackDone
 }
-// const back = router.back;
-// router.back = () => {
+// router.beforeEach(() => {
+//   let pro = new Promise((re) => {
+//     let r = router as any;
+//     r["re"] = re;
+//   });
 //   let doc = document as any;
 //   doc.startViewTransition(async () => {
-//     history.back();
-//   })
-// }
-// router.back = back;
+//     await pro;
+//   });
+// })
+router.afterEach(() => {
+  let r = router as any;
+  if (r["re"] != undefined) {
+    r["re"]();
+    r["re"] = undefined;
+  }
+})
+
+
+
 export default router;

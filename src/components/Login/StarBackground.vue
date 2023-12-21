@@ -1,16 +1,15 @@
 <template>
-  <div>
     <canvas id="starBg"></canvas>
-  </div>
 </template>
   
 <script setup lang="ts">
 // @ts-nocheck
-import { onMounted } from 'vue';
+import { onMounted, onUnmounted } from 'vue';
 
 let stars: Star[] = [];
 const maxStars = 1100; // 星星数量
 let canvas = document.getElementById("starBg");
+let animationFrameID;
 onMounted(() => {
   canvas = document.getElementById("starBg");
   initCanvas();
@@ -50,11 +49,14 @@ function initCanvas() {
     ctx.globalCompositeOperation = "lighter";
     stars.forEach((star) => star.draw());
 
-    window.requestAnimationFrame(animation);
+    animationFrameID = window.requestAnimationFrame(animation);
   }
 
   animation()
 }
+onUnmounted(() => {
+  window.cancelAnimationFrame(animationFrameID)
+})
 
 function random(min, max) {
   if (arguments.length < 2) {
@@ -118,5 +120,12 @@ class Star {
 }
 </script>
   
-<style scoped></style>
+<style scoped>
+#starBg{
+  display: block;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+</style>
   
