@@ -1,5 +1,5 @@
 <template>
-    <div class="rootDiv">
+    <div class="rootDiv" id="rootDiv">
         <div class="scholarDivBorder">
             <div class="scholarDiv">
                 <div class="imageDiv">
@@ -16,7 +16,7 @@
                 <div class="verticalSplitDiv"></div>
                 <div class="infoDiv">
                     <div class="nameDiv">
-                        <p class="nameSpan">
+                        <p class="nameSpan" id="authorName">
                             {{ scholarName }}</p>
                         <span class="idSpan">scholarID :
                             {{ scholarID }}
@@ -91,7 +91,7 @@
                         src="https://x0.ifengimg.com/res/2020/79AF4AE1EC8333953CBE4B3B3D0529A6E1FB6186_size217_w1080_h1171.jpeg" />
                     <div class="verticalSplitDiv" />
                     <div class="coScholarInfoDiv">
-                        <n-ellipsis style="max-width: calc(100% - 20px);">
+                        <n-ellipsis style="max-width: calc(100%);">
                             <router-link class="coScholarName" :to="{
                                 path: '/scholarHome',
                                 query: {
@@ -102,11 +102,10 @@
                                 {{ sch.display_name }}
                             </router-link>
                         </n-ellipsis>
-                        <n-ellipsis style="max-width: calc(100% - 20px); margin-bottom: 5px; display: block;"
-                            :tooltip="false">
+                        <n-ellipsis style="max-width: calc(100%); margin-bottom: 5px; display: block;" :tooltip="false">
                             {{ sch.last_known_institution_display_name }}
                         </n-ellipsis>
-                        <div class="horizontalSplitDiv" />
+                        <div class="horizontalSplitDiv" style="width: calc(100%);" />
                     </div>
                 </div>
             </div>
@@ -120,6 +119,15 @@ import { useRoute } from 'vue-router';
 import { get } from '@/api/axios'
 import { useMessage } from 'naive-ui'
 import { Author, CoAuthor, Paper } from '@/models/model'
+import emitter from '@/eventBus/eventBus';
+const io = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting)
+        emitter.emit("titleChange", "");
+    else
+        emitter.emit("titleChange", scholarName.value);
+}, {
+    rootMargin: "-70px"
+});
 const message = useMessage();
 const route = useRoute();
 const transLabelName = new Map<string, string>([
@@ -199,7 +207,7 @@ onMounted(async () => {
         history.pushState(null, "", document.URL)
         window.addEventListener('popstate', back, false);
     }
-
+    io.observe(document.getElementById("authorName")!);
     const data = await get(message, "/author", { "author_id": route.query.author_id });
     if (data) {
         scholarInfo.value = data;
@@ -238,8 +246,8 @@ onMounted(async () => {
         } = {
             label: '文章数量',
             data: [],
-            backgroundColor: ['rgba(255, 159, 64, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(153, 102, 255, 0.2)'],
-            borderColor: ['rgb(255, 159, 64)', 'rgb(75, 192, 192)', 'rgb(54, 162, 235)', 'rgb(153, 102, 255)'],
+            backgroundColor: [getComputedStyle(document.documentElement).getPropertyValue('--primary-100')],
+            borderColor: [getComputedStyle(document.documentElement).getPropertyValue('--primary-100')],
             borderWidth: 1
         }
         dateMap.forEach((val, key) => {
@@ -253,6 +261,8 @@ onMounted(async () => {
 });
 onUnmounted(() => {
     window.removeEventListener('popstate', back, false);
+    emitter.emit("titleChange", "");
+    io.disconnect();
 })
 function back() {
     console.log("back");
@@ -271,15 +281,6 @@ function back() {
 }
 </script>
 <style scoped>
-.abutton {
-    border: none;
-    background: none;
-    outline: none;
-    font-size: 14px;
-    color: #666666;
-}
-
-
 .verticalSplitDiv {
     width: 1px;
     height: 50%;
@@ -297,7 +298,7 @@ function back() {
 
 .rootDiv {
     width: 100%;
-    min-width: 800px;
+    min-width: 1000px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -358,6 +359,7 @@ function back() {
     font-weight: bold;
     view-transition-name: scholarName;
     position: sticky;
+
 }
 
 .idSpan {
@@ -373,6 +375,8 @@ function back() {
 
 .briefInfo {
     height: 30px;
+    font-size: medium;
+    color: var(--primary-100);
 }
 
 .claimButton {
@@ -477,7 +481,7 @@ function back() {
 }
 
 .coScholarDiv {
-    width: 100%;
+    width: calc(100%);
     margin-top: 10px;
     display: flex;
     flex-direction: row;
@@ -490,12 +494,12 @@ function back() {
 
 .coScholarInfoDiv {
     margin: 5px;
-    width: 100%;
+    width: calc(100% - 48px);
 }
 
 .coScholarName {
     font-size: medium;
-    color: blue;
+    color: var(--primary-100);
     text-decoration: none;
     display: block;
 }

@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang='ts'>
-import { computed,ref } from 'vue';
+import { computed, ref } from 'vue';
 import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
 import { Search12Filled, Person32Filled, Settings32Filled } from '@vicons/fluent';
 import emitter from '@/eventBus/eventBus';
@@ -55,52 +55,60 @@ import router from '@/router'
 // 输入框
 const searchValue = ref("")
 const searchOptions = computed(() => {
-    return [    '@gmail.com', '@163.com', '@qq.com'].map((suffix) => {
-          const prefix = searchValue.value
-          return {
+    return ['@gmail.com', '@163.com', '@qq.com'].map((suffix) => {
+        const prefix = searchValue.value
+        return {
             label: prefix + suffix,
             value: prefix + suffix
-          }
+        }
     })
 })
 const additionValue = ref("文章")
 const options = [
-    {label:'文章',value:'文章'},
-    {label:'作者',value:'作者'},
-    {label:'期刊',value:'期刊'},
-    {label:'机构',value:'机构'},
+    { label: '文章', value: '文章' },
+    { label: '作者', value: '作者' },
+    { label: '期刊', value: '期刊' },
+    { label: '机构', value: '机构' },
 ]
 const currentSearchResultPageNumber = ref(0)
-emitter.on("currentSearchResultPageNumber", (data:any) => currentSearchResultPageNumber.value = data)
+emitter.on("currentSearchResultPageNumber", (data: any) => currentSearchResultPageNumber.value = data)
 const search = async () => {
     router.push({
-        path:'/search',
-        query:{
-            wd:searchValue.value,
-            ad:additionValue.value
+        path: '/search',
+        query: {
+            wd: searchValue.value,
+            ad: additionValue.value
         }
     })
 }
 const title = ref("")
+emitter.on("titleChange", (data: any) => title.value = data)
 
 </script>
 
 <style scoped>
-.optTitleDiv {
-    width: 100px;
-    max-width: 100px;
-    align-self: center;
-    margin-left: 20px;
-    font-size: 16pt;
-}
-
 .headerDiv {
     width: 100%;
     display: flex;
+    position: relative;
+}
+
+.optTitleDiv {
+    width: 160px;
+    max-width: 160px;
+    font-size: 16pt;
+    position: absolute;
+    line-height: 50px;
+    -webkit-line-clamp: 1;
+
+    white-space: nowrap;
+    overflow: hidden;
+    left: 20px;
+    text-overflow: ellipsis;
 }
 
 .headerContainer {
-    width: 80%;
+    width: 70%;
     height: 100%;
     display: flex;
     justify-content: space-between;
@@ -154,25 +162,30 @@ const title = ref("")
         background-color: #ccc;
     }
 }
-.selectPlaceHolder{
+
+.selectPlaceHolder {
     height: 100%;
     width: 65px;
 }
-.selectAddition{
+
+.selectAddition {
     height: 100%;
     width: 55px;
     position: absolute;
     top: 17%;
     right: 27%;
 }
-.additionSelector{
+
+.additionSelector {
     width: 100%;
     height: 100%;
 }
-.additionSelector :deep(.n-base-selection-input){
+
+.additionSelector :deep(.n-base-selection-input) {
     width: fit-content;
 }
-.advancedSearchButton{
+
+.advancedSearchButton {
     width: 72px;
     height: 100%;
     cursor: pointer;
