@@ -7,7 +7,7 @@
       <n-button icon-placement="left" strong secondary round type="info">
         <template #icon>
           <n-icon>
-            <cash-icon />
+            <newspaper-outline />
           </n-icon>
         </template>
         获取全文
@@ -30,7 +30,7 @@
 </template>
 <script setup lang="ts">
 import { NButton, Nicon } from 'naive-ui';
-import { } from '@vicons/fluent';
+import { NewspaperOutline } from '@vicons/ionicons5';
 defineProps({
   title: String,
   authors: Array<String>,
