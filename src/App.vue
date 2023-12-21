@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import { GlobalThemeOverrides, NConfigProvider } from 'naive-ui'
-import '@/assets/style/animationStyle.css'
+import './animationStyle.css'
 import { useRoute } from 'vue-router';
 import { ref, Ref } from 'vue'
 

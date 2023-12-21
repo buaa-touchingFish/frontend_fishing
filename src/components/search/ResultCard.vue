@@ -71,7 +71,7 @@ const result:Paper = props.result
 
     &:hover{
         box-shadow: 0 0 10px #ccc;
-        background-color: rgb(232, 232, 254);
+        background-color: var(--primary-300);
         transition: 0.2s all linear;
     }
 }
