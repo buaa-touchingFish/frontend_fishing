@@ -13,6 +13,7 @@ import { GlobalThemeOverrides, NConfigProvider } from 'naive-ui'
 import '@/assets/style/animationStyle.css'
 import { useRoute } from 'vue-router';
 import { ref, Ref } from 'vue'
+
 const route = useRoute();
 const colorStyle = getComputedStyle(document.documentElement);
 /**
@@ -42,9 +43,7 @@ const themeOverrides: Ref<GlobalThemeOverrides> = ref({
   --bg-100: #FFFFFF;
   --bg-200: #f5f5f5;
   --bg-300: #cccccc;
-
-
-
+  --bg-rendering: #e5ecf6;
   /* black */
   /* --primary-100: #0085ff;
             --primary-200: #69b4ff;
