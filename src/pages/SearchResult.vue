@@ -39,18 +39,20 @@ const route = useRoute()
 // 结果数量
 const resultNumber = ref(0)
 const page = ref(1)
-const pageCount = ref(100)
+const pageCount = ref(10)
 
 watch(page,(newValue) => {
-    emitter.emit("currentSearchResultPageNumber",newValue)
+    console.log(newValue);
+    
+    resultList.value = totalresultList.value.slice(newValue*10,newValue*10+10)
 })
-
 
 // 排序
 
 
 // 搜索
 const resultList:Ref<Paper[]> = ref([]);
+const totalresultList:Ref<Paper[]> = ref([]);
 onMounted(async () => {
     const additionValue = route.query.ad;
     const searchValue = route.query.wd;
@@ -64,8 +66,8 @@ onMounted(async () => {
             "publisher": additionValue == '期刊' ? searchValue : "",
         }
     )
-    resultList.value = res
-    console.log(resultList.value);
+    totalresultList.value = res
+    resultList.value = totalresultList.value.slice(0,10)
 })
 
 //二级搜索
@@ -196,7 +198,7 @@ const recommendList:recommend[] = [
 }
 .searchResults{
     width: 60%;
-    height: 1000px;
+    height: fit-content;
     padding: 0 25px;
     box-sizing: border-box;
 }
@@ -229,6 +231,6 @@ const recommendList:recommend[] = [
     padding: 10px;
     border-radius: 10px;
     background-color: white;
-    margin: 0 auto;
+    margin: 0 auto 20px;
 }
 </style>

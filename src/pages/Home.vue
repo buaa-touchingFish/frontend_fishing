@@ -106,6 +106,7 @@ const changeShowCard = () => {
 .mainContainer {
     width: 100%;
     min-height: 100vh;
+    height: fit-content;
     background-color: rgb(239, 239, 249);
 }
 
@@ -131,6 +132,7 @@ const changeShowCard = () => {
 
 .main {
     width: 100%;
+    height: fit-content;
     display: flex;
     justify-content: center;
     align-items: center;
