@@ -1,6 +1,7 @@
 <template>
     <div class="login-form-container">
-        <n-form ref="loginFormRef" :model="loginModel" :rules="loginRules" :style="loginFormStyle">
+        <n-form ref="loginFormRef" :model="loginModel" :rules="loginRules" :style="loginFormStyle"
+        label-width="100px" label-placement="left">
             <n-form-item path="name" label="用户名">
                 <n-input v-model:value="loginModel.name" @keydown.enter.prevent placeholder="请输入用户名" />
             </n-form-item>
@@ -9,7 +10,7 @@
             </n-form-item>
 
             <div class="login-form-bottom">
-                <n-button round type="primary" @click="login" style="width: 100%;">
+                <n-button round type="primary" @click="login" style="width: 80%;">
                     登录
                 </n-button>
 
@@ -20,7 +21,8 @@
             </div>
         </n-form>
 
-        <n-form ref="registerFormRef" :model="registerModel" :rules="registerRules" :style="registerFormStyle">
+        <n-form ref="registerFormRef" :model="registerModel" :rules="registerRules" :style="registerFormStyle" 
+        label-width="100px" label-placement="left">
             <n-form-item path="username" label="用户名">
                 <n-input v-model:value="registerModel.username" @keydown.enter.prevent placeholder="请输入用户名" />
             </n-form-item>
@@ -39,24 +41,25 @@
                 <div class="input-with-button">
                     <n-input v-model:value="registerModel.captcha" @keydown.enter.prevent placeholder="请输入验证码" />
                     <n-button type="primary" :disabled="isRegisterButtonDisabled" @click="submitRegisterCaptcha"
-                        style="width: 130px;">
+                        style="width: 100px;">
                         {{ registerButtonText }}
                     </n-button>
                 </div>
             </n-form-item>
 
             <div class="form-bottom">
-                <n-button type="primary" @click="register" style="width: 50%;">
+                <n-button type="primary" @click="register" style="width: 40%;">
                     注册
                 </n-button>
-                <n-button  @click="switchLogin" style="width: 50%;">
+                <n-button @click="switchLogin" style="width: 40%;">
                     去登录
                 </n-button>
-                
+
             </div>
         </n-form>
 
-        <n-form ref="frogetFormRef" :model="forgetModel" :rules="forgetRules" :style="forgetFormStyle">
+        <n-form ref="frogetFormRef" :model="forgetModel" :rules="forgetRules" :style="forgetFormStyle" 
+        label-width="100px" label-placement="left">
             <n-form-item path="email" label="邮箱">
                 <n-input v-model:value="forgetModel.email" @keydown.enter.prevent placeholder="请输入邮箱" />
             </n-form-item>
@@ -81,7 +84,7 @@
                 <n-button type="primary" @click="forget" class="leftButton">
                     找回
                 </n-button>
-                <n-button  @click="switchLogin" class="rightButton">
+                <n-button @click="switchLogin" class="rightButton">
                     去登录
                 </n-button>
             </div>
@@ -96,14 +99,11 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     z-index: 2;
     animation: loginAnimation 1s;
     animation-fill-mode: forwards;
     animation-timing-function: ease;
-}
-
-.login-form-container form {
-    width: 80%;
 }
 
 ::-webkit-scrollbar {
@@ -112,7 +112,8 @@
 
 .login-form-bottom {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
+    align-items: center;
     flex-direction: column;
     margin-top: 5%;
 }
@@ -121,6 +122,7 @@
     display: flex;
     flex-direction: row;
     margin-top: 5%;
+    justify-content: space-between;
 
     .leftButton {
         margin-left: 10%;
@@ -128,7 +130,7 @@
     }
 
     .rightButton {
-        
+
         width: 40%;
     }
 }
@@ -148,7 +150,7 @@
 }
 
 .links span {
-    padding: 5px 10px ;
+    padding: 5px 10px;
     border-radius: 5px;
 }
 
@@ -270,7 +272,6 @@ const switchForget = () => {
 }
 const message = useMessage()
 const emailPattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-const formType = ref<string>('login')
 const loginModel = ref<LoginModelType>({
     name: null,
     password: null,
@@ -419,13 +420,21 @@ const login = (e: MouseEvent) => {
                 "username": loginModel.value.name,
                 "password": loginModel.value.password,
             })
-            if (res == false) {
+            if (res === false) {
                 return;
             }
-            const token = res
+
+            const token = res.jwt
             // TODO:加token和userstore保存信息
             axiosStore.updateAuthorizationHeader(token)
-            router.push('/')
+            userstore.curUser = res.uid
+            localStorage.setItem('token', token)
+            localStorage.setItem('uid', res.uid)
+            if (res.uid <= 20) {
+                router.push('/admin')
+            } else {
+                router.push('/')
+            }
 
         } else {
             message.warning("请完善信息")
@@ -457,8 +466,8 @@ const submitRegisterCaptcha = async () => {
         }
         let email = registerModel.value.email
         let res = await post(message, "/user/sendCaptcha", {
-            email: registerModel.value.email
-        }) 
+            email: email
+        })
         if (!res) {
             return;
         }
@@ -477,11 +486,14 @@ const register = (e: MouseEvent) => {
                 "email": registerModel.value.email,
                 "captcha": registerModel.value.captcha,
             })
-            if (!res) {
+            if (res === false) {
                 return
             }
-            message.success('注册成功')
-            formType.value = 'login'
+            forgetFormStyle.value = hideStyle
+            registerFormStyle.value = hideStyle
+            setTimeout(() => {
+                loginFormStyle.value = showStyle
+            }, 500)
         }
     })
 }
@@ -511,7 +523,7 @@ const submitForgetCaptcha = async () => {
         let res = await post(message, "/user/findpwd", {
             email: forgetModel.value.email
         })
-        if (!res) {
+        if (res === false) {
             return
         }
         message.success('发送成功')
@@ -523,18 +535,21 @@ const submitForgetCaptcha = async () => {
 
 const forget = (e: MouseEvent) => {
     e.preventDefault()
-    frogetFormRef.value?.validate((errors) => {
+    frogetFormRef.value?.validate(async (errors) => {
         if (!errors) {
-            let res = post(message, "/user/pwdFind", {
+            let res = await post(message, "/user/pwdFind", {
                 "email": forgetModel.value.email,
                 "captcha": forgetModel.value.captcha,
                 "newPassword": forgetModel.value.password,
             })
-            if (!res) {
+            if (res === false) {
                 return
             }
-            message.success('找回成功')
-            formType.value = 'login'
+            forgetFormStyle.value = hideStyle
+            registerFormStyle.value = hideStyle
+            setTimeout(() => {
+                loginFormStyle.value = showStyle
+            }, 500)
         }
     })
 }
