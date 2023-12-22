@@ -1,17 +1,17 @@
 <template>
-    <div class="searchRasultContainer">
+    <div class="searchRasultContainer" v-if="!showSkeleton">
         <div class="secondarySearch">
             <SecondarySearchCard v-for="(secondarySearch,index) in secondarySearchList" :key="index" :secondarySearch="secondarySearch"></SecondarySearchCard>
         </div>
         <div class="searchResults">
             <div class="resultTop">
-                <div class="resultNumber">为您找到{{ resultNumber }}条相关结果</div>
+                <div class="resultNumber">为您找到约{{ resultNumber }}条相关结果</div>
                 <div class="sort">排序</div>
             </div>
             <div class="resultCardsContainer">
                 <ResultCard v-for="(result) in resultList" :key="result.id" :result="result"></ResultCard>
             </div>
-            <div class="paginator shadow">
+            <div class="paginator shadow" v-show="resultList.length>10">
                 <n-pagination v-model:page="page" :page-count="pageCount" :page-slot="7" />
             </div>
         </div>
@@ -19,6 +19,23 @@
             <ReconmmendCard :recommend="recommendList"></ReconmmendCard>
         </div>
         <n-back-top :right="100" />
+    </div>
+    <div class="searchRasultContainer" v-else>
+        <div class="secondarySearch">
+            <n-skeleton v-for="i in 3" :key="i" height="150px" width="100%" style="margin-bottom:20px;border-radius: 5px;"/>
+        </div>
+        <div class="searchResults">
+            <div class="resultTop">
+                <div class="resultNumber">为您找到约<n-skeleton text style="width: 50px" />条相关结果</div>
+                <div class="sort"><n-skeleton text style="width: 40px" /></div>
+            </div>
+            <div class="resultCardsContainer">
+                <n-skeleton v-for="i in 5" :key="i" height="180px" width="100%" style="margin-bottom:20px;border-radius: 10px;"/>
+            </div>
+        </div>
+        <div class="recommend">
+            <n-skeleton height="800px" width="100%" style="margin-bottom:20px;border-radius: 10px;"/>
+        </div>
     </div>
 </template>
 
@@ -35,6 +52,9 @@ import { useMessage } from 'naive-ui';
 
 const message = useMessage()
 const route = useRoute()
+
+//骨架屏
+const showSkeleton = ref(false)
 
 // 结果数量
 const resultNumber = ref(0)
@@ -54,6 +74,7 @@ watch(page,(newValue) => {
 const resultList:Ref<Paper[]> = ref([]);
 const totalresultList:Ref<Paper[]> = ref([]);
 onMounted(async () => {
+    showSkeleton.value = true;
     const additionValue = route.query.ad;
     const searchValue = route.query.wd;
     const res = await post(
@@ -68,6 +89,7 @@ onMounted(async () => {
     )
     totalresultList.value = res
     resultList.value = totalresultList.value.slice(0,10)
+    showSkeleton.value = false;
     console.log(totalresultList.value);
     
 })

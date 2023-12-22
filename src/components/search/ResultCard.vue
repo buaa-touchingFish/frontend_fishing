@@ -79,7 +79,6 @@ const result:Paper = props.result
     width: 100%;
     height: 50px;
     margin: 0;
-    margin-left: 5px;
     padding: 0 10px 0 0;
     font-size: 20px;
     font-weight: 400;

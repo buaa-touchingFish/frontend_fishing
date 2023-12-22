@@ -4,9 +4,9 @@
             <StarBackground />
         </div>
         <div class="login-in-container">
-            <div class="login-left">
+            <!-- <div class="login-left">
                 <Earth></Earth>
-            </div>
+            </div> -->
             <div class="login-right">
                 <LoginForm />
             </div>
@@ -17,7 +17,7 @@
 <script setup lang='ts'>
 import LoginForm from '@/components/Login/LoginForm.vue';
 import StarBackground from '@/components/Login/StarBackground.vue';
-import Earth from '@/components/Login/Earth.vue';
+// import Earth from '@/components/Login/Earth.vue';
 </script>
 
 <style scoped>
@@ -40,10 +40,10 @@ import Earth from '@/components/Login/Earth.vue';
         width: 60%;
         min-width: 600x;
         height: 60%;
-        min-height: 550px;
+        min-height: 500px;
         flex-direction: row;
         display: flex;
-        justify-content: space-evenly;
+        justify-content: center;
         border-radius: 10px;
         overflow: hidden;
         background-color: white;
@@ -61,12 +61,12 @@ import Earth from '@/components/Login/Earth.vue';
         }
 
         .login-right {
-            width: 40%;
+            width: 60%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 30px;
+            /* padding: 30px; */
         }
     }
 
