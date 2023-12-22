@@ -55,6 +55,7 @@
                 <div class="setting">
                     <n-icon size="23" color="blue" :component="Settings32Filled" />
                 </div>
+                <n-switch @update:value="handleChange" />
             </div>
         </div>
     </div>
@@ -103,9 +104,13 @@ const search = async () => {
         }
     })
 }
+//标题
 const title = ref("")
 emitter.on("titleChange", (data: any) => title.value = data)
 
+function handleChange(value: boolean) {
+    emitter.emit("themeChange", value);
+}
 </script>
 
 <style scoped>
@@ -116,17 +121,17 @@ emitter.on("titleChange", (data: any) => title.value = data)
 }
 
 .optTitleDiv {
-    width: 160px;
-    max-width: 160px;
+    width: 180px;
+    max-width: 180px;
     font-size: 16pt;
     position: absolute;
     line-height: 50px;
     -webkit-line-clamp: 1;
-
     white-space: nowrap;
     overflow: hidden;
     left: 20px;
     text-overflow: ellipsis;
+    color: var(--text-100);
 }
 
 .headerContainer {
@@ -173,7 +178,7 @@ emitter.on("titleChange", (data: any) => title.value = data)
     width: calc(100vw * 0.7 * 0.7 * 0.8 * 0.8);
     padding: 5px 10px;
     border-radius: 7px;
-    background-color: white;
+    background-color: var(--bg-100);
 }
 
 .completeSearchOption {
@@ -252,7 +257,7 @@ emitter.on("titleChange", (data: any) => title.value = data)
 
 .advancedSearchCard {
     width: calc(100vw * 0.7 * 0.7 * 0.8 * 0.8);
-    background-color: white;
+    background-color: var(--bg-100);
 }
 
 .headerRight {

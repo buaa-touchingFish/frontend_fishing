@@ -2,7 +2,7 @@
     <div class="homeDiv" v-if="showHome">
         <Stars></Stars>
         <div class="homeParent">
-            <div id="background" class="homeBackground" >
+            <div id="background" class="homeBackground">
                 <StarBackground></StarBackground>
             </div>
             <div class="homeHeaderDiv">
@@ -93,7 +93,7 @@ const changeShowCard = () => {
     position: relative;
     width: 100%;
     height: 100%;
-    color: white;
+    color: var(--bg-100);
 }
 
 .homeBackground {
@@ -113,7 +113,7 @@ const changeShowCard = () => {
 .header {
     height: 57px;
     width: 100%;
-    background-color: white;
+    background-color: var(--bg-100);
     position: sticky;
     top: 0;
     display: flex;
@@ -125,7 +125,7 @@ const changeShowCard = () => {
 
 .menu {
     height: 100vh;
-    background-color: transparent;
+    background-color: var(--bg-100);
     position: fixed;
     z-index: 998;
 }
@@ -193,7 +193,7 @@ const changeShowCard = () => {
     position: absolute;
     left: 0;
     top: 18%;
-    box-shadow: 0 0 20px 10px white;
+    box-shadow: 0 0 20px 10px var(--bg-100);
     border-radius: 50%;
     animation: shining 2.5s linear infinite;
 }
@@ -247,7 +247,7 @@ const changeShowCard = () => {
     left: 10%;
     height: 15%;
     border-radius: 15% 0 0 15%;
-    background-color: white;
+    background-color: var(--bg-100);
     color: #000;
 }
 
@@ -256,7 +256,7 @@ const changeShowCard = () => {
     left: 10%;
     height: 15%;
     border-radius: 15% 0 0 15%;
-    background-color: white;
+    background-color: var(--bg-100);
     color: #000;
     border-color: #000;
 }
@@ -271,7 +271,7 @@ const changeShowCard = () => {
 .advancedSearchDiv {
     width: 100%;
     height: 100%;
-    background-color: white;
+    background-color: var(--bg-100);
     border-radius: 10px;
     display: flex;
     flex-direction: column;
@@ -321,5 +321,4 @@ const changeShowCard = () => {
     display: flex;
     flex-direction: row;
 }
-
 </style>
