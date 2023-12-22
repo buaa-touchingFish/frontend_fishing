@@ -1,15 +1,17 @@
 <template>
   <n-config-provider :theme-overrides="themeOverrides">
-    <n-message-provider>
-      <n-notification-provider>
-        <router-view :key="route.fullPath"></router-view>
-      </n-notification-provider>
-    </n-message-provider>
+    <n-dialog-provider>
+      <n-message-provider>
+        <n-notification-provider>
+          <router-view :key="route.fullPath"></router-view>
+        </n-notification-provider>
+      </n-message-provider>
+    </n-dialog-provider>
   </n-config-provider>
 </template>
 
 <script setup lang="ts">
-import { GlobalThemeOverrides, NConfigProvider } from 'naive-ui'
+import { GlobalThemeOverrides, NConfigProvider, NDialogProvider } from 'naive-ui'
 import './animationStyle.css'
 import { useRoute } from 'vue-router';
 import { ref, Ref } from 'vue'

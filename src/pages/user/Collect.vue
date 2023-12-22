@@ -30,11 +30,12 @@ import api from '@/api/axios.ts';
 import ArticleItem from "@/components/userHome/ArticleItem.vue";
 import { useCollectStore, Tag } from '@/store/collectStore'
 import { ref, computed, onMounted } from "vue";
-import { NTabs, NTabPane, NModal, NInput, NButton, useMessage } from "naive-ui";
+import { NTabs, NTabPane, NModal, NInput, NButton, useMessage, useDialog } from "naive-ui";
 
 const collectStore = useCollectStore();
 
 const message = useMessage();
+const dialog = useDialog();
 
 onMounted(() => {
   // collectStore.getAllCollects();
@@ -130,8 +131,20 @@ const createLabel = () => {
 }
 
 // TODO
-const handleClose = (name: number) => {
+const handleClose = (name: string) => {
   console.log(name);
+  dialog.warning({
+    title: '删除标签',
+    content: `将删除标签: ${name}`,
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: () => {
+      message.success('确定')
+    },
+    onNegativeClick: () => {
+      message.error('取消')
+    }
+  })
 }
 
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div class="item-container" :class="{ 'selected-style': selected }" @click="handleContainerClicked">
     <div class="check-box">
-      <n-checkbox v-model:checked="check" @update:checked="handleCheckedChange"></n-checkbox>
+      <n-checkbox v-model:checked="check" @update:checked="handleCheckedChange" @click.stop></n-checkbox>
     </div>
     <div class="right-container">
       <div class="title">{{ title }}</div>
@@ -68,8 +68,8 @@ const handleCheckedChange = (value: boolean) => {
   cursor: pointer;
   /* border: 1px solid black; */
   border-radius: 5px;
-  background-color: #ffffff;
-  box-shadow: #999999;
+  background-color: var(--bg-100);
+  box-shadow: var(--bg-300);
   margin: 10px;
   transition: filter 0.3s ease;
 
@@ -93,7 +93,7 @@ const handleCheckedChange = (value: boolean) => {
 
     .author-journal {
       font-size: 12px;
-      color: #999999;
+      color: var(--text-200);
       margin-bottom: 5px;
     }
 
@@ -121,7 +121,7 @@ const handleCheckedChange = (value: boolean) => {
 
       .citations {
         font-size: 12px;
-        color: #999999;
+        color: var(--bg-300);
         margin-left: auto;
       }
     }
