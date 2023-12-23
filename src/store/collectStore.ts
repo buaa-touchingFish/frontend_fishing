@@ -22,19 +22,21 @@ export class Tag {
     this.papers = papers;
     this.papers_checked = new Set<string>();
   }
-  addPaper(paper: Paper) {
+  public addPaper(paper: Paper) {
     this.papers.push(paper);
   }
-  deletePaper(paper_id: string | undefined) {
+  public deletePaper(paper_id: string | undefined) {
     if (paper_id === undefined) return;
     this.papers_checked.delete(paper_id);
     const i = this.papers.findIndex((item) => item.paper_id === paper_id);
     if (i !== -1) this.papers.splice(i, 1);
   }
-  setPaperChecked(paper_id: string) {
+  public setPaperChecked(paper_id: string | undefined) {
+    if (paper_id === undefined) return;
     this.papers_checked.add(paper_id);
   }
-  setPaperUnchecked(paper_id: string) {
+  public setPaperUnchecked(paper_id: string | undefined) {
+    if (paper_id === undefined) return;
     this.papers_checked.delete(paper_id);
   }
 }
@@ -61,7 +63,7 @@ export class Paper {
     this.citations = citations;
     this.tags = tags;
   }
-  deleteTag(tag_name: string | undefined) {
+  public deleteTag(tag_name: string | undefined) {
     if (tag_name === undefined) return;
     const i = this.tags.findIndex((item) => item === tag_name);
     if (i !== -1) this.tags.splice(i, 1);
@@ -74,6 +76,7 @@ export const useCollectStore = defineStore("collect", () => {
   const active_paper_id = ref("paper_id");
   const tags = ref([] as Tag[]);
   const papers = ref([] as Paper[]);
+  const isFakeData = ref(true);
   const set_active_tag_name = (active_tag_name1: string | undefined) => {
     if (active_tag_name1 === undefined) return;
     // console.log('active_tag_name1', active_tag_name1);
@@ -234,6 +237,7 @@ export const useCollectStore = defineStore("collect", () => {
     active_tag_name,
     active_paper_id,
     tags,
+    isFakeData,
     set_active_tag_name,
     set_active_paper_id,
     getAllCollects,

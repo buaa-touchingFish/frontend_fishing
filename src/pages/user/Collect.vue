@@ -1,15 +1,49 @@
 <template>
   <div class="collect-container">
-    <n-tabs v-model:value="value" type="card" addable closable tab-style="min-width: 80px;" @close="handleClose"
-      @add="handleAdd">
-      <n-tab-pane v-for="tag in collectStore.tags" :key="tag.name" :closable="notAll(tag.name)" :name="tag.name"
-        :tab="tag2String(tag)">
-        <div v-for="paper in tag.papers" :key="paper.paper_id">
-          <ArticleItem :self_tag_name="tag.name" :paper_id="paper.paper_id" :title="paper.title"
-            :author="paper.authors[0]" :journal="paper.journal" :citations="paper.citations" :tags="paper.tags" />
-        </div>
-      </n-tab-pane>
-    </n-tabs>
+    <n-space>
+      <n-tabs v-model:value="cur_tag_name" type="card" addable closable @close="handleClose" @add="handleAdd">
+        <n-tab-pane v-for="tag in collectStore.tags" :key="tag.name" :closable="notAll(tag.name)" :name="tag.name"
+          :tab="tag2String(tag)">
+          <n-space>
+            <n-space vertical>
+              <div class="export-container">
+                <div class="check-all">
+                  <n-checkbox v-model:checked="allChecked">
+                    全选
+                  </n-checkbox>
+                </div>
+                <n-button text>
+                  <template #icon>
+                    <n-icon>
+                      <Export />
+                    </n-icon>
+                  </template>
+                  导出引文
+                </n-button>
+              </div>
+              <div v-for="paper in tag.papers" :key="paper.paper_id">
+                <ArticleItem @item-click="handleItemClick" :self_tag_name="tag.name" :paper_id="paper.paper_id"
+                  :title="paper.title" :author="paper.authors[0]" :journal="paper.journal" :citations="paper.citations"
+                  :tags="paper.tags" />
+              </div>
+            </n-space>
+            <ArticlePreView v-if="canLoadPreview" :paper_id="collectStore.active_paper_id" />
+            <n-card v-else style="background-color: var(--bg-100);">
+              <template #header>
+                <n-space vertical>
+                  <n-skeleton text width="50vw" />
+                  <n-skeleton text width="50vw" />
+                  <n-skeleton text width="50vw" />
+                  <n-skeleton text width="50vw" />
+                </n-space>
+                <n-skeleton text width="80px" :repeat="3" />
+              </template>
+              <n-skeleton text :repeat="6" />
+            </n-card>
+          </n-space>
+        </n-tab-pane>
+      </n-tabs>
+    </n-space>
     <n-modal v-model:show="showModal" preset="dialog" title="新标签">
       <div :class="{ label_input: statusIsError }" :style="{ '--pseudo-content': `'${pseudoContent}'` }">
         <n-input v-modal:value="newCreatingLabel" @input="updateCreatingStatus" :status="creatingStatus"
@@ -26,11 +60,13 @@
   </div>
 </template>
 <script setup lang="ts">
+import { OpenOutline as Export } from '@vicons/ionicons5';
 import api from '@/api/axios.ts';
 import ArticleItem from "@/components/userHome/ArticleItem.vue";
+import ArticlePreView from '@/components/userHome/ArticlePreview.vue'
 import { useCollectStore, Tag } from '@/store/collectStore'
 import { ref, computed, onMounted } from "vue";
-import { NTabs, NTabPane, NModal, NInput, NButton, useMessage, useDialog } from "naive-ui";
+import { NTabs, NTabPane, NModal, NInput, NButton, useMessage, useDialog, NSpace, NCard, NSkeleton, NCheckbox, NIcon } from "naive-ui";
 
 const collectStore = useCollectStore();
 
@@ -40,6 +76,35 @@ const dialog = useDialog();
 onMounted(() => {
   // collectStore.getAllCollects();
   collectStore.fakeData();
+})
+
+const handleItemClick = () => {
+  if (collectStore.active_paper_id !== 'paper_id')
+    return;
+}
+
+const allChecked = computed({
+  get() {
+    const tag = collectStore.tags.find(item => item.name === cur_tag_name.value);
+    if (tag) return tag.papers.length === tag.papers_checked.size;
+    return false;
+  },
+  set(val) {
+    const tag = collectStore.tags.find(item => item.name === cur_tag_name.value);
+    if (val === true) {
+      if (tag) {
+        tag.papers.forEach(item => tag.setPaperChecked(item.paper_id));
+      }
+    } else {
+      if (tag) {
+        tag.papers.forEach(item => tag.setPaperUnchecked(item.paper_id));
+      }
+    }
+  }
+});
+
+const canLoadPreview = computed(() => {
+  return !collectStore.isFakeData && collectStore.active_paper_id !== 'paper_id';
 })
 
 const tag2String = computed(() => {
@@ -54,7 +119,7 @@ const notAll = computed(() => {
   }
 })
 
-const value = ref("全部");
+const cur_tag_name = ref("全部");
 
 const tag_string_array = computed(() => {
   const strs = [];
@@ -159,8 +224,26 @@ const handleClose = (name: string) => {
 <style scoped>
 .collect-container {
   margin-top: 15px;
+  margin-bottom: 15px;
   margin-left: 80px;
   width: 100%;
+
+  .preview {
+    width: 200px;
+    height: 1200px;
+    background-color: red;
+  }
+
+  .export-container {
+    display: flex;
+    justify-content: space-between;
+
+    .check-all {
+      margin-left: 10px;
+      display: flex;
+      align-items: center;
+    }
+  }
 }
 
 .label_input::before {

@@ -1,7 +1,7 @@
 <template>
   <div class="item-container" :class="{ 'selected-style': selected }" @click="handleContainerClicked">
     <div class="check-box">
-      <n-checkbox v-model:checked="check" @update:checked="handleCheckedChange" @click.stop></n-checkbox>
+      <n-checkbox v-model:checked="computed_check" @click.stop></n-checkbox>
     </div>
     <div class="right-container">
       <div class="title">{{ title }}</div>
@@ -33,7 +33,7 @@
 </template>
 <script setup lang="ts">
 import { useCollectStore } from '@/store/collectStore'
-import { ref, computed } from "vue";
+import { ref, computed, defineEmits } from "vue";
 import { NCheckbox, NTag, useMessage, useDialog, NPopover, NButton, NSpace } from "naive-ui";
 
 const props = defineProps({
@@ -47,10 +47,11 @@ const props = defineProps({
 });
 
 const message = useMessage();
-
 const dialog = useDialog();
 
 const collectStore = useCollectStore();
+
+const emit = defineEmits(['itemClick']);
 
 // console.log('self idx', props.self_tag_idx, props.self_paper_idx);
 // console.log('active idx', props.active_tag_idx, props.active_paper_idx);
@@ -66,18 +67,26 @@ const handleContainerClicked = () => {
   // console.log("container clicked", props.self_tag_idx, props.self_paper_idx);
   collectStore.set_active_tag_name(props.self_tag_name);
   collectStore.set_active_paper_id(props.paper_id);
+  emit('itemClick');
   // console.log("active idx", collectStore.active_tag_idx, collectStore.active_paper_idx);
   // console.log("self idx", props.self_tag_idx, props.self_paper_idx);
   // console.log("selected", selected.value);
 };
 
-const check = ref(false);
-
-const handleCheckedChange = (value: boolean) => {
-  check.value = value;
-  console.log("check", check.value);
-  collectStore.change_item_checked(props.self_tag_name, props.paper_id, value);
-};
+const computed_check = computed({
+  get() {
+    const tag = collectStore.tags.find(item => item.name === props.self_tag_name);
+    if (tag) {
+      return tag.papers_checked.has(props.paper_id ?? 'wrong_id');
+    }
+    return false;
+  },
+  set(val) {
+    const tag = collectStore.tags.find(item => item.name === props.self_tag_name);
+    if (val === true) tag?.setPaperChecked(props.paper_id);
+    else tag?.setPaperUnchecked(props.paper_id);
+  }
+})
 
 const handleClose = (tag_name: string) => {
   console.log('tag_name', tag_name);
@@ -135,7 +144,7 @@ const handleAdd = (tag_name: string) => {
   border-radius: 5px;
   background-color: var(--bg-100);
   box-shadow: var(--bg-300);
-  margin: 10px;
+  /* margin: 10px; */
   transition: filter 0.3s ease;
 
   .check-box {
