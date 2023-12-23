@@ -23,7 +23,7 @@ const loading = ref(true)
 
 
 onMounted(async () => {
-    let res = await get(message, '/admin/unclaimed', {})
+    let res = await get(message, '/admin/myclaims', {})
     if (res === false) {
         return
     }
