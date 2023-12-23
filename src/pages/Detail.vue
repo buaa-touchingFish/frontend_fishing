@@ -1,33 +1,31 @@
 <template>
     <div class="detailContainer">
         <n-card :title=fileDetail.title>
-            <div>
-                <span class="constFont">作者：</span>
-                <span v-for="(author, index) in fileDetail.authors" :key=index>
-                    {{ author }}
-                    <span></span>
-                </span>
-            </div>
+            <n-grid :x-gap="12" :y-gap="8" :cols="36">
+                <n-grid-item :span="2" class="constFont">作者:</n-grid-item>
+                <n-grid-item :span="34">
+                    <n-space :size="[12, 0]">
+                        <span v-for="(authorship, index) in fileDetail.authorships" :key=index>
+                            {{ authorship.author.display_name }};
+                        </span>
+                    </n-space>
+                </n-grid-item>
 
-            <div class="abstractContainer">
-                <div class="constFont">摘要：</div>
-                <div class="abstractContent">
-                    {{ fileDetail.abstract }}
-                </div>
-            </div>
+                <n-grid-item :span="2" class="constFont">摘要:</n-grid-item>
+                <n-grid-item :span="34">{{ fileDetail.abstract }}</n-grid-item>
 
-            <div>
-                <span class="constFont">关键词：</span>
-                <span v-for="(word, index) in fileDetail.keywords" :key=index>
-                    {{ word }}
-                    <span></span> 
-                </span>
-            </div>
+                <n-grid-item :span="2" class="constFont">关键词:</n-grid-item>
+                <n-grid-item :span="34">
+                    <n-space :size="[12, 0]">
+                        <span v-for="(word, index) in fileDetail.keywords" :key=index>
+                            {{ word }};
+                        </span>
+                    </n-space>
+                </n-grid-item>
 
-            <div>
-                <span class="constFont">发布日期：</span>
-                <span>{{ fileDetail.date }}</span>
-            </div>
+                <n-grid-item :span="2" class="constFont">时间:</n-grid-item>
+                <n-grid-item :span="34">{{ fileDetail.publication_date }}</n-grid-item>
+            </n-grid>
             
             <template #footer>
                 <n-button type="info">收藏</n-button>
@@ -52,7 +50,7 @@
             <n-card class="comments" :segmented="{content: true}">
                 <n-tabs type="line" animated>
                     <n-tab-pane name="评论" tab="评论">
-                        <Comment v-for="(comment, index) in fileDetail.comments" :key=index :comment=comment></Comment>
+                        <Comment v-for="(comment, index) in comments" :key=index :comment=comment></Comment>
                     </n-tab-pane>
                     <n-tab-pane name="相似文献" tab="相似文献">
                         <PaperItem v-for="(paperItem, index) in similarPapers" :key=index :paperItem=paperItem></PaperItem>
@@ -72,10 +70,10 @@
                 </n-grid>
                 <template #footer>
                     <n-grid x-gap="12" :cols="4" class="statValueFont">
-                        <n-gi>{{fileDetail.readNum}}</n-gi>
-                        <n-gi>{{fileDetail.collectNum}}</n-gi>
-                        <n-gi>{{fileDetail.quotedNum}}</n-gi>
-                        <n-gi >{{fileDetail.commentNum}}</n-gi>
+                        <n-gi>{{fileDetail.browse}}</n-gi>
+                        <n-gi>{{fileDetail.collect}}</n-gi>
+                        <n-gi>{{fileDetail.cited_by_count}}</n-gi>
+                        <n-gi >{{fileDetail.cited_by_count}}</n-gi>
                     </n-grid>
                 </template>
             </n-card>
@@ -101,54 +99,88 @@
 <script setup lang='ts'>
 import Comment from '@/components/detail/Comment.vue'
 import PaperItem from '@/components/detail/PaperItem.vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, Ref } from 'vue'
 import Clipboard from 'clipboard'
 import { post } from '@/api/axios'
 import { useMessage } from 'naive-ui'
 import { useRoute } from 'vue-router'
+import { Paper } from '@/models/model'
 
-const message = useMessage();
-const route = useRoute();
+const message = useMessage()
+const route = useRoute()
 
+const fileDetail:Ref<Paper> = ref({
+    id:"",
+    title:"",
+    publication_date:"",
+    authorships:[
+        {
+            author:{
+                id: "",
+                display_name: ""
+            },
+            institutions:[]
+        },
+    ],
+    abstract:"",
+    keywords:[],
+    cited_by_count:203,
+    oa_url: "",
+    doi: "",
+    type: "",
+    publisher: {
+        id: "",
+        display_name: ""
+    },
+    referenced_works: [],
+    related_works: [],
+    lan: "",
+    issn: "",
+    is_active: false,
+    browse: 0,
+    good: 0,
+    collect: 0
+})
+type paperItemType = {
+    title:string,
+    abstract:string,
+    authors:string[],
+    date:string,
+    quotedNum:number,
+}
+const similarPapers:paperItemType[] = []
 onMounted(async () => {
-    const paperId = route.params.id;
-    console.log(paperId)
+    const paperId = route.params.id
     const res = await post(
         message,"/paper/single",
         {
             "id":paperId
         }
     )
-    console.log(res);
+    console.log(res)
+    fileDetail.value = res
+    
+    // const similarIds:string[] = []
+    // fileDetail.value.related_works.forEach(e => {
+    //     similarIds.push(e)
+    // });
+    const similarIds = fileDetail.value.related_works
+    console.log(similarIds)
+    const similar = await post(
+        message,"/paper/getRel",
+        {
+            "id":similarIds
+        }
+    )
+    console.log(similar)
 })
-type detailType = {
-    title:string,
-    date:string,
-    authors:string[],
-    abstract:string,
-    keywords:string[],
-    collectNum:number,
-    quotedNum:number,
-    commentNum:number,
-    readNum:number,
-    comments:commentType[]
-}
+
 type commentType = {
     userName:string,
     date:string,
     content:string
 }
-const fileDetail:detailType = {
-    title:"计算机视觉中摄像机定标综述",
-    date:"2002-10-10",
-    authors:["tom","mary","jack"],
-    abstract:"回顾了摄影测量学和计算机视觉中的各种摄像机定标方法,对各种方法进行了分析,比较,并讨论了摄像机定标方法应用于计算机视觉中的特点.目的:探讨超声对肝门静脉癌栓的诊断价值,提高肝癌的诊断率.方法回顾性分析了48例肝内静脉内实质团块患者超声检查资料,重点观察肝癌的部位及门静脉内 部回声,血流特点,并与临床最后证实有肝癌存在的结果进行对比分析.结果48例门静脉癌栓患者,42例经CT,MRI确诊,6例经手术病理证实,诊断符合 率100%.结论二维超声联合CDFI检查肝内门静脉系统癌栓有较高的诊断价值.",
-    keywords:["计算机视觉","摄像机定标","摄影测量学","立体视觉","三维重建"],
-    collectNum:203,
-    quotedNum:54,
-    commentNum:14,
-    readNum:10000,
-    comments:[
+const comments:commentType[] = [
         {
             userName:"tom",
             date:"2002-01-01",
@@ -164,39 +196,32 @@ const fileDetail:detailType = {
             date:"2002-01-01",
             content:"回顾了摄影测量学和计算机视觉中的各种摄像机定标方法,对各种方法进行了分析,比较,并讨论了摄像机定标方法应用于计算机视觉中的特点.目的:探讨超声对肝门静脉癌栓的诊断价值,提高肝癌的诊断率.方法回顾性分析了48例肝内静脉内实质团块患者超声检查资料,重点观察肝癌的部位及门静脉内 部回声,血流特点,并与临床最后证实有肝癌存在的结果进行对比分析.结果48例门静脉癌栓患者,42例经CT,MRI确诊,6例经手术病理证实,诊断符合 率100%.结论二维超声联合CDFI检查肝内门静脉系统癌栓有较高的诊断价值."
         },
-    ]
-}
-
-type paperItemType = {
-    title:string,
-    abstract:string,
-    authors:string[],
-    date:string,
-    quotedNum:number,
-}
-const similarPapers:paperItemType[] = [
-    {
-        title:"计算机视觉中摄像机定标综述",
-        abstract:"回顾了摄影测量学和计算机视觉中的各种摄像机定标方法,对各种方法进行了分析,比较,并讨论了摄像机定标方法应用于计算机视觉中的特点.目的:探讨超声对肝门静脉癌栓的诊断价值,提高肝癌的诊断率.方法回顾性分析了48例肝内静脉内实质团块患者超声检查资料,重点观察肝癌的部位及门静脉内 部回声,血流特点,并与临床最后证实有肝癌存在的结果进行对比分析.结果48例门静脉癌栓患者,42例经CT,MRI确诊,6例经手术病理证实,诊断符合 率100%.结论二维超声联合CDFI检查肝内门静脉系统癌栓有较高的诊断价值.",
-        authors:["tom","mary","jack"],
-        date:"2002-10-10",
-        quotedNum:54,
-    },
-    {
-        title:"计算机视觉中摄像机定标综述",
-        abstract:"回顾了摄影测量病理证实,诊断符合 率100%.结论二维超声联合CDFI检查肝内门静脉系统癌栓有较高的诊断价值.",
-        authors:["tom","mary","jack"],
-        date:"2002-10-10",
-        quotedNum:54,
-    },
-    {
-        title:"计算机视觉中摄像机定标综述",
-        abstract:"回顾了摄影测量学和计算机视觉中的各种摄像机定标方法,对各种方法进行了分析,比较,并讨论了摄像机定标方法应用于计算机视觉中的特点.目的:探讨超声对肝门静脉癌栓的诊断价值,提高肝癌的诊断率.方法回顾性分析了48例肝内静脉内实质团块患者超声检查资料,重点观察肝癌的部位及门静脉内 部回声,血流特点,并与临床最后证实有肝癌存在的结果进行对比分析.结果48例门静脉癌栓患者,42例经CT,MRI确诊,6例经手术病理证实,诊断符合 率100%.结论二维超声联合CDFI检查肝内门静脉系统癌栓有较高的诊断价值.",
-        authors:["tom","mary","jack"],
-        date:"2002-10-10",
-        quotedNum:54,
-    },
 ]
+
+
+// const similarPapers:paperItemType[] = [
+//     {
+//         title:"计算机视觉中摄像机定标综述",
+//         abstract:"回顾了摄影测量学和计算机视觉中的各种摄像机定标方法,对各种方法进行了分析,比较,并讨论了摄像机定标方法应用于计算机视觉中的特点.目的:探讨超声对肝门静脉癌栓的诊断价值,提高肝癌的诊断率.方法回顾性分析了48例肝内静脉内实质团块患者超声检查资料,重点观察肝癌的部位及门静脉内 部回声,血流特点,并与临床最后证实有肝癌存在的结果进行对比分析.结果48例门静脉癌栓患者,42例经CT,MRI确诊,6例经手术病理证实,诊断符合 率100%.结论二维超声联合CDFI检查肝内门静脉系统癌栓有较高的诊断价值.",
+//         authors:["tom","mary","jack"],
+//         date:"2002-10-10",
+//         quotedNum:54,
+//     },
+//     {
+//         title:"计算机视觉中摄像机定标综述",
+//         abstract:"回顾了摄影测量病理证实,诊断符合 率100%.结论二维超声联合CDFI检查肝内门静脉系统癌栓有较高的诊断价值.",
+//         authors:["tom","mary","jack"],
+//         date:"2002-10-10",
+//         quotedNum:54,
+//     },
+//     {
+//         title:"计算机视觉中摄像机定标综述",
+//         abstract:"回顾了摄影测量学和计算机视觉中的各种摄像机定标方法,对各种方法进行了分析,比较,并讨论了摄像机定标方法应用于计算机视觉中的特点.目的:探讨超声对肝门静脉癌栓的诊断价值,提高肝癌的诊断率.方法回顾性分析了48例肝内静脉内实质团块患者超声检查资料,重点观察肝癌的部位及门静脉内 部回声,血流特点,并与临床最后证实有肝癌存在的结果进行对比分析.结果48例门静脉癌栓患者,42例经CT,MRI确诊,6例经手术病理证实,诊断符合 率100%.结论二维超声联合CDFI检查肝内门静脉系统癌栓有较高的诊断价值.",
+//         authors:["tom","mary","jack"],
+//         date:"2002-10-10",
+//         quotedNum:54,
+//     },
+// ]
 const quotePapers:paperItemType[] = [
     {
         title:"计算机视觉中摄像机定标综述",
@@ -256,12 +281,6 @@ function copy() {
 } */
 .constFont{
     color: gray;
-}
-.abstractContainer{
-    display: flex;
-}
-.abstractContent{
-    width: 95%;
 }
 .button{
     margin-left: 20px;

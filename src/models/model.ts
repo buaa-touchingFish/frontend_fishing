@@ -9,7 +9,6 @@ export type Paper = {
         institutions: never[];
     }[];
     keywords: string[];
-    cited_by_count: number;
     oa_url: string;
     doi: string;
     publication_date: string;
@@ -24,6 +23,11 @@ export type Paper = {
     issn: string;
     is_active: boolean;
     abstract: string;
+    //统计数据
+    cited_by_count: number;
+    browse: number;
+    good: number;
+    collect: number;
 }
 export type Author = {
     id: string;
