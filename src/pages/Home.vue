@@ -220,7 +220,9 @@ const changeShowCard = () => {
 .searchBar :deep(.n-input__input) {
     height: 50px;
     margin-left: 10px;
-    padding-top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .search {

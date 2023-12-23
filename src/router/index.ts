@@ -18,8 +18,16 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/pages/ClaimScholar.vue'),
       },
       {
+        path: '/userCenter',
+        component: () => import('@/pages/user/UserCenter.vue'),
+      },
+      {
         path: '/detail/:id',
         component: () => import('@/pages/Detail.vue'),
+      },
+      {
+        path: '/collect',
+        component: () => import('@/pages/user/Collect.vue'),
       }
     ]
   },
