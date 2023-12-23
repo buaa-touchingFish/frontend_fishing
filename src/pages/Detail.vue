@@ -28,9 +28,41 @@
             </n-grid>
             
             <template #footer>
-                <n-button type="info">收藏</n-button>
-                <n-button type="info" class="button" @click="changeQuoteMask">引用</n-button>
-                <n-button type="info" class="button" @click="changeShowCommentInput">评论</n-button>
+                <n-popover trigger="hover">
+                    <template #trigger>
+                        <n-icon size="40" color="#0000ff" class="button">
+                            <Star12Regular />
+                        </n-icon>
+                    </template>
+                    <span>收藏</span>
+                </n-popover>
+                
+                <n-popover trigger="hover">
+                    <template #trigger>
+                        <n-icon size="40" color="#0000ff" class="follow_buton"  @click="changeQuoteMask">
+                            <TextQuote16Filled />
+                        </n-icon>
+                    </template>
+                    <span>引用</span>
+                </n-popover>
+
+                <n-popover trigger="hover">
+                    <template #trigger>
+                        <n-icon size="40" color="#0000ff" class="follow_buton"  @click="changeShowCommentInput">
+                            <Comment12Regular />
+                        </n-icon>
+                    </template>
+                    <span>评论</span>
+                </n-popover>
+
+                <!-- <n-popover trigger="hover">
+                    <template #trigger>
+                        <n-icon size="40" color="#0000ff" class="follow_buton" >
+                            <Comment12Regular />
+                        </n-icon>
+                    </template>
+                    <span>链接</span>
+                </n-popover> -->
                 <div class="newComment" v-show="ifShowCommentInput">
                     <n-input
                         v-model:value="newComment"
@@ -84,6 +116,7 @@
             </n-card>
         </div>
     </div>
+
     <n-modal v-model:show="quoteMask">
         <n-card
             style="width: 600px"
@@ -110,42 +143,12 @@ import { post, get } from '@/api/axios'
 import { useMessage } from 'naive-ui'
 import { useRoute } from 'vue-router'
 import { Paper } from '@/models/model'
+import { Star12Regular, TextQuote16Filled, Comment12Regular } from '@vicons/fluent'
 
 const message = useMessage()
 const route = useRoute()
 
-const fileDetail:Ref<Paper> = ref({
-    id:"",
-    title:"",
-    publication_date:"",
-    authorships:[
-        {
-            author:{
-                id: "",
-                display_name: ""
-            },
-            institutions:[]
-        },
-    ],
-    abstract:"",
-    keywords:[],
-    cited_by_count:203,
-    oa_url: "",
-    doi: "",
-    type: "",
-    publisher: {
-        id: "",
-        display_name: ""
-    },
-    referenced_works: [],
-    related_works: [],
-    lan: "",
-    issn: "",
-    is_active: false,
-    browse: 0,
-    good: 0,
-    collect: 0
-})
+const fileDetail:Ref<Paper | any> = ref({})
 type paperItemType = {
     title:string,
     abstract:string,
@@ -202,8 +205,8 @@ onMounted(async () => {
             "paper_id":fileDetail.value.id
         }
     )
+    console.log(res)
     comments.value = res
-    console.log(comments.value)
 })
 
 const quoteMask = ref(false)
@@ -227,8 +230,8 @@ function copy() {
     })
 }
 
-function publishComment() {
-    const res = post(
+async function publishComment() {
+    await post(
         message,"/comment",
         {
             "content":newComment.value,
@@ -236,18 +239,15 @@ function publishComment() {
             "sender_id":localStorage.getItem("uid"),
         }
     )
+
+    const res = await get(
+        message,"/comment",
+        {
+            "paper_id":fileDetail.value.id
+        }
+    )
     console.log(res)
-    
-    async () => {
-        const newComments =  await get(
-            message,"/comment",
-            {
-                "paper_id":fileDetail.value.id
-            }
-        )
-        comments.value = newComments
-        console.log(comments.value)
-    }
+    comments.value = res
 }
 </script>
 
@@ -265,6 +265,10 @@ function publishComment() {
     color: gray;
 }
 .button{
+    cursor: pointer;
+}
+.follow_buton{
+    cursor: pointer;
     margin-left: 20px;
 }
 .commentsAndStatistics{
