@@ -2,7 +2,8 @@
     <div>
         <n-data-table :loading="loading" :columns="columns" :data="data" :pagination="pagination" />
         <n-modal v-model:show="showModal">
-            <n-card style="width: 600px; display: flex; justify-content: center; align-items: center;" title="详情" :bordered="false" size="huge" role="dialog" aria-modal="true">
+            <n-card style="width: 600px; display: flex; justify-content: center; align-items: center;" title="详情"
+                :bordered="false" size="huge" role="dialog" aria-modal="true">
                 <n-image width="100" :src="imgUrl" />
             </n-card>
         </n-modal>
@@ -27,7 +28,7 @@ onMounted(async () => {
     data.value = []
     res.map((item: any) => {
         const row: RowData = {
-            key: item.claimRequest.applicant_id,
+            key: item.claimRequest.id,
             name: item.author.display_name,
             username: item.user.username,
             email: item.user.email,
@@ -52,7 +53,7 @@ const imgUrl = ref('')
 const displayDetail = (row: RowData) => {
     imgUrl.value = "http://" + row.imgUrl
     console.log(row.imgUrl);
-    
+
     showModal.value = true
 }
 

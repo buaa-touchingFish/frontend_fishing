@@ -1,12 +1,13 @@
 <template>
-    <div class="resultCardContainer shadow" @click="$router.push('/detail/'+result.id);">
+    <div class="resultCardContainer shadow" @click="$router.push('/detail/' + result.id);">
         <h1 class="title">
-            <n-ellipsis style="max-width: 100%">{{ result.title }}</n-ellipsis>
+            <n-ellipsis style="max-width: 100%;color: var(--text-100);">{{ result.title }}</n-ellipsis>
         </h1>
         <div class="authors">
-            <div class="author" v-for="(authorship,index) in result.authorships" :key="index" v-show="index<5">
-                <n-ellipsis style="max-width: 100px">{{ authorship.author.display_name }}</n-ellipsis>
-                <div v-show="index != 4 && index != result.authorships.length-1">,&nbsp;&nbsp;</div>
+            <div class="author" v-for="(authorship, index) in result.authorships" :key="index" v-show="index < 5">
+                <n-ellipsis style="max-width: 100px; color: var(--text-100);">{{ authorship.author.display_name
+                }}</n-ellipsis>
+                <div v-show="index != 4 && index != result.authorships.length - 1">,&nbsp;&nbsp;</div>
             </div>
         </div>
         <div class="publish_time_and_cited_by_count">
@@ -18,7 +19,7 @@
             </div>
         </div>
         <div class="abstract">
-            {{ result.abstract.length>=150 ? result.abstract.substring(0,150)+"..." : result.abstract }}
+            {{ result.abstract.length >= 150 ? result.abstract.substring(0, 150) + "..." : result.abstract }}
         </div>
         <div class="cardBottom">
             <div class="option">
@@ -35,29 +36,31 @@ import { ref } from 'vue';
 import { Paper } from '@/models/model'
 
 const props = defineProps<{
-    result:Paper
+    result: Paper
 }>()
 
-const result:Paper = props.result
+const result: Paper = props.result
 
 
 
 </script>
 
 <style scoped>
-.shadow{
+.shadow {
     box-shadow: 0 0 5px 3px #eee;
 }
-.ellipsis{
-    white-space:nowrap;
+
+.ellipsis {
+    white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
 }
-.resultCardContainer{
+
+.resultCardContainer {
     width: 95%;
     margin-bottom: 15px;
     padding: 7px 20px 13px 25px;
-    background-color: white;
+    background-color: var(--bg-100);
     display: flex;
     flex-direction: column;
     border-radius: 10px;
@@ -65,17 +68,18 @@ const result:Paper = props.result
     cursor: pointer;
     transition: 0.2s all linear;
 
-    &:first-child{
+    &:first-child {
         margin-top: 15px;
     }
 
-    &:hover{
+    &:hover {
         box-shadow: 0 0 10px #ccc;
-        background-color: var(--primary-300);
+        background-color: var(--card-cover);
         transition: 0.2s all linear;
     }
 }
-.title{
+
+.title {
     width: 100%;
     height: 50px;
     margin: 0;
@@ -88,46 +92,55 @@ const result:Paper = props.result
     cursor: pointer;
     /* view-transition-name: searchResultCardTitle; */
 }
-.authors{
+
+.authors {
     width: 100%;
     margin-bottom: 5px;
     display: flex;
 }
-.author{
+
+.author {
     display: flex;
 }
-.publish_time_and_cited_by_count{
+
+.publish_time_and_cited_by_count {
     font-size: 13px;
-    color: #555;
+    color: var(--text-200);
     display: flex;
 }
-.cited_by_count{
+
+.cited_by_count {
     margin-left: 20%;
 }
-.abstract{
+
+.abstract {
     text-wrap: wrap;
-    color: #555;
+    color: var(--text-200);
     font-size: 13px;
     line-height: 26px;
 }
-.cardBottom{
+
+.cardBottom {
     width: 100%;
     height: 50px;
     display: flex;
 }
-.otherInfo{
+
+.otherInfo {
     width: 50%;
     font-size: 14px;
     display: flex;
     align-items: center;
 }
-.option{
+
+.option {
     width: 50%;
     margin-top: 5px;
     display: flex;
     align-items: center;
 }
-.optionButton{
+
+.optionButton {
     margin-right: 7px;
     height: 30px;
 }

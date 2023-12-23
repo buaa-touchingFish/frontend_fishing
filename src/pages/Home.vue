@@ -121,6 +121,7 @@ const changeShowCard = () => {
     align-items: center;
     box-shadow: 0 5px 10px #ccc, 0 -5px 10px #ccc;
     z-index: 999;
+    view-transition-name: mainHeader;
 }
 
 .menu {
