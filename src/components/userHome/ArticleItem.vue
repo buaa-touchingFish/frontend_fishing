@@ -11,7 +11,14 @@
           <n-tag v-for="tag in tags" closable type="info" size="small" @close="handleClose(tag)">{{ tag }}</n-tag>
           <n-popover trigger="hover" placement="bottom-start">
             <template #trigger>
-              <n-tag class="add-tag" type="info" size="small">+</n-tag>
+              <n-tag class="add-tag" type="info" size="small">
+                <template #icon>
+                  <n-icon>
+                    <Add />
+                  </n-icon>
+                </template>
+                添加
+              </n-tag>
             </template>
             <template #header>
               <n-space>
@@ -32,6 +39,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import { Add } from '@vicons/ionicons5'
 import { useCollectStore } from '@/store/collectStore'
 import { ref, computed, defineEmits } from "vue";
 import { NCheckbox, NTag, useMessage, useDialog, NPopover, NButton, NSpace } from "naive-ui";
@@ -137,7 +145,7 @@ const handleAdd = (tag_name: string) => {
 <style scoped>
 .item-container {
   width: 375px;
-  height: 100px;
+  height: auto;
   display: flex;
   cursor: pointer;
   /* border: 1px solid black; */
@@ -180,6 +188,7 @@ const handleAdd = (tag_name: string) => {
       .tag-container {
         display: flex;
         gap: 5px;
+        flex-wrap: wrap;
 
         .add-tag {
           cursor: pointer;

@@ -153,7 +153,7 @@ const handleAdd = () => {
 }
 
 const requestCreateNewLabel = async (label_name: string) => {
-  const res = await api.post('/collect/label', {
+  /* const res = await api.post('/collect/label', {
     params: {
       user_id: collectStore.user_id,
       paper_id: '',
@@ -161,7 +161,8 @@ const requestCreateNewLabel = async (label_name: string) => {
     }
   });
   console.log('requestCreateNewLabel', res.data);
-  return res.data.code === 0;
+  return res.data.code === 0; */
+  return true;
 }
 
 const createLabel = () => {
