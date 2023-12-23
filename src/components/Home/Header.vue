@@ -60,7 +60,7 @@
                 </div>
             </div>
             <div class="headerRight">
-                <div class="user">
+                <div class="user" @click="userInfoModal = true">
                     <n-icon size="23" color="blue" :component="Person32Filled" />
                 </div>
                 <div class="setting">
@@ -70,11 +70,13 @@
             </div>
         </div>
     </div>
+    <UserInfo :userInfoModal="userInfoModal" @close="closeUserInfo" />
 </template>
 
 <script setup lang='ts'>
 import {  watch, ref,Ref } from 'vue';
 import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
+import UserInfo from '@/components/Home/UserInfo.vue'
 import { Search12Filled, Person32Filled, Settings32Filled } from '@vicons/fluent';
 import emitter from '@/eventBus/eventBus';
 import router from '@/router'
@@ -173,15 +175,20 @@ emitter.on("titleChange", (data: any) => title.value = data)
 function handleChange(value: boolean) {
     emitter.emit("themeChange", value);
 }
-watch(() => route.query.wd, (newValue) => {
-    console.log(newValue);
-    if (newValue) {
-        console.log(newValue);
-
-        searchValue.value = newValue as string
+watch(() => route.query, (newValue) => {
+    if (newValue.wd) {
+        searchValue.value = newValue.wd as string
+    }
+    if(newValue.ad){
+        additionValue.value = newValue.ad as string
     }
 }, { immediate: true, deep: true })
 
+//个人信息
+const userInfoModal = ref(false);
+const closeUserInfo = (value:boolean) => {
+    userInfoModal.value = value
+}
 </script>
 
 <style scoped>
@@ -348,6 +355,7 @@ watch(() => route.query.wd, (newValue) => {
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
 
 .setting {
