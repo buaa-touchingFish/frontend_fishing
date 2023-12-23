@@ -22,9 +22,9 @@
         </div>
         <div class="cardBottom">
             <div class="option">
-                <n-button strong secondary round type="info" class="optionButton">收藏</n-button>
-                <n-button strong secondary round type="info" class="optionButton">引用</n-button>
-                <n-button strong secondary round type="info" class="optionButton">全文下载</n-button>
+                <n-button strong secondary round type="info" class="optionButton" @click.stop=""><n-icon :size="18" :component="Star20Regular" /><span>收藏</span></n-button>
+                <n-button strong secondary round type="info" class="optionButton" @click.stop=""><n-icon :size="18" :component="AlignLeft16Regular" /><span>引用</span></n-button>
+                <n-button strong secondary round type="info" class="optionButton" @click.stop=""><n-icon :size="18" :component="ArrowDownload16Regular" /><span>全文下载</span></n-button>
             </div>
         </div>
     </div>
@@ -33,6 +33,7 @@
 <script setup lang='ts'>
 import { ref } from 'vue';
 import { Paper } from '@/models/model'
+import { Star20Regular,AlignLeft16Regular,ArrowDownload16Regular } from '@vicons/fluent'
 
 const props = defineProps<{
     result:Paper
@@ -130,5 +131,13 @@ const result:Paper = props.result
 .optionButton{
     margin-right: 7px;
     height: 30px;
+    display: flex;
+    align-items: center;
+
+    & span{
+        height: 18px;
+        line-height: 18px;
+        margin-left: 3px;
+    }
 }
 </style>
