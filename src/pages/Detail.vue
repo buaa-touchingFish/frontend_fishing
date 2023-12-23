@@ -41,7 +41,7 @@
                             maxRows: 5
                         }"
                     />
-                    <n-button type="info" class="newCommentButton">发布</n-button>
+                    <n-button type="info" class="newCommentButton" @click="publishComment">发布</n-button>
                 </div>
             </template>
         </n-card>
@@ -51,12 +51,17 @@
                 <n-tabs type="line" animated>
                     <n-tab-pane name="评论" tab="评论">
                         <Comment v-for="(comment, index) in comments" :key=index :comment=comment></Comment>
+                        <n-empty description="还没有评论哦" v-show="comments.length == 0"></n-empty>
                     </n-tab-pane>
+
                     <n-tab-pane name="相似文献" tab="相似文献">
                         <PaperItem v-for="(paperItem, index) in similarPapers" :key=index :paperItem=paperItem></PaperItem>
+                        <n-empty description="无相似文献" v-show="similarPapers.length == 0"></n-empty>
                     </n-tab-pane>
+
                     <n-tab-pane name="引用文献" tab="引用文献">
                         <PaperItem v-for="(paperItem, index) in quotePapers" :key=index :paperItem=paperItem></PaperItem>
+                        <n-empty description="无引用文献" v-show="quotePapers.length == 0"></n-empty>
                     </n-tab-pane>
                 </n-tabs>
             </n-card>
@@ -73,7 +78,7 @@
                         <n-gi>{{fileDetail.browse}}</n-gi>
                         <n-gi>{{fileDetail.collect}}</n-gi>
                         <n-gi>{{fileDetail.cited_by_count}}</n-gi>
-                        <n-gi >{{fileDetail.cited_by_count}}</n-gi>
+                        <n-gi >{{comments.length}}</n-gi>
                     </n-grid>
                 </template>
             </n-card>
@@ -101,7 +106,7 @@ import Comment from '@/components/detail/Comment.vue'
 import PaperItem from '@/components/detail/PaperItem.vue'
 import { ref, onMounted, Ref } from 'vue'
 import Clipboard from 'clipboard'
-import { post } from '@/api/axios'
+import { post, get } from '@/api/axios'
 import { useMessage } from 'naive-ui'
 import { useRoute } from 'vue-router'
 import { Paper } from '@/models/model'
@@ -144,14 +149,27 @@ const fileDetail:Ref<Paper> = ref({
 type paperItemType = {
     title:string,
     abstract:string,
-    authors:string[],
-    date:string,
-    quotedNum:number,
+    authors:{
+        id:string,
+        display_name:string
+    }[],
+    publication_date:string,
+    cited_by_count:number,
+    id:string,
+    publisher:string
 }
-const similarPapers:paperItemType[] = []
+type commentType = {
+    sender_name:string,
+    send_time:string,
+    content:string
+}
+
+const similarPapers:Ref<paperItemType[]> = ref([])
+const quotePapers:Ref<paperItemType[]> = ref([])
+const comments:Ref<commentType[]> = ref([])
 onMounted(async () => {
     const paperId = route.params.id
-    const res = await post(
+    let res = await post(
         message,"/paper/single",
         {
             "id":paperId
@@ -160,92 +178,33 @@ onMounted(async () => {
     console.log(res)
     fileDetail.value = res
     
-    // const similarIds:string[] = []
-    // fileDetail.value.related_works.forEach(e => {
-    //     similarIds.push(e)
-    // });
-    const similarIds = fileDetail.value.related_works
-    console.log(similarIds)
-    const similar = await post(
+    res = await post(
         message,"/paper/getRel",
         {
-            "id":similarIds
+            "rel":fileDetail.value.related_works
         }
     )
-    console.log(similar)
+    similarPapers.value = res
+    console.log(similarPapers.value)
+
+    res = await post(
+        message,"/paper/getRef",
+        {
+            "ref":fileDetail.value.referenced_works
+        }
+    )
+    quotePapers.value = res
+    console.log(quotePapers.value)
+
+    res = await get(
+        message,"/comment",
+        {
+            "paper_id":fileDetail.value.id
+        }
+    )
+    comments.value = res
+    console.log(comments.value)
 })
-
-type commentType = {
-    userName:string,
-    date:string,
-    content:string
-}
-const comments:commentType[] = [
-        {
-            userName:"tom",
-            date:"2002-01-01",
-            content:"回顾了摄影测量学和计算机视觉中的各种摄像机定标方法,对各种方法进行了分析,比较,并讨论了摄像机定标方法应用于计算机视觉中的特点.目的:探讨超声对肝门静脉癌栓的诊断价值,提高肝癌的诊断率.方法回顾性分析了48例肝内静脉内实质团块患者超声检查资料,重点观察肝癌的部位及门静脉内 部回声,血流特点,并与临床最后证实有肝癌存在的结果进行对比分析.结果48例门静脉癌栓患者,42例经CT,MRI确诊,6例经手术病理证实,诊断符合 率100%.结论二维超声联合CDFI检查肝内门静脉系统癌栓有较高的诊断价值."
-        },
-        {
-            userName:"mary",
-            date:"2002-01-01",
-            content:"回顾了摄影测量学和计算机视觉中的各种摄像机定标方法,对各种方法进行了分析,比较,并讨论了摄像机定标方法应用于计算机视觉中的特点.目的:探讨超声对肝门静脉癌栓的诊断价值,提高肝癌的诊断率.方法回顾性分析了48例肝内静脉内实质团块患者超声检查资料,重点观察肝癌的部位及门静脉内 部回声,血流特点,并与临床最后证实有肝癌存在的结果进行对比分析.结果48例门静脉癌栓患者,42例经CT,MRI确诊,6例经手术病理证实,诊断符合 率100%.结论二维超声联合CDFI检查肝内门静脉系统癌栓有较高的诊断价值."
-        },
-        {
-            userName:"jack",
-            date:"2002-01-01",
-            content:"回顾了摄影测量学和计算机视觉中的各种摄像机定标方法,对各种方法进行了分析,比较,并讨论了摄像机定标方法应用于计算机视觉中的特点.目的:探讨超声对肝门静脉癌栓的诊断价值,提高肝癌的诊断率.方法回顾性分析了48例肝内静脉内实质团块患者超声检查资料,重点观察肝癌的部位及门静脉内 部回声,血流特点,并与临床最后证实有肝癌存在的结果进行对比分析.结果48例门静脉癌栓患者,42例经CT,MRI确诊,6例经手术病理证实,诊断符合 率100%.结论二维超声联合CDFI检查肝内门静脉系统癌栓有较高的诊断价值."
-        },
-]
-
-
-// const similarPapers:paperItemType[] = [
-//     {
-//         title:"计算机视觉中摄像机定标综述",
-//         abstract:"回顾了摄影测量学和计算机视觉中的各种摄像机定标方法,对各种方法进行了分析,比较,并讨论了摄像机定标方法应用于计算机视觉中的特点.目的:探讨超声对肝门静脉癌栓的诊断价值,提高肝癌的诊断率.方法回顾性分析了48例肝内静脉内实质团块患者超声检查资料,重点观察肝癌的部位及门静脉内 部回声,血流特点,并与临床最后证实有肝癌存在的结果进行对比分析.结果48例门静脉癌栓患者,42例经CT,MRI确诊,6例经手术病理证实,诊断符合 率100%.结论二维超声联合CDFI检查肝内门静脉系统癌栓有较高的诊断价值.",
-//         authors:["tom","mary","jack"],
-//         date:"2002-10-10",
-//         quotedNum:54,
-//     },
-//     {
-//         title:"计算机视觉中摄像机定标综述",
-//         abstract:"回顾了摄影测量病理证实,诊断符合 率100%.结论二维超声联合CDFI检查肝内门静脉系统癌栓有较高的诊断价值.",
-//         authors:["tom","mary","jack"],
-//         date:"2002-10-10",
-//         quotedNum:54,
-//     },
-//     {
-//         title:"计算机视觉中摄像机定标综述",
-//         abstract:"回顾了摄影测量学和计算机视觉中的各种摄像机定标方法,对各种方法进行了分析,比较,并讨论了摄像机定标方法应用于计算机视觉中的特点.目的:探讨超声对肝门静脉癌栓的诊断价值,提高肝癌的诊断率.方法回顾性分析了48例肝内静脉内实质团块患者超声检查资料,重点观察肝癌的部位及门静脉内 部回声,血流特点,并与临床最后证实有肝癌存在的结果进行对比分析.结果48例门静脉癌栓患者,42例经CT,MRI确诊,6例经手术病理证实,诊断符合 率100%.结论二维超声联合CDFI检查肝内门静脉系统癌栓有较高的诊断价值.",
-//         authors:["tom","mary","jack"],
-//         date:"2002-10-10",
-//         quotedNum:54,
-//     },
-// ]
-const quotePapers:paperItemType[] = [
-    {
-        title:"计算机视觉中摄像机定标综述",
-        abstract:"回顾了摄影测量学和计算机视觉中的各种摄像机定标方法,对各种方法进行了分析,比较,并讨论了摄像机定标方法应用于计算机视觉中的特点.目的:探讨超声对肝门静脉癌栓的诊断价值,提高肝癌的诊断率.方法回顾性分析了48例肝内静脉内实质团块患者超声检查资料,重点观察肝癌的部位及门静脉内 部回声,血流特点,并与临床最后证实有肝癌存在的结果进行对比分析.结果48例门静脉癌栓患者,42例经CT,MRI确诊,6例经手术病理证实,诊断符合 率100%.结论二维超声联合CDFI检查肝内门静脉系统癌栓有较高的诊断价值.",
-        authors:["tom","mary","jack"],
-        date:"2002-10-10",
-        quotedNum:54,
-    },
-    {
-        title:"计算机视觉中摄像机定标综述",
-        abstract:"回顾了摄影测量学和计算机视觉中的各种摄像机定标方法,对各种方法进行了分析,比较,并讨论了摄像机定标方法应用于计算机视觉中的特点.目的:探讨超声对肝门静脉癌栓的诊断价值,提高肝癌的诊断率.方法回顾性分析了48例肝内静脉内实质团块患者超声检查资料,重点观察肝癌的部位及门静脉内 部回声,血流特点,并与临床最后证实有肝癌存在的结果进行对比分析.结果48例门静脉癌栓患者,42例经CT,MRI确诊,6例经手术病理证实,诊断符合 率100%.结论二维超声联合CDFI检查肝内门静脉系统癌栓有较高的诊断价值.",
-        authors:["tom","mary","jack"],
-        date:"2002-10-10",
-        quotedNum:54,
-    },
-    {
-        title:"计算机视觉中摄像机定标综述",
-        abstract:"回顾了摄影测量学和计算机视觉中的各种摄像机定标方法,对各种方法进行了分析,比较,并讨论了摄像机定标方法应用于计算机视觉中的特点.目的:探讨超声对肝门静脉癌栓的诊断价值,提高肝癌的诊断率.方法回顾性分析了48例肝内静脉内实质团块患者超声检查资料,重点观察肝癌的部位及门静脉内 部回声,血流特点,并与临床最后证实有肝癌存在的结果进行对比分析.结果48例门静脉癌栓患者,42例经CT,MRI确诊,6例经手术病理证实,诊断符合 率100%.结论二维超声联合CDFI检查肝内门静脉系统癌栓有较高的诊断价值.",
-        authors:["tom","mary","jack"],
-        date:"2002-10-10",
-        quotedNum:54,
-    },
-]
-
 
 const quoteMask = ref(false)
 function changeQuoteMask(){
@@ -266,6 +225,29 @@ function copy() {
         clipboard.destroy()
         alert("复制成功！");
     })
+}
+
+function publishComment() {
+    const res = post(
+        message,"/comment",
+        {
+            "content":newComment.value,
+            "paper_id":fileDetail.value.id,
+            "sender_id":localStorage.getItem("uid"),
+        }
+    )
+    console.log(res)
+    
+    async () => {
+        const newComments =  await get(
+            message,"/comment",
+            {
+                "paper_id":fileDetail.value.id
+            }
+        )
+        comments.value = newComments
+        console.log(comments.value)
+    }
 }
 </script>
 

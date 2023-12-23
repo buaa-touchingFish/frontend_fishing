@@ -1,22 +1,23 @@
 <template>
     <div>
-        <span class="title">
-            {{ paperItem.title }}
+        <span class="title" @click="$router.push('/detail/' + paperItem.id)">
+            {{ paperItem.title.length>=50 ? paperItem.title.substring(0,50)+"..." : paperItem.title }}
         </span>
     </div>
     <div>
-        {{ paperItem.abstract.length>=70 ? paperItem.abstract.substring(0,70)+"..." : paperItem.abstract }}
+        {{ paperItem.abstract.length>=150 ? paperItem.abstract.substring(0,150)+"..." : paperItem.abstract }}
     </div>
     <div class="author">
-        <span v-for="(author, index) in paperItem.authors" :key=index>
-            {{ author }}
-            <span></span>
-        </span>
+        <n-space>
+            <span v-for="(author, index) in paperItem.authors" :key=index>
+                {{ author.display_name }};
+            </span>
+        </n-space>
     </div>
     <div class="foot">
         <n-space>
-            <span>引用量：{{ paperItem.quotedNum }}</span>
-            <span>发布时间：{{ paperItem.date }}</span>
+            <span>引用量：{{ paperItem.cited_by_count }}</span>
+            <span>发布时间：{{ paperItem.publication_date }}</span>
         </n-space>
     </div>
     <n-divider/>
@@ -28,9 +29,14 @@ const props = defineProps(['paperItem'])
 type paperItemType = {
     title:string,
     abstract:string,
-    authors:string[],
-    date:string,
-    quotedNum:number,
+    authors:{
+        id:string,
+        display_name:string
+    }[],
+    publication_date:string,
+    cited_by_count:number,
+    id:string,
+    publisher:string
 }
 const paperItem:paperItemType = props.paperItem
 </script>

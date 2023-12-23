@@ -7,11 +7,11 @@
         />
         <div class="nameAndDate">
             <n-space>
-                {{ comment.userName }}
+                {{ comment.sender_name }}
                 <span class="constFont">
                     发布于
                 </span> 
-                {{comment.date}}
+                {{comment.send_time}}
             </n-space>
         </div>
     </div>
@@ -24,8 +24,8 @@
 <script setup lang='ts'>
 const props = defineProps(['comment'])
 type commentType = {
-    userName:string,
-    date:string,
+    sender_name:string,
+    send_time:string,
     content:string
 }
 const comment:commentType = props.comment
