@@ -18,13 +18,13 @@
                 </template>
                 <n-number-animation ref="numberAnimationInstRef" :from="0" :to="11451400" :duration="1000" />
             </n-statistic>
-            <n-statistic class="item" label="入驻学者" tabular-nums>
+            <n-statistic class="item" label="记录学者" tabular-nums>
                 <template #prefix>
                     <n-icon>
                         <PeopleQueue24Filled />
                     </n-icon>
                 </template>
-                <n-number-animation ref="numberAnimationInstRef" :from="0" :to="114514" :duration="1000" />
+                <n-number-animation ref="numberAnimationInstRef" :from="0" :to="scholarCount" :duration="1000" />
             </n-statistic>
         </div>
     </div>
@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { post } from '@/api/axios';
+import { post, get } from '@/api/axios';
 import { GlobeSearch24Filled, DocumentBulletListMultiple24Filled, PeopleQueue24Filled } from '@vicons/fluent'
 import { NumberAnimationInst, useMessage } from 'naive-ui'
 import { ref, onMounted } from "vue";
@@ -47,7 +47,17 @@ const numberAnimationInstRef = ref<NumberAnimationInst | null>(null)
 onMounted(async () => {
     chartData.value = await setChartData();
     chartOptions.value = setChartOptions();
+    let res = await get(message, '/author/count', {
+    })
+    if (res === false) {
+        return;
+    }
+    scholarCount.value = res
 });
+
+const scholarCount = ref(123)
+
+
 
 const chartData = ref();
 const chartOptions = ref();

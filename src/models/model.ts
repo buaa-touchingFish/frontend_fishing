@@ -50,3 +50,8 @@ export type CoAuthor = {
     display_name: string;
     last_known_institution_display_name: string;
 }
+export type recommendPaper = {
+    id: string,
+    title: string,
+    browse: number
+}

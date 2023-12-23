@@ -6,17 +6,24 @@
         <div class="searchResults">
             <div class="resultTop">
                 <div class="resultNumber">为您找到约{{ resultNumber }}条相关结果</div>
-                <div class="sort">排序</div>
+                <div class="sort">
+                    <n-popselect v-model:value="sortValue" :options="sortOptions" trigger="click">
+                        <div class="sortIcon">
+                            <n-icon size="16" :component="ArrowSort16Filled"></n-icon>&nbsp;
+                            <span>{{ sortValue }}</span>
+                        </div>
+                    </n-popselect>
+                </div>
             </div>
             <div class="resultCardsContainer">
                 <ResultCard v-for="(result) in resultList" :key="result.id" :result="result"></ResultCard>
             </div>
-            <div class="paginator shadow" v-show="resultList.length>10">
+            <div class="paginator shadow" v-show="totalresultList.length>10">
                 <n-pagination v-model:page="page" :page-count="pageCount" :page-slot="7" />
             </div>
         </div>
         <div class="recommend">
-            <ReconmmendCard :recommend="recommendList"></ReconmmendCard>
+            <ReconmmendCard></ReconmmendCard>
         </div>
         <n-back-top :right="100" />
     </div>
@@ -49,6 +56,7 @@ import { Paper } from '@/models/model'
 import { useRoute } from 'vue-router'
 import { post } from '@/api/axios';
 import { useMessage } from 'naive-ui';
+import { ArrowSort16Filled } from '@vicons/fluent'
 
 const message = useMessage()
 const route = useRoute()
@@ -58,17 +66,39 @@ const showSkeleton = ref(false)
 
 // 结果数量
 const resultNumber = ref(0)
+
+//换页
 const page = ref(1)
 const pageCount = ref(10)
 
 watch(page,(newValue) => {
-    
     resultList.value = totalresultList.value.slice((newValue-1)*10,(newValue-1)*10+10)
-    console.log(resultList);
 })
 
 // 排序
-
+const sortValue = ref('相关性')
+const sortOptions = [
+    {label:'相关性',value:'相关性'},
+    {label:'被引量',value:'被引量'},
+    {label:'时间',value:'时间'},
+]
+const copyedTotalresultList:Ref<Paper[]> = ref([]);
+watch(sortValue,() => {
+    if(sortValue.value == '相关性'){
+        totalresultList.value = JSON.parse(JSON.stringify(copyedTotalresultList.value))
+        resultList.value = totalresultList.value.slice((page.value-1)*10,(page.value-1)*10+10)
+    }else if(sortValue.value == '被引量'){
+        totalresultList.value.sort((a,b) => {
+            return b.cited_by_count- a.cited_by_count;
+        })
+        resultList.value = totalresultList.value.slice((page.value-1)*10,(page.value-1)*10+10)
+    }else{
+        totalresultList.value.sort((a,b) => {
+            return new Date(a.publication_date) > new Date(b.publication_date) ? 1 : -1;
+        })
+        resultList.value = totalresultList.value.slice((page.value-1)*10,(page.value-1)*10+10)
+    }
+})
 
 // 搜索
 const resultList:Ref<Paper[]> = ref([]);
@@ -88,10 +118,10 @@ onMounted(async () => {
         }
     )
     totalresultList.value = res
-    resultList.value = totalresultList.value.slice(0,10)
+    resultList.value = totalresultList.value.slice(0,10);
+    copyedTotalresultList.value = JSON.parse(JSON.stringify(res));
     showSkeleton.value = false;
-    console.log(totalresultList.value);
-    
+    console.log(copyedTotalresultList.value);
 })
 
 //二级搜索
@@ -157,54 +187,6 @@ const secondarySearchList:secondarySearch[] = [
             {name:"化学工程与技术",count:200}]
     },
 ]
-
-//推荐
-type recommend = {
-    title:string,
-    QueryVolume:number
-}
-const recommendList:recommend[] = [
-    {
-        title:"题目1你猜猜是什么你猜猜呢踩踩踩踩踩踩踩踩",
-        QueryVolume:200
-    },
-    {
-        title:"题目2你猜猜是什么你猜猜呢",
-        QueryVolume:300
-    },
-    {
-        title:"题目3你猜猜是什么你猜猜呢",
-        QueryVolume:400
-    },
-    {
-        title:"题目4你猜猜是什么你猜猜呢",
-        QueryVolume:500
-    },
-    {
-        title:"题目5你猜猜是什么你猜猜呢",
-        QueryVolume:600
-    },
-    {
-        title:"题目1你猜猜是什么你猜猜呢",
-        QueryVolume:200
-    },
-    {
-        title:"题目2你猜猜是什么你猜猜呢",
-        QueryVolume:300
-    },
-    {
-        title:"题目3你猜猜是什么你猜猜呢",
-        QueryVolume:400
-    },
-    {
-        title:"题目4你猜猜是什么你猜猜呢",
-        QueryVolume:500
-    },
-    {
-        title:"题目5你猜猜是什么你猜猜呢",
-        QueryVolume:600
-    },
-]
 </script>
 
 <style scoped>
@@ -238,6 +220,15 @@ const recommendList:recommend[] = [
 }
 .sort{
     margin-right: 5px;
+    cursor: pointer;
+
+    &:hover{
+        color:var(--primary-100)
+    }
+}
+.sortIcon{
+    display: flex;
+    align-items: center;
 }
 .recommend{
     width: 23%;

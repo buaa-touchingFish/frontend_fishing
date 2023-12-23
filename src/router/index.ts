@@ -1,48 +1,48 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
+import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/',
-    component: () => import('@/pages/Home.vue'),
+    path: "/",
+    component: () => import("@/pages/Home.vue"),
     children: [
       {
-        path: '/search',
-        component: () => import('@/pages/SearchResult.vue'),
+        path: "/search",
+        component: () => import("@/pages/SearchResult.vue"),
       },
       {
-        path: '/scholarHome',
-        component: () => import('@/pages/ScholarHome.vue'),
+        path: "/scholarHome",
+        component: () => import("@/pages/ScholarHome.vue"),
       },
       {
-        path: '/claimScholar',
-        component: () => import('@/pages/ClaimScholar.vue'),
+        path: "/claimScholar",
+        component: () => import("@/pages/ClaimScholar.vue"),
       },
       {
-        path: '/userCenter',
-        component: () => import('@/pages/user/UserCenter.vue'),
+        path: "/userCenter",
+        component: () => import("@/pages/user/UserCenter.vue"),
       },
       {
-        path: '/detail/:id',
-        component: () => import('@/pages/Detail.vue'),
+        path: "/detail/:id",
+        component: () => import("@/pages/Detail.vue"),
       },
       {
-        path: '/collect',
-        component: () => import('@/pages/user/Collect.vue'),
-      }
-    ]
+        path: "/collect",
+        component: () => import("@/pages/user/Collect.vue"),
+      },
+    ],
   },
   {
-    path: '/admin',
-    component: () => import('@/pages/Admin.vue'),
+    path: "/admin",
+    component: () => import("@/pages/Admin.vue"),
   },
   {
-    path: '/login',
-    component: () => import('@/pages/Login.vue'),
+    path: "/login",
+    component: () => import("@/pages/Login.vue"),
   },
   {
-    path: '/test',
-    component: () => import('@/pages/test.vue')
-  }
+    path: "/test",
+    component: () => import("@/pages/test.vue"),
+  },
 ];
 
 const router = createRouter({
@@ -54,8 +54,8 @@ router.push = (to) => {
   let doc = document as any;
   return doc.startViewTransition(async () => {
     await push(to);
-  }).updateCallbackDone
-}
+  }).updateCallbackDone;
+};
 // router.beforeEach(() => {
 //   let pro = new Promise((re) => {
 //     let r = router as any;
@@ -72,8 +72,6 @@ router.afterEach(() => {
     r["re"]();
     r["re"] = undefined;
   }
-})
-
-
+});
 
 export default router;
