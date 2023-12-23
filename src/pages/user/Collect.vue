@@ -2,10 +2,10 @@
   <div class="collect-container">
     <n-tabs v-model:value="value" type="card" addable closable tab-style="min-width: 80px;" @close="handleClose"
       @add="handleAdd">
-      <n-tab-pane v-for="(tag, tidx) in collectStore.tags" :key="tag.name" :closable="notAll(tag.name)" :name="tag.name"
+      <n-tab-pane v-for="tag in collectStore.tags" :key="tag.name" :closable="notAll(tag.name)" :name="tag.name"
         :tab="tag2String(tag)">
-        <div v-for="(paper, pidx) in tag.papers" :key="paper.paper_id">
-          <ArticleItem :self_tag_idx="tidx" :self_paper_idx="pidx" :paper_id="paper.paper_id" :title="paper.title"
+        <div v-for="paper in tag.papers" :key="paper.paper_id">
+          <ArticleItem :self_tag_name="tag.name" :paper_id="paper.paper_id" :title="paper.title"
             :author="paper.authors[0]" :journal="paper.journal" :citations="paper.citations" :tags="paper.tags" />
         </div>
       </n-tab-pane>
@@ -44,7 +44,7 @@ onMounted(() => {
 
 const tag2String = computed(() => {
   return (tag: Tag) => {
-    return `${tag.name} (${tag.number})`
+    return `${tag.name} (${tag.papers.length})`
   }
 });
 
@@ -95,6 +95,7 @@ const requestCreateNewLabel = async (label_name: string) => {
       label_name
     }
   });
+  console.log('requestCreateNewLabel', res.data);
   return res.data.code === 0;
 }
 
@@ -132,17 +133,24 @@ const createLabel = () => {
 
 // TODO
 const handleClose = (name: string) => {
-  console.log(name);
+  // console.log(name);
   dialog.warning({
     title: '删除标签',
     content: `将删除标签: ${name}`,
     positiveText: '确定',
     negativeText: '取消',
     onPositiveClick: () => {
-      message.success('确定')
+      collectStore.requestDeleteTag(name).then((res) => {
+        if (res === true) {
+          collectStore.delete_whole_tag(name);
+          message.success('删除标签成功');
+        } else {
+          message.success('删除标签失败');
+        }
+      })
     },
     onNegativeClick: () => {
-      message.error('取消')
+      message.info('取消')
     }
   })
 }
@@ -151,7 +159,8 @@ const handleClose = (name: string) => {
 <style scoped>
 .collect-container {
   margin-top: 15px;
-  width: 40vw;
+  margin-left: 80px;
+  width: 100%;
 }
 
 .label_input::before {
