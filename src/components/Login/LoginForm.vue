@@ -1,7 +1,7 @@
 <template>
     <div class="login-form-container">
-        <n-form ref="loginFormRef" :model="loginModel" :rules="loginRules" :style="loginFormStyle"
-        label-width="100px" label-placement="left">
+        <n-form ref="loginFormRef" :model="loginModel" :rules="loginRules" :style="loginFormStyle" label-width="100px"
+            label-placement="left">
             <n-form-item path="name" label="用户名">
                 <n-input v-model:value="loginModel.name" @keydown.enter.prevent placeholder="请输入用户名" />
             </n-form-item>
@@ -10,19 +10,22 @@
             </n-form-item>
 
             <div class="login-form-bottom">
-                <n-button round type="primary" @click="login" style="width: 80%;">
+                <n-button round type="primary" @click="login" style="width: 85%;">
                     登录
                 </n-button>
-
-                <div class="links">
-                    <span @click="switchRegister">注册</span>
-                    <span @click="switchForget">找回密码</span>
-                </div>
+            </div>
+            <div class="form-bottom">
+                <n-button type="primary" @click="switchRegister"  style="margin-left: 10%; width: 40%;">
+                    注册
+                </n-button>
+                <n-button @click="switchForget"  style="width: 40%;">
+                    找回密码
+                </n-button>
             </div>
         </n-form>
 
-        <n-form ref="registerFormRef" :model="registerModel" :rules="registerRules" :style="registerFormStyle" 
-        label-width="100px" label-placement="left">
+        <n-form ref="registerFormRef" :model="registerModel" :rules="registerRules" :style="registerFormStyle"
+            label-width="100px" label-placement="left">
             <n-form-item path="username" label="用户名">
                 <n-input v-model:value="registerModel.username" @keydown.enter.prevent placeholder="请输入用户名" />
             </n-form-item>
@@ -54,12 +57,11 @@
                 <n-button @click="switchLogin" style="width: 40%;">
                     去登录
                 </n-button>
-
             </div>
         </n-form>
 
-        <n-form ref="frogetFormRef" :model="forgetModel" :rules="forgetRules" :style="forgetFormStyle" 
-        label-width="100px" label-placement="left">
+        <n-form ref="frogetFormRef" :model="forgetModel" :rules="forgetRules" :style="forgetFormStyle" label-width="100px"
+            label-placement="left">
             <n-form-item path="email" label="邮箱">
                 <n-input v-model:value="forgetModel.email" @keydown.enter.prevent placeholder="请输入邮箱" />
             </n-form-item>
@@ -116,6 +118,7 @@
     align-items: center;
     flex-direction: column;
     margin-top: 5%;
+    width: 110%;
 }
 
 .form-bottom {
@@ -123,6 +126,7 @@
     flex-direction: row;
     margin-top: 5%;
     justify-content: space-between;
+    width: 100%;
 
     .leftButton {
         margin-left: 10%;
@@ -130,7 +134,6 @@
     }
 
     .rightButton {
-
         width: 40%;
     }
 }
@@ -526,7 +529,6 @@ const submitForgetCaptcha = async () => {
         if (res === false) {
             return
         }
-        message.success('发送成功')
     } else {
         message.error('请先填写邮箱')
     }
@@ -537,10 +539,10 @@ const forget = (e: MouseEvent) => {
     e.preventDefault()
     frogetFormRef.value?.validate(async (errors) => {
         if (!errors) {
-            let res = await post(message, "/user/pwdFind", {
+            let res = await post(message, "/user/changepwd", {
                 "email": forgetModel.value.email,
                 "captcha": forgetModel.value.captcha,
-                "newPassword": forgetModel.value.password,
+                "new_pwd": forgetModel.value.password,
             })
             if (res === false) {
                 return

@@ -23,7 +23,6 @@ onMounted(async () => {
     if (res === false) {
         return
     }
-    console.log(res);
     loading.value = false
     data.value = []
     res.map((item: any) => {
