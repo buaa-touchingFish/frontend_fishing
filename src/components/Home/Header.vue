@@ -11,36 +11,28 @@
                 <div class="searchInput">
                     <!-- <n-auto-complete v-model:value="searchValue" :options="searchOptions">
                     <template #default="{ handleInput, handleBlur, handleFocus, value: slotValue }"> -->
-                <n-popover :show="showComplete" placement="bottom" trigger="manual" :show-arrow="false" raw>
-                    <template #trigger>
-                        <n-input
-                            ref="searchInput"
-                            class="searchInput"
-                            type="text"
-                            placeholder=""
-                            size="large"
-                            v-model:value="searchValue"
-                            @focus="searchComplete"
-                            @blur="showComplete = false"
-                            @keyup.enter.naive="search(searchValue)"
-                            @keydown.up.naive.prevent="key_up"
-                            @keydown.down.naive="key_down"
-                            @input="searchComplete"
-                        >
-                            <template #prefix>
-                                <div class="advancedSearch"></div>
-                            </template>
-                            <template #suffix>
-                                <div class="selectPlaceHolder"></div>
-                                <n-icon style="cursor: pointer;" size="20" color="blue" :component="Search12Filled" @click="search(searchValue)"/>
-                            </template>
-                        </n-input>
-                    <!-- </template>
+                    <n-popover :show="showComplete" placement="bottom" trigger="manual" :show-arrow="false" raw>
+                        <template #trigger>
+                            <n-input ref="searchInput" class="searchInput" type="text" placeholder="" size="large"
+                                v-model:value="searchValue" @focus="searchComplete" @blur="showComplete = false"
+                                @keyup.enter.naive="search(searchValue)" @keydown.up.naive.prevent="key_up"
+                                @keydown.down.naive="key_down" @input="searchComplete">
+                                <template #prefix>
+                                    <div class="advancedSearch"></div>
+                                </template>
+                                <template #suffix>
+                                    <div class="selectPlaceHolder"></div>
+                                    <n-icon style="cursor: pointer;" size="20" color="blue" :component="Search12Filled"
+                                        @click="search(searchValue)" />
+                                </template>
+                            </n-input>
+                            <!-- </template>
                 </n-auto-complete> -->
                         </template>
                         <div class="completeSearch">
-                            <div v-for="(completeSearchOption, index) in completeSearchOptions" :key="index" @click="search(completeSearchOption.label)"
-                                class="completeSearchOption" :class="{completeSearchOptionIsSelect:completeSearchOption.isSelect}">
+                            <div v-for="(completeSearchOption, index) in completeSearchOptions" :key="index"
+                                @click="search(completeSearchOption.label)" class="completeSearchOption"
+                                :class="{ completeSearchOptionIsSelect: completeSearchOption.isSelect }">
                                 {{ completeSearchOption.label }}
                             </div>
                         </div>
@@ -73,7 +65,7 @@
 </template>
 
 <script setup lang='ts'>
-import {  watch, ref,Ref } from 'vue';
+import { watch, ref, Ref } from 'vue';
 import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
 import { Search12Filled, Person32Filled, Settings32Filled } from '@vicons/fluent';
 import emitter from '@/eventBus/eventBus';
@@ -92,56 +84,56 @@ const showComplete = ref(false)
 const completeSearchOptionsSuffix = ref(['@gmail.com', '@163.com', '@qq.com'])
 const currentCompleteSearchOptionIndex = ref(-1)
 const copySearchValue = ref("")
-let completeSearchOptions:Ref<{label:string,isSelect:boolean}[]>;
-const searchInput:Ref<any> = ref(null)
-let time:any;
+let completeSearchOptions: Ref<{ label: string, isSelect: boolean }[]>;
+const searchInput: Ref<any> = ref(null)
+let time: any;
 const searchComplete = async () => {
     copySearchValue.value = searchValue.value;
-    if(!searchValue.value){
+    if (!searchValue.value) {
         showComplete.value = false;
         return
     }
-    if(time){
+    if (time) {
         clearTimeout(time);
     }
     time = setTimeout(() => {
         // await post()
-    },200)
+    }, 200)
     currentCompleteSearchOptionIndex.value = -1;
     completeSearchOptions = ref(completeSearchOptionsSuffix.value.map((suffix) => {
         const prefix = searchValue.value
         return {
             label: prefix + suffix,
             isSelect: false
-          }
+        }
     }))
 
     showComplete.value = true;
 }
 const key_up = () => {
-    if(currentCompleteSearchOptionIndex.value != -1)
+    if (currentCompleteSearchOptionIndex.value != -1)
         completeSearchOptions.value[currentCompleteSearchOptionIndex.value].isSelect = false
     currentCompleteSearchOptionIndex.value--;
-    if(currentCompleteSearchOptionIndex.value == -1){
+    if (currentCompleteSearchOptionIndex.value == -1) {
         searchValue.value = copySearchValue.value;
-    }else if(currentCompleteSearchOptionIndex.value == -2){
-        currentCompleteSearchOptionIndex.value = completeSearchOptions.value.length-1;
+    } else if (currentCompleteSearchOptionIndex.value == -2) {
+        currentCompleteSearchOptionIndex.value = completeSearchOptions.value.length - 1;
         completeSearchOptions.value[currentCompleteSearchOptionIndex.value].isSelect = true;
         searchValue.value = completeSearchOptions.value[currentCompleteSearchOptionIndex.value].label;
-    }else{
+    } else {
         completeSearchOptions.value[currentCompleteSearchOptionIndex.value].isSelect = true;
         searchValue.value = completeSearchOptions.value[currentCompleteSearchOptionIndex.value].label;
     }
     searchInput.value.setSelectionRange(searchValue.value.length, searchValue.value.length);
 }
 const key_down = () => {
-    if(currentCompleteSearchOptionIndex.value != -1)
+    if (currentCompleteSearchOptionIndex.value != -1)
         completeSearchOptions.value[currentCompleteSearchOptionIndex.value].isSelect = false;
     currentCompleteSearchOptionIndex.value++;
-    if(currentCompleteSearchOptionIndex.value == completeSearchOptions.value.length){
+    if (currentCompleteSearchOptionIndex.value == completeSearchOptions.value.length) {
         currentCompleteSearchOptionIndex.value = -1;
         searchValue.value = copySearchValue.value;
-    }else{
+    } else {
         completeSearchOptions.value[currentCompleteSearchOptionIndex.value].isSelect = true;
         searchValue.value = completeSearchOptions.value[currentCompleteSearchOptionIndex.value].label;
     }
@@ -157,7 +149,7 @@ const options = [
 ]
 const currentSearchResultPageNumber = ref(0)
 emitter.on("currentSearchResultPageNumber", (data: any) => currentSearchResultPageNumber.value = data)
-const search = async (value:string) => {
+const search = async (value: string) => {
     router.push({
         path: '/search',
         query: {
@@ -237,6 +229,7 @@ watch(() => route.query.wd, (newValue) => {
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    color: var(--text-100);
 }
 
 .searchInput {
@@ -268,9 +261,11 @@ watch(() => route.query.wd, (newValue) => {
         transition: 200ms all linear;
     }
 }
-.completeSearchOptionIsSelect{
+
+.completeSearchOptionIsSelect {
     background-color: #ccc;
 }
+
 .advancedSearch {
     width: 80px;
     height: 100%;
