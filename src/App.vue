@@ -14,6 +14,10 @@ import './animationStyle.css'
 import { useRoute } from 'vue-router';
 import { ref, Ref } from 'vue'
 import emitter from '@/eventBus/eventBus';
+import { useThemeStore } from '@/store/themeStore';
+import { storeToRefs } from 'pinia';
+const themeStore = useThemeStore();
+const { isDark } = storeToRefs(themeStore);
 
 const route = useRoute();
 const colorStyle = document.documentElement.style;
@@ -27,7 +31,8 @@ const whiteTheme: GlobalThemeOverrides = {
     primaryColorHover: "#757de8",
     primaryColorPressed: "#dedeff",
     textColor1: "#333333",
-    textColor2: "#333333"
+    textColor2: "#333333",
+    textColor3: "#333333"
   },
   // ...
 };
@@ -39,7 +44,8 @@ const blackTheme: GlobalThemeOverrides =
     primaryColorHover: '#69b4ff',
     primaryColorPressed: '#e0ffff',
     textColor1: 'white',
-    textColor2: 'white'
+    textColor2: 'white',
+    textColor3: 'white'
   },
   // ...
 };
@@ -49,17 +55,6 @@ emitter.on("themeChange", (data: any) => {
   const doc: any = document;
   doc.startViewTransition(() => {
     if (data) {
-      /* 
-  --primary-100: #0085ff;
-          --primary-200: #69b4ff;
-          --primary-300: #e0ffff;
-          --accent-100: #006fff;
-          --accent-200: #e1ffff;
-          --text-100: #FFFFFF;
-          --text-200: #9e9e9e;
-          --bg-100: #1E1E1E;
-          --bg-200: #2d2d2d;
-          --bg-300: #454545; */
       themeOverrides.value = blackTheme;
       theme.value = darkTheme;
       colorStyle.setProperty('--primary-100', '#0085ff');
@@ -69,10 +64,15 @@ emitter.on("themeChange", (data: any) => {
       colorStyle.setProperty('--accent-200', '#e1ffff');
       colorStyle.setProperty('--text-100', '#FFFFFF');
       colorStyle.setProperty('--text-200', '#9e9e9e');
-      colorStyle.setProperty('--bg-100', '#1E1E1E');
+      colorStyle.setProperty('--bg-100', '#0c1117');
       colorStyle.setProperty('--bg-200', '#2d2d2d');
       colorStyle.setProperty('--bg-300', '#454545');
       colorStyle.setProperty('--bg-rendering', '#454545');
+      colorStyle.setProperty('background-color', '#0c1117');
+      // colorStyle.setProperty('--bg-100', '#454545');
+      // colorStyle.setProperty('--bg-200', '#2d2d2d');
+      // colorStyle.setProperty('--bg-300', '#1E1E1E');
+      // colorStyle.setProperty('--bg-rendering', '#1E1E1E');
     }
     else {
       themeOverrides.value = whiteTheme;
@@ -88,10 +88,16 @@ emitter.on("themeChange", (data: any) => {
       colorStyle.setProperty('--bg-200', '#f5f5f5');
       colorStyle.setProperty('--bg-300', '#cccccc');
       colorStyle.setProperty('--bg-rendering', '#e5ecf6');
+      colorStyle.setProperty('background-color', '#FFFFFF');
     }
   });
 
 })
+const isDarkTheme = window.matchMedia("(prefers-color-scheme: dark)"); // 是深色
+if (isDarkTheme.matches) { // 是深色
+  emitter.emit("themeChange", true);
+  isDark.value = true;
+} 
 </script>
 
 <style>
@@ -108,18 +114,6 @@ emitter.on("themeChange", (data: any) => {
   --bg-200: #f5f5f5;
   --bg-300: #cccccc;
   --bg-rendering: #e5ecf6;
-  /* black */
-  /* 
-  --primary-100: #0085ff;
-            --primary-200: #69b4ff;
-            --primary-300: #e0ffff;
-            --accent-100: #006fff;
-            --accent-200: #e1ffff;
-            --text-100: #FFFFFF;
-            --text-200: #9e9e9e;
-            --bg-100: #1E1E1E;
-            --bg-200: #2d2d2d;
-            --bg-300: #454545; */
 
 }
 
@@ -134,5 +128,6 @@ emitter.on("themeChange", (data: any) => {
   --bg-100: #1E1E1E;
   --bg-200: #2d2d2d;
   --bg-300: #454545;
+
 }
 </style>

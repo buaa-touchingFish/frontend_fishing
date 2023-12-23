@@ -11,29 +11,21 @@
                 <div class="searchInput">
                     <!-- <n-auto-complete v-model:value="searchValue" :options="searchOptions">
                     <template #default="{ handleInput, handleBlur, handleFocus, value: slotValue }"> -->
-                <n-popover :show="showComplete" placement="bottom" trigger="manual" :show-arrow="false" raw>
-                    <template #trigger>
-                        <n-input
-                            class="searchInput"
-                            type="text"
-                            placeholder=""
-                            size="large"
-                            v-model:value="searchValue"
-                            @focus="searchComplete"
-                            @blur="showComplete = false"
-                            @keyup.enter.naive="search"
-                            @keydown.Up.naive="key_up"
-                            @keydown.Down.naive="key_down"
-                        >
-                            <template #prefix>
-                                <div class="advancedSearch"></div>
-                            </template>
-                            <template #suffix>
-                                <div class="selectPlaceHolder"></div>
-                                <n-icon style="cursor: pointer;" size="20" color="blue" :component="Search12Filled" @click="search"/>
-                            </template>
-                        </n-input>
-                    <!-- </template>
+                    <n-popover :show="showComplete" placement="bottom" trigger="manual" :show-arrow="false" raw>
+                        <template #trigger>
+                            <n-input class="searchInput" type="text" placeholder="" size="large" v-model:value="searchValue"
+                                @focus="searchComplete" @blur="showComplete = false" @keyup.enter.naive="search"
+                                @keydown.Up.naive="key_up" @keydown.Down.naive="key_down">
+                                <template #prefix>
+                                    <div class="advancedSearch"></div>
+                                </template>
+                                <template #suffix>
+                                    <div class="selectPlaceHolder"></div>
+                                    <n-icon style="cursor: pointer;" size="20" color="blue" :component="Search12Filled"
+                                        @click="search" />
+                                </template>
+                            </n-input>
+                            <!-- </template>
                 </n-auto-complete> -->
                         </template>
                         <div class="completeSearch">
@@ -64,22 +56,25 @@
                 <div class="setting">
                     <n-icon size="23" color="blue" :component="Settings32Filled" />
                 </div>
-                <n-switch @update:value="handleChange" />
+                <n-switch v-model:value="isDark" secondary @update:value="handleChange" />
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang='ts'>
-import { computed,watch,ref } from 'vue';
+import { computed, watch, ref } from 'vue';
 import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
 import { Search12Filled, Person32Filled, Settings32Filled } from '@vicons/fluent';
 import emitter from '@/eventBus/eventBus';
 import router from '@/router'
 import { useRoute } from 'vue-router'
+import { useThemeStore } from '@/store/themeStore';
+import { storeToRefs } from 'pinia';
+const themeStore = useThemeStore();
+const { isDark } = storeToRefs(themeStore);
 
 const route = useRoute()
-
 // 输入框
 const searchValue = ref("")
 const showComplete = ref(false)
@@ -95,7 +90,7 @@ const completeSearchOptions = computed(() => {
         return {
             label: prefix + suffix,
             isSelect: false
-          }
+        }
     })
 })
 const key_up = () => {
@@ -135,14 +130,14 @@ emitter.on("titleChange", (data: any) => title.value = data)
 function handleChange(value: boolean) {
     emitter.emit("themeChange", value);
 }
-watch(() => route.query.wd,(newValue) => {
+watch(() => route.query.wd, (newValue) => {
     console.log(newValue);
-    if(newValue){
+    if (newValue) {
         console.log(newValue);
-        
+
         searchValue.value = newValue as string
     }
-},{immediate: true,deep: true})
+}, { immediate: true, deep: true })
 
 </script>
 
