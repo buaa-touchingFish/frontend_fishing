@@ -92,7 +92,7 @@ emitter.on("themeChange", (data: any) => {
       colorStyle.setProperty('--bg-300', '#cccccc');
       colorStyle.setProperty('--bg-rendering', '#e5ecf6');
       colorStyle.setProperty('background-color', '#FFFFFF');
-      colorStyle.setProperty('--card-cover', '#0c1117');
+      colorStyle.setProperty('--card-cover', '#dedeff');
     }
   });
 
