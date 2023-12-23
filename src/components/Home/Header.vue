@@ -11,34 +11,28 @@
                 <div class="searchInput">
                     <!-- <n-auto-complete v-model:value="searchValue" :options="searchOptions">
                     <template #default="{ handleInput, handleBlur, handleFocus, value: slotValue }"> -->
-                <n-popover :show="showComplete" placement="bottom" trigger="manual" :show-arrow="false" raw>
-                    <template #trigger>
-                        <n-input
-                            class="searchInput"
-                            type="text"
-                            placeholder=""
-                            size="large"
-                            v-model:value="searchValue"
-                            @focus="searchComplete"
-                            @blur="showComplete = false"
-                            @keyup.enter.naive="search"
-                            @keydown.Up.naive="key_up"
-                            @keydown.Down.naive="key_down"
-                        >
-                            <template #prefix>
-                                <div class="advancedSearch"></div>
-                            </template>
-                            <template #suffix>
-                                <div class="selectPlaceHolder"></div>
-                                <n-icon style="cursor: pointer;" size="20" color="blue" :component="Search12Filled" @click="search"/>
-                            </template>
-                        </n-input>
-                    <!-- </template>
+                    <n-popover :show="showComplete" placement="bottom" trigger="manual" :show-arrow="false" raw>
+                        <template #trigger>
+                            <n-input ref="searchInput" class="searchInput" type="text" placeholder="" size="large"
+                                v-model:value="searchValue" @focus="searchComplete" @blur="showComplete = false"
+                                @keyup.enter.naive="search(searchValue)" @keydown.up.naive.prevent="key_up"
+                                @keydown.down.naive="key_down" @input="searchComplete">
+                                <template #prefix>
+                                    <div class="advancedSearch"></div>
+                                </template>
+                                <template #suffix>
+                                    <div class="selectPlaceHolder"></div>
+                                    <n-icon style="cursor: pointer;" size="20" color="blue" :component="Search12Filled"
+                                        @click="search(searchValue)" />
+                                </template>
+                            </n-input>
+                            <!-- </template>
                 </n-auto-complete> -->
                         </template>
                         <div class="completeSearch">
                             <div v-for="(completeSearchOption, index) in completeSearchOptions" :key="index"
-                                class="completeSearchOption">
+                                @click="search(completeSearchOption.label)" class="completeSearchOption"
+                                :class="{ completeSearchOptionIsSelect: completeSearchOption.isSelect }">
                                 {{ completeSearchOption.label }}
                             </div>
                         </div>
@@ -64,50 +58,86 @@
                 <div class="setting">
                     <n-icon size="23" color="blue" :component="Settings32Filled" />
                 </div>
-                <n-switch @update:value="handleChange" />
+                <n-switch v-model:value="isDark" secondary @update:value="handleChange" />
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang='ts'>
-import { computed,watch,ref } from 'vue';
+import { watch, ref, Ref } from 'vue';
 import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
 import { Search12Filled, Person32Filled, Settings32Filled } from '@vicons/fluent';
 import emitter from '@/eventBus/eventBus';
 import router from '@/router'
 import { useRoute } from 'vue-router'
+import { useThemeStore } from '@/store/themeStore';
+import { storeToRefs } from 'pinia';
+const themeStore = useThemeStore();
+const { isDark } = storeToRefs(themeStore);
+import { post } from '@/api/axios'
 
 const route = useRoute()
-
 // 输入框
 const searchValue = ref("")
 const showComplete = ref(false)
-const searchComplete = () => {
-
-    showComplete.value = true;
-}
 const completeSearchOptionsSuffix = ref(['@gmail.com', '@163.com', '@qq.com'])
 const currentCompleteSearchOptionIndex = ref(-1)
-const completeSearchOptions = computed(() => {
-    return completeSearchOptionsSuffix.value.map((suffix) => {
+const copySearchValue = ref("")
+let completeSearchOptions: Ref<{ label: string, isSelect: boolean }[]>;
+const searchInput: Ref<any> = ref(null)
+let time: any;
+const searchComplete = async () => {
+    copySearchValue.value = searchValue.value;
+    if (!searchValue.value) {
+        showComplete.value = false;
+        return
+    }
+    if (time) {
+        clearTimeout(time);
+    }
+    time = setTimeout(() => {
+        // await post()
+    }, 200)
+    currentCompleteSearchOptionIndex.value = -1;
+    completeSearchOptions = ref(completeSearchOptionsSuffix.value.map((suffix) => {
         const prefix = searchValue.value
         return {
             label: prefix + suffix,
             isSelect: false
-          }
-    })
-})
-const key_up = () => {
-    // completeSearchOptions.value[currentCompleteSearchOptionIndex.value].isSelect = false
+        }
+    }))
 
-    // completeSearchOptions.value[currentCompleteSearchOptionIndex.value].isSelect
+    showComplete.value = true;
+}
+const key_up = () => {
+    if (currentCompleteSearchOptionIndex.value != -1)
+        completeSearchOptions.value[currentCompleteSearchOptionIndex.value].isSelect = false
+    currentCompleteSearchOptionIndex.value--;
+    if (currentCompleteSearchOptionIndex.value == -1) {
+        searchValue.value = copySearchValue.value;
+    } else if (currentCompleteSearchOptionIndex.value == -2) {
+        currentCompleteSearchOptionIndex.value = completeSearchOptions.value.length - 1;
+        completeSearchOptions.value[currentCompleteSearchOptionIndex.value].isSelect = true;
+        searchValue.value = completeSearchOptions.value[currentCompleteSearchOptionIndex.value].label;
+    } else {
+        completeSearchOptions.value[currentCompleteSearchOptionIndex.value].isSelect = true;
+        searchValue.value = completeSearchOptions.value[currentCompleteSearchOptionIndex.value].label;
+    }
+    searchInput.value.setSelectionRange(searchValue.value.length, searchValue.value.length);
 }
 const key_down = () => {
-    // if(currentCompleteSearchOptionIndex.value != -1)
-    //     completeSearchOptions.value[currentCompleteSearchOptionIndex.value].isSelect = false;
-    // currentCompleteSearchOptionIndex.value++;
-    // completeSearchOptions.value[currentCompleteSearchOptionIndex.value].isSelect = true;
+    if (currentCompleteSearchOptionIndex.value != -1)
+        completeSearchOptions.value[currentCompleteSearchOptionIndex.value].isSelect = false;
+    currentCompleteSearchOptionIndex.value++;
+    if (currentCompleteSearchOptionIndex.value == completeSearchOptions.value.length) {
+        currentCompleteSearchOptionIndex.value = -1;
+        searchValue.value = copySearchValue.value;
+    } else {
+        completeSearchOptions.value[currentCompleteSearchOptionIndex.value].isSelect = true;
+        searchValue.value = completeSearchOptions.value[currentCompleteSearchOptionIndex.value].label;
+    }
+    searchInput.value.setSelectionRange(searchValue.value.length, searchValue.value.length);
 }
 
 const additionValue = ref("文章")
@@ -119,11 +149,11 @@ const options = [
 ]
 const currentSearchResultPageNumber = ref(0)
 emitter.on("currentSearchResultPageNumber", (data: any) => currentSearchResultPageNumber.value = data)
-const search = async () => {
+const search = async (value: string) => {
     router.push({
         path: '/search',
         query: {
-            wd: searchValue.value,
+            wd: value,
             ad: additionValue.value
         }
     })
@@ -135,14 +165,14 @@ emitter.on("titleChange", (data: any) => title.value = data)
 function handleChange(value: boolean) {
     emitter.emit("themeChange", value);
 }
-watch(() => route.query.wd,(newValue) => {
+watch(() => route.query.wd, (newValue) => {
     console.log(newValue);
-    if(newValue){
+    if (newValue) {
         console.log(newValue);
-        
+
         searchValue.value = newValue as string
     }
-},{immediate: true,deep: true})
+}, { immediate: true, deep: true })
 
 </script>
 
@@ -199,6 +229,7 @@ watch(() => route.query.wd,(newValue) => {
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    color: var(--text-100);
 }
 
 .searchInput {
@@ -215,7 +246,6 @@ watch(() => route.query.wd,(newValue) => {
 }
 
 .completeSearchOption {
-    width: 100%;
     border-radius: 5px;
     padding: 5px 7px;
     margin-top: 5px;
@@ -230,6 +260,10 @@ watch(() => route.query.wd,(newValue) => {
         background-color: #ccc;
         transition: 200ms all linear;
     }
+}
+
+.completeSearchOptionIsSelect {
+    background-color: #ccc;
 }
 
 .advancedSearch {
@@ -290,6 +324,8 @@ watch(() => route.query.wd,(newValue) => {
 
 .advancedSearchCard {
     width: calc(100vw * 0.7 * 0.7 * 0.8 * 0.8);
+    padding: 20px;
+    box-sizing: border-box;
     background-color: var(--bg-100);
 }
 
