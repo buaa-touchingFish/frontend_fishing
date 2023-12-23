@@ -27,11 +27,11 @@ onMounted(async () => {
     if (res === false) {
         return
     }
-    loading.value = false
+    
     data.value = []
     res.map((item: any) => {
         const row: RowData = {
-            key: item.claimRequest.applicant_id,
+            key: item.claimRequest.id,
             type: '门户认领',
             handle_time: item.claimRequest.handle_time,
             username: item.user.username,
@@ -39,6 +39,22 @@ onMounted(async () => {
         }
         data.value.push(row)
     })
+    res = await get(message, '/admin/myappeal', {})
+    if (res === false) {
+        return
+    }
+    res.map((item: any) => {
+        const row: RowData = {
+            key: item.paperAppeal.id,
+            type: '文章申诉',
+            handle_time: item.paperAppeal.handle_time,
+            username: item.user.username,
+            time: item.paperAppeal.create_time,
+        }
+        data.value.push(row)
+    })
+    loading.value = false
+
 })
 
 const columns: DataTableColumns = [

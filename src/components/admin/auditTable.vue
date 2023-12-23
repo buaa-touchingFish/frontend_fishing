@@ -4,7 +4,8 @@
         <n-modal v-model:show="showModal">
             <n-card style="width: 600px; display: flex; justify-content: center; align-items: center;" title="详情"
                 :bordered="false" size="huge" role="dialog" aria-modal="true">
-                <n-image width="100" :src="imgUrl" />
+                <n-image v-if="type === 'claim'" width="100" :src="imgUrl" />
+                <n-input v-else :value="content" disabled round />
             </n-card>
         </n-modal>
     </div>
@@ -27,12 +28,31 @@ onMounted(async () => {
     data.value = []
     res.map((item: any) => {
         const row: RowData = {
-            key: item.claimRequest.id,
+            key: item.claimRequest.id + '@claim',
             name: item.author.display_name,
             username: item.user.username,
             email: item.user.email,
             time: item.claimRequest.create_time,
-            imgUrl: item.claimRequest.photo_url
+            imgUrl: item.claimRequest.photo_url,
+            content: '',
+            type: 'claim'
+        }
+        data.value.push(row)
+    })
+    res = await get(message, '/admin/unappealed', {})
+    if (res === false) {
+        return
+    }
+    res.map((item: any) => {
+        const row: RowData = {
+            key: item.paperAppeal.id + '@appeal',
+            name: item.paper.title,
+            username: item.user.username,
+            email: item.user.email,
+            time: item.paperAppeal.create_time,
+            imgUrl: '',
+            content: item.paperAppeal.content,
+            type: 'appeal'
         }
         data.value.push(row)
     })
@@ -45,22 +65,34 @@ type RowData = {
     email: string
     time: string
     imgUrl: string
+    content: string
+    type: string
 }
 const message = useMessage();
 const showModal = ref(false);
+const type = ref('')
 const imgUrl = ref('')
+const content = ref('')
 const displayDetail = (row: RowData) => {
     imgUrl.value = "http://" + row.imgUrl
-    console.log(row.imgUrl);
-
+    content.value = row.content
+    type.value = row.type
     showModal.value = true
 }
 
 const pass = async (row: RowData) => {
-    let res = await post(message, '/admin/handle/claim', {
-        "claimRequestId": row.key,
-        "result": true
-    })
+    let res;
+    if (row.type === 'claim') {
+        res = await post(message, '/admin/handle/claim', {
+            "claimRequestId": row.key.split('@')[0],
+            "result": true
+        })
+    } else {
+        res = await post(message, '/admin/handle/appeal', {
+            "id": row.key.split('@')[0],
+            "result": true
+        })
+    }
     if (res === false) {
         return
     }
@@ -70,10 +102,18 @@ const pass = async (row: RowData) => {
 }
 
 const deny = async (row: RowData) => {
-    let res = await post(message, '/admin/handle/claim', {
-        "claimRequestId": row.key,
-        "result": false
-    })
+    let res;
+    if (row.type === 'claim') {
+        res = await post(message, '/admin/handle/claim', {
+            "claimRequestId": row.key.split('@')[0],
+            "result": false
+        })
+    } else {
+        res = await post(message, '/admin/handle/appeal', {
+            "id": row.key.split('@')[0],
+            "result": false
+        })
+    }
     if (res === false) {
         return
     }

@@ -158,7 +158,7 @@ const key_down = () => {
 }
 const search = async (value: string) => {
     if (value.length === 0) {
-        message.info("先输入再搜索哦")
+        router.push('/search')
         return
     }
     router.push({
@@ -297,7 +297,7 @@ const changeShowCard = () => {
 
 .searchInput :deep(.n-input__input) {
     height: 50px;
-    margin-left: 20%;
+    margin-left: 22%;
     display: flex;
     align-items: center;
     justify-content: center;
