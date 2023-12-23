@@ -22,8 +22,8 @@
                                 </template>
                                 <template #suffix>
                                     <div class="selectPlaceHolder"></div>
-                                    <n-icon style="cursor: pointer;" size="20" color="blue" :component="Search12Filled"
-                                        @click="search(searchValue)" />
+                                    <n-icon style="cursor: pointer;" size="20" color="var(--primary-100)"
+                                        :component="Search12Filled" @click="search(searchValue)" />
                                 </template>
                             </n-input>
                             <!-- </template>
@@ -53,10 +53,10 @@
             </div>
             <div class="headerRight">
                 <div class="user">
-                    <n-icon size="23" color="blue" :component="Person32Filled" />
+                    <n-icon size="23" color="var(--primary-100)" :component="Person32Filled" />
                 </div>
                 <div class="setting">
-                    <n-icon size="23" color="blue" :component="Settings32Filled" />
+                    <n-icon size="23" color="var(--primary-100)" :component="Settings32Filled" />
                 </div>
                 <n-switch v-model:value="isDark" secondary @update:value="handleChange" />
             </div>
@@ -315,9 +315,10 @@ watch(() => route.query.wd, (newValue) => {
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    color: var(--text-100);
 
     &:hover {
-        color: blue;
+        color: var(--primary-100);
         transition: 0.1s all linear;
     }
 }

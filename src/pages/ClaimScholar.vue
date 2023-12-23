@@ -10,7 +10,6 @@
             <span class="nameSpan">{{ scholarName }}</span>
             <p class="idSpan">scholarID : {{ scholarID }}</p>
         </div>
-        <n-divider></n-divider>
         <div class="formDiv">
             <span class="mailSpan">邮箱</span>
             <n-input type="text" v-model:value="emailStr" placeholder="请如如实输入邮箱. ig:mail@domain.com"></n-input>
@@ -22,6 +21,7 @@
             <span class="mailSpan">证明信息</span>
             <n-upload ref="uploader" class="uploadImg" :custom-request="customRequest" :default-upload="false" max="1"
                 :default-file-list="fileList" list-type="image-card">
+
             </n-upload>
             <n-button class="submitButton" @click="submitInfo">提交</n-button>
         </div>
@@ -162,6 +162,7 @@ function back() {
     align-self: center;
     padding-left: 40px;
     padding-right: 40px;
+    margin-top: 20px;
 }
 
 .mailSpan {
@@ -173,6 +174,7 @@ function back() {
 
 .uploadImg {
     align-self: center;
+    color: var(--text-100);
 }
 
 .inputDiv {
