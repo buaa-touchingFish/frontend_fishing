@@ -32,7 +32,7 @@ import router from '@/router';
 import { Ref, onMounted, onUnmounted, ref } from 'vue';
 import { UploadCustomRequestOptions, UploadInst, useMessage } from 'naive-ui';
 import { useRoute } from 'vue-router';
-import { post, postWithParam } from '@/api/axios';
+import { post } from '@/api/axios';
 const message = useMessage();
 const route = useRoute();
 const scholarName = ref(route.query.author_name);
