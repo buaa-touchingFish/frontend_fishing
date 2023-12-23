@@ -37,29 +37,42 @@
 </template>
 
 <script setup lang="ts">
+import { post } from '@/api/axios';
 import { GlobeSearch24Filled, DocumentBulletListMultiple24Filled, PeopleQueue24Filled } from '@vicons/fluent'
-import { NumberAnimationInst } from 'naive-ui'
+import { NumberAnimationInst, useMessage } from 'naive-ui'
 import { ref, onMounted } from "vue";
 
 const numberAnimationInstRef = ref<NumberAnimationInst | null>(null)
 
-onMounted(() => {
-    chartData.value = setChartData();
+onMounted(async () => {
+    chartData.value = await setChartData();
     chartOptions.value = setChartOptions();
 });
 
 const chartData = ref();
 const chartOptions = ref();
-const setChartData = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
 
+const message = useMessage()
+const setChartData = async () => {
+    const documentStyle = getComputedStyle(document.documentElement);
+    const today = new Date();
+    const labels : string[] = []
+    labels.push((today.getMonth()+1) + "-" + today.getDate())
+    for (var i = 0; i < 6; i++) {
+        today.setTime(today.getTime() - 24 * 60 * 60 * 1000);
+        labels.push((today.getMonth()+1) + "-" + today.getDate())
+    }
+    let res : string[]= await post(message, '/history/logincnt', {
+        days:"7"
+    })
+    
     return {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        labels: labels.reverse(),
         datasets: [
             {
-                label: 'First Dataset',
-                data: [65, 59, 80, 81, 56, 55, 40],
-                fill: false,
+                label: '近七日访问量',
+                data: res.reverse(),
+                fill: true,
                 borderColor: documentStyle.getPropertyValue('--blue-500'),
                 tension: 0.4
             },

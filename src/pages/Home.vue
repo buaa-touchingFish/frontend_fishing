@@ -22,9 +22,30 @@
                 <div class="homeContentRight">
                     <div class="search">
                         <div class="searchDiv" :class="{ searchRotate: changeCard }">
-                            <n-auto-complete class="searchBar" size="large" placeholder="搜索你想了解的论文"
-                                :options="searchOptions" />
-                            <n-button class="searchButton" @click="$router.push('/search')" type="primary">搜索</n-button>
+                            <n-popover :show="showComplete" placement="bottom" trigger="manual" :show-arrow="false" raw>
+                                <template #trigger>
+                                    <n-input ref="searchInput" class="searchInput" type="text" placeholder="" size="large"
+                                        v-model:value="searchValue" @focus="searchComplete" @blur="showComplete = false"
+                                        @keyup.enter.naive="search(searchValue)" @keydown.up.naive.prevent="key_up"
+                                        @keydown.down.naive="key_down" @input="searchComplete">
+                                        <template #prefix>
+                                            <div class="advancedSearch"></div>
+                                        </template>
+                                        <template #suffix>
+                                            <div class="selectPlaceHolder"></div>
+                                            <n-icon style="cursor: pointer;" size="28" color="blue"
+                                                :component="Search12Filled" @click="search(searchValue)" />
+                                        </template>
+                                    </n-input>
+                                </template>
+                                <div class="completeSearch">
+                                    <div v-for="(completeSearchOption, index) in completeSearchOptions" :key="index"
+                                        @click="search(completeSearchOption.label)" class="completeSearchOption"
+                                        :class="{ completeSearchOptionIsSelect: completeSearchOption.isSelect }">
+                                        {{ completeSearchOption.label }}
+                                    </div>
+                                </div>
+                            </n-popover>
                             <n-button class="extraButton" @click="changeShowCard" type="primary">高级搜索</n-button>
                         </div>
                         <div class="advancedSearchDiv" :class="{ advancedSearchRotate: changeCard }">
@@ -50,7 +71,7 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, watch, onMounted, computed, Ref } from 'vue';
+import { ref, watch, onMounted, Ref } from 'vue';
 import Header from '@/components/Home/Header.vue'
 import Menu from '@/components/Home/Menu.vue'
 import StarBackground from '@/components/Login/StarBackground.vue';
@@ -58,9 +79,12 @@ import Clock from '@/components/Clock.vue';
 import { useRoute } from 'vue-router'
 import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
 import Stars from '@/components/Home/Stars.vue'
-import { Search12Regular, Earth16Regular } from "@vicons/fluent";
+import { Search12Filled } from "@vicons/fluent";
+import router from '@/router';
+import { useMessage } from 'naive-ui';
 
 const route = useRoute()
+const message = useMessage()
 
 // 判断是否需要展示首页
 const showHome = ref(true)
@@ -71,15 +95,80 @@ onMounted(() => {
     showHome.value = (route.path == '/')
 })
 
-const searchValue = ref("")
-
 //搜索推荐的地方
-const searchOptions = computed(() => {
-    const result: string[] = [];
-    result.push("我落泪");
-    result.push("情绪零碎");
-    return result;
-});
+const searchValue = ref("")
+const showComplete = ref(false)
+const completeSearchOptionsSuffix = ref(['@gmail.com', '@163.com', '@qq.com'])
+const currentCompleteSearchOptionIndex = ref(-1)
+const copySearchValue = ref("")
+let completeSearchOptions: Ref<{ label: string, isSelect: boolean }[]>;
+const searchInput: Ref<any> = ref(null)
+let time: any;
+const searchComplete = async () => {
+    copySearchValue.value = searchValue.value;
+    if (!searchValue.value) {
+        showComplete.value = false;
+        return
+    }
+    if (time) {
+        clearTimeout(time);
+    }
+    time = setTimeout(() => {
+        // await post()
+    }, 200)
+    currentCompleteSearchOptionIndex.value = -1;
+    completeSearchOptions = ref(completeSearchOptionsSuffix.value.map((suffix) => {
+        const prefix = searchValue.value
+        return {
+            label: prefix + suffix,
+            isSelect: false
+        }
+    }))
+
+    showComplete.value = true;
+}
+const key_up = () => {
+    if (currentCompleteSearchOptionIndex.value != -1)
+        completeSearchOptions.value[currentCompleteSearchOptionIndex.value].isSelect = false
+    currentCompleteSearchOptionIndex.value--;
+    if (currentCompleteSearchOptionIndex.value == -1) {
+        searchValue.value = copySearchValue.value;
+    } else if (currentCompleteSearchOptionIndex.value == -2) {
+        currentCompleteSearchOptionIndex.value = completeSearchOptions.value.length - 1;
+        completeSearchOptions.value[currentCompleteSearchOptionIndex.value].isSelect = true;
+        searchValue.value = completeSearchOptions.value[currentCompleteSearchOptionIndex.value].label;
+    } else {
+        completeSearchOptions.value[currentCompleteSearchOptionIndex.value].isSelect = true;
+        searchValue.value = completeSearchOptions.value[currentCompleteSearchOptionIndex.value].label;
+    }
+    searchInput.value.setSelectionRange(searchValue.value.length, searchValue.value.length);
+}
+const key_down = () => {
+    if (currentCompleteSearchOptionIndex.value != -1)
+        completeSearchOptions.value[currentCompleteSearchOptionIndex.value].isSelect = false;
+    currentCompleteSearchOptionIndex.value++;
+    if (currentCompleteSearchOptionIndex.value == completeSearchOptions.value.length) {
+        currentCompleteSearchOptionIndex.value = -1;
+        searchValue.value = copySearchValue.value;
+    } else {
+        completeSearchOptions.value[currentCompleteSearchOptionIndex.value].isSelect = true;
+        searchValue.value = completeSearchOptions.value[currentCompleteSearchOptionIndex.value].label;
+    }
+    searchInput.value.setSelectionRange(searchValue.value.length, searchValue.value.length);
+}
+const search = async (value: string) => {
+    if (value.length === 0) {
+        message.info("先输入再搜索哦")
+        return
+    }
+    router.push({
+        path: '/search',
+        query: {
+            wd: value,
+            ad: '文章'
+        }
+    })
+}
 
 // Card
 const changeCard = ref(false)
@@ -183,10 +272,17 @@ const changeShowCard = () => {
     align-items: center;
 }
 
-.slogen {
-    margin-left: 40%;
-    font-size: 40pt;
-    width: 30%;
+.searchInput {
+    width: 80%;
+    border-radius: 10px;
+    position: relative;
+}
+
+.completeSearch {
+    width: calc(100vw * 0.7 * 0.7 * 0.8 * 0.8);
+    padding: 5px 10px;
+    border-radius: 7px;
+    background-color: var(--bg-100);
 }
 
 .searchIcon {
@@ -198,28 +294,9 @@ const changeShowCard = () => {
     animation: shining 2.5s linear infinite;
 }
 
-.searchInputLeft {
-    width: 40px;
-    height: 100%;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-}
-
-.searchBar {
-    width: 90%;
-}
-
-.searchBar :deep(.n-input) {
-    --n-border: 'none' !important;
-    --n-border-hover: 'none' !important;
-    --n-border-focus: 'none' !important;
-    --n-box-shadow-focus: 'none' !important;
-}
-
-.searchBar :deep(.n-input__input) {
+.searchInput :deep(.n-input__input) {
     height: 50px;
-    margin-left: 10px;
+    margin-left: 20%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -231,6 +308,26 @@ const changeShowCard = () => {
     position: relative;
     transform-style: preserve-3d;
     perspective: 700px;
+}
+
+.completeSearchOption {
+    border-radius: 5px;
+    padding: 5px 7px;
+    margin-top: 5px;
+    cursor: pointer;
+    transition: 200ms all linear;
+
+    &:first-child {
+        margin-top: 0;
+    }
+
+    &:hover {
+        background-color: #ccc;
+        transition: 200ms all linear;
+    }
+}
+.completeSearchOptionIsSelect{
+    background-color: #ccc;
 }
 
 .searchDiv {
@@ -247,21 +344,13 @@ const changeShowCard = () => {
 .extraButton {
     position: absolute;
     left: 10%;
-    height: 15%;
-    border-radius: 15% 0 0 15%;
-    background-color: var(--bg-100);
-    color: #000;
+    height: 50px;
+    border-radius: 10% 0 0 10%;
+    background-color: #757de8;
+    color: white;
+    font-size: 16px;
 }
 
-.extraButton:hover {
-    position: absolute;
-    left: 10%;
-    height: 15%;
-    border-radius: 15% 0 0 15%;
-    background-color: var(--bg-100);
-    color: #000;
-    border-color: #000;
-}
 
 .searchDivider {
     position: absolute;

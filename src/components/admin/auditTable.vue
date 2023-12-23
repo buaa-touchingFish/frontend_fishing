@@ -22,12 +22,11 @@ onMounted(async () => {
     if (res === false) {
         return
     }
-    console.log(res);
     loading.value = false
     data.value = []
     res.map((item: any) => {
         const row: RowData = {
-            key: item.claimRequest.applicant_id,
+            key: item.claimRequest.id,
             name: item.author.display_name,
             username: item.user.username,
             email: item.user.email,
