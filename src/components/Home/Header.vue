@@ -66,23 +66,26 @@
                 <div class="setting">
                     <n-icon size="23" color="blue" :component="Settings32Filled" />
                 </div>
-                <n-switch @update:value="handleChange" />
+                <n-switch v-model:value="isDark" secondary @update:value="handleChange" />
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang='ts'>
-import { watch,ref,Ref } from 'vue';
+import {  watch, ref,Ref } from 'vue';
 import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
 import { Search12Filled, Person32Filled, Settings32Filled } from '@vicons/fluent';
 import emitter from '@/eventBus/eventBus';
 import router from '@/router'
 import { useRoute } from 'vue-router'
+import { useThemeStore } from '@/store/themeStore';
+import { storeToRefs } from 'pinia';
+const themeStore = useThemeStore();
+const { isDark } = storeToRefs(themeStore);
 import { post } from '@/api/axios'
 
 const route = useRoute()
-
 // 输入框
 const searchValue = ref("")
 const showComplete = ref(false)
@@ -170,14 +173,14 @@ emitter.on("titleChange", (data: any) => title.value = data)
 function handleChange(value: boolean) {
     emitter.emit("themeChange", value);
 }
-watch(() => route.query.wd,(newValue) => {
+watch(() => route.query.wd, (newValue) => {
     console.log(newValue);
-    if(newValue){
+    if (newValue) {
         console.log(newValue);
-        
+
         searchValue.value = newValue as string
     }
-},{immediate: true,deep: true})
+}, { immediate: true, deep: true })
 
 </script>
 
