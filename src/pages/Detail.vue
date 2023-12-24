@@ -5,7 +5,19 @@
                 <n-grid-item :span="2" class="constFont">作者:</n-grid-item>
                 <n-grid-item :span="34">
                     <n-space :size="[12, 0]">
-                        <span v-for="(authorship, index) in fileDetail.authorships" :key=index>
+                        <span 
+                            class="author"
+                            v-for="(authorship, index) in fileDetail.authorships" :key=index
+                            @click="$router.push(
+                                {
+                                    path:'/scholarHome',
+                                    query:{
+                                        author_name:authorship.author.display_name,
+                                        author_id:authorship.author.id
+                                    }
+                                }
+                            )"
+                        >
                             {{ authorship.author.display_name }};
                         </span>
                     </n-space>
@@ -357,6 +369,11 @@ function download() {
 } */
 .constFont{
     color: gray;
+}
+.author:hover{
+    color: blue;
+    cursor: pointer;
+    text-decoration: underline;
 }
 .first_button{
     cursor: pointer;
