@@ -278,7 +278,9 @@ const loading = ref(true);
 const subscribed = ref(false);
 const claimed = ref(false);
 onMounted(async () => {
-    
+    const r1 = await get(message, '/author/subscribe', { author_id: scholarID.value });
+    if (r1)
+        subscribed.value = true;
 });
 const yearFilterOption = ref([{
     label: "全部年份",
@@ -356,9 +358,10 @@ onMounted(async () => {
         window.addEventListener('popstate', back, false);
     }
     io.observe(document.getElementById("authorName")!);
-    const data = await get(message, "/author", { "author_id": route.query.author_id, "paper_id": route.query.paper_id });
+    const data = await get(message, "/author", { "author_id": route.query.author_id, "paper_id": route.query.paper_id ?? "" });
     if (data) {
         scholarInfo.value = data;
+        claimed.value = (scholarInfo.value?.author.claim_uid ?? -1) > 0
         {
             const typeMap = new Map<string, number>();
             const dateMap = new Map<number, number>();

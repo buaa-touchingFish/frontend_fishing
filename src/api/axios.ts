@@ -60,6 +60,7 @@ export async function post(message: MessageApiInjection, url: string, props: any
     }
 }
 
+
 export async function deleteApi(message: MessageApiInjection, url: string, props: any) {
     try {
         const res = await request.delete(url, props);
