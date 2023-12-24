@@ -6,14 +6,14 @@
                 <StarBackground></StarBackground>
             </div>
             <div class="homeHeaderDiv">
-                <n-button class="loginButton" @click="$router.push({
+                <n-button class="loginButton" type="primary" @click="$router.push({
                     path: '/scholarHome',
                     query: {
                         author_name: 'J. Russell Ramsay',
                         author_id: 'A5077915689'
                     }
                 });" href="/">设置</n-button>
-                <n-button class="loginButton" @click="$router.push('/login');" href="/">登录</n-button>
+                <n-button class="loginButton" type="primary" @click="$router.push('/login');" href="/">登录</n-button>
                 <Subscribe class="loginButton"></Subscribe>
             </div>
             <div class="homeContentDiv">

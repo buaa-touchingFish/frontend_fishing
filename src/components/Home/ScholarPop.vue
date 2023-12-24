@@ -1,6 +1,6 @@
 <template>
     <div>
-        <n-popover class="scholarPop" trigger="click" scrollable>
+        <n-popover class="scholarPop" trigger="hover" scrollable>
             <template #trigger>
                 <n-icon size="40">
                     <PeopleCheckmark16Filled />
@@ -27,7 +27,7 @@
                             <n-ellipsis style="max-width: 240px">
                                 {{ scholar.institution }}
                                 <template #tooltip>
-                                    <div style="padding: 0;">
+                                    <div>
                                         {{ scholar.institution }}
                                     </div>
                                 </template>
@@ -59,7 +59,6 @@ onMounted(async () => {
     let res = await get(message, '/subscribe', {
         user_id: localStorage.getItem('uid')
     })
-    console.log(res);
     scholarList.value = [];
     res.map((item: any) => {
         const scholar: ScholarData = {
@@ -98,5 +97,9 @@ onMounted(async () => {
     margin-left: 10px;
     display: flex;
     flex-direction: column;
+
+    .name {
+        font-weight: bold;
+    }
 }
 </style>
