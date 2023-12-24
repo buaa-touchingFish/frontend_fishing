@@ -60,34 +60,6 @@ export async function post(message: MessageApiInjection, url: string, props: any
     }
 }
 
-export async function deleteApi(message: MessageApiInjection, url: string, props: any) {
-    try {
-        const res = await request.delete(url, props);
-        if (res.status === 200) {
-            if (res.data.code === 200) {
-                message.success(res.data.message)
-                return res.data.data;
-            } else {
-                let code = res.data.code
-                if (code === 400) {
-                    message.warning(res.data.message)
-                } else if (code === 401) {
-                    message.warning(res.data.message)
-                    router.push('/login')
-                }
-                return false;
-            }
-        } else {
-            message.error("网络错误！");
-            return false;
-        }
-    }
-    catch {
-        console.log('请求错误：' + url);
-        console.log(props);
-    }
-}
-
 export async function postWithParam(message: MessageApiInjection, url: string, props: any, params: any) {
     try {
         const res = await request.post(url, props, { params: params });

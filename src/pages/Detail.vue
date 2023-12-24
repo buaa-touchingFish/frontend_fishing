@@ -1,6 +1,6 @@
 <template>
     <div class="detailContainer">
-        <n-card :title=fileDetail.title>
+        <n-card :title=fileDetail.title class="border">
             <n-grid :x-gap="12" :y-gap="8" :cols="36">
                 <n-grid-item :span="2" class="constFont">作者:</n-grid-item>
                 <n-grid-item :span="34">
@@ -30,7 +30,7 @@
             <template #footer>
                 <n-popover trigger="hover" v-if="!fileDetail.isCollected">
                     <template #trigger>
-                        <n-icon size="40" color="#0000ff" class="button" @click="collect">
+                        <n-icon size="40" color="#0000ff" class="first_button" @click="collect">
                             <Star12Regular />
                         </n-icon>
                     </template>
@@ -39,7 +39,7 @@
 
                 <n-popover trigger="hover" v-else>
                     <template #trigger>
-                        <n-icon size="40" color="#0000ff" class="button" @click="undoCollect">
+                        <n-icon size="40" color="#0000ff" class="first_button" @click="undoCollect">
                             <Star12Filled />
                         </n-icon>
                     </template>
@@ -107,7 +107,7 @@
         </n-card>
         
         <div class="commentsAndStatistics">
-            <n-card class="comments" :segmented="{content: true}">
+            <n-card class="comments border" :segmented="{content: true}">
                 <n-tabs type="line" animated>
                     <n-tab-pane name="评论" tab="评论">
                         <Comment v-for="(comment, index) in comments" :key=index :comment=comment></Comment>
@@ -126,7 +126,7 @@
                 </n-tabs>
             </n-card>
 
-            <n-card class="statistics" :segmented="{footer: 'soft'}">
+            <n-card class="statistics border" :segmented="{footer: 'soft'}">
                 <n-grid x-gap="12" :cols="4" class="constFont">
                     <n-gi>浏览量</n-gi>
                     <n-gi>收藏量</n-gi>
@@ -185,7 +185,7 @@ import Comment from '@/components/detail/Comment.vue'
 import PaperItem from '@/components/detail/PaperItem.vue'
 import { ref, onMounted, Ref } from 'vue'
 import Clipboard from 'clipboard'
-import { post, get, deleteApi } from '@/api/axios'
+import { post, get } from '@/api/axios'
 import { useMessage } from 'naive-ui'
 import { useRoute } from 'vue-router'
 import { Paper } from '@/models/model'
@@ -325,14 +325,15 @@ async function collect() {
     fileDetail.value.isCollected = true
 }
 async function undoCollect() {
-    const res = await deleteApi(
-        message,"/collect",
+    const res = await post(
+        message,"/collect/delete",
         {
             "user_id":localStorage.getItem("uid"),
             "paper_id":fileDetail.value.id
         }
     )
     console.log(res)
+    fileDetail.value.isCollected = false
 }
 
 function link() {
@@ -357,7 +358,7 @@ function download() {
 .constFont{
     color: gray;
 }
-.button{
+.first_button{
     cursor: pointer;
 }
 .follow_buton{
@@ -393,5 +394,9 @@ function download() {
 .newCommentButton{
     margin-left: 10px;
     height: 55px;
+}
+
+.border{
+    border-radius: 25px;
 }
 </style>
