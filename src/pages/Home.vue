@@ -14,6 +14,7 @@
                     }
                 });" href="/">设置</n-button>
                 <n-button class="loginButton" @click="$router.push('/login');" href="/">登录</n-button>
+                <Subscribe class="loginButton"></Subscribe>
             </div>
             <div class="homeContentDiv">
                 <div class="homeContentLeft">
@@ -79,6 +80,7 @@ import Clock from '@/components/Clock.vue';
 import { useRoute } from 'vue-router'
 import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
 import Stars from '@/components/Home/Stars.vue'
+import Subscribe from '@/components/Home/ScholarPop.vue'
 import { Search12Filled } from "@vicons/fluent";
 import router from '@/router';
 import { useMessage } from 'naive-ui';
@@ -158,7 +160,6 @@ const key_down = () => {
 }
 const search = async (value: string) => {
     if (value.length === 0) {
-        message.info("先输入再搜索哦")
         return
     }
     router.push({
