@@ -363,7 +363,7 @@ const changeShowCard = () => {
 
 .advancedSearchDiv {
     width: 100%;
-    height: 100%;
+    height: 150%;
     background-color: var(--bg-100);
     border-radius: 10px;
     display: flex;
