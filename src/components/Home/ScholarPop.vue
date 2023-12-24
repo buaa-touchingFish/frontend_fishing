@@ -60,7 +60,7 @@ onMounted(async () => {
         user_id: localStorage.getItem('uid')
     })
     scholarList.value = [];
-    res.map((item: any) => {
+    res?.map((item: any) => {
         const scholar: ScholarData = {
             key: item.id,
             name: item.display_name,

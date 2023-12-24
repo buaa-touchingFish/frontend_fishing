@@ -61,7 +61,7 @@ onMounted(async () => {
     })
     
     noticeList.value = [];
-    res.map((item: any) => {
+    res?.map((item: any) => {
         const notice: noticeData = {
             key: item.id,
             title: item.title,
@@ -85,8 +85,6 @@ const read = async (notice:noticeData) => {
             item.status = true
         }
     })
-    
-    
 }
 
 </script>

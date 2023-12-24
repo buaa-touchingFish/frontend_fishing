@@ -86,24 +86,24 @@ const languageOptions = [
         value: 'fr'
     },
     {
-        label: 'pt',
-        value: 'pt'
-    },
-    {
-        label: 'id',
-        value: 'id'
-    },
-    {
-        label: 'ko',
-        value: 'ko'
-    },
-    {
         label: 'tr',
         value: 'tr'
     },
     {
-        label: 'ca',
-        value: 'ca'
+        label: 'pt',
+        value: 'pt'
+    },
+    {
+        label: 'zh-cn',
+        value: 'zh-cn'
+    },
+    {
+        label: 'ja',
+        value: 'ja'
+    },
+    {
+        label: 'it',
+        value: 'it'
     },
     {
         label: 'null',
@@ -138,12 +138,8 @@ const typeOptions = [
         value: 'dissertation'
     },
     {
-        label: 'report',
-        value: 'report'
-    },
-    {
-        label: 'paratext',
-        value: 'paratext'
+        label: 'erratum',
+        value: 'erratum'
     },
     {
         label: 'editorial',

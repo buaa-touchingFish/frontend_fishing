@@ -22,7 +22,7 @@
             <div class="homeContentDiv">
                 <div class="homeContentLeft">
                     <!-- <Clock></Clock> -->
-                    <img src="../assets/AcadVista-长款.png" width="400" style="z-index: 1;" />
+                    <img src="@/assets/AcadVista-长款.png" width="400" style="z-index: 1;" />
                     <div class="infos">
                         <div class="infosTop">
                             <div class="info">
@@ -31,7 +31,7 @@
                                 </n-icon>
                                 <span>
                                     <span>学者</span>
-                                    <n-number-animation :from="0" :to="2252000" :duration="1000" />
+                                    <n-number-animation :from="0" :to="12100566" :duration="1000" />
                                 </span>
                             </div>
                             <div class="info">
@@ -40,7 +40,7 @@
                                 </n-icon>
                                 <span>
                                     <span>机构</span>
-                                    <n-number-animation :from="0" :to="2252000" :duration="1000" />
+                                    <n-number-animation :from="0" :to="20182" :duration="1000" />
                                 </span>
                             </div>
                         </div>
@@ -51,7 +51,7 @@
                                 </n-icon>
                                 <span>
                                     <span>论文</span>
-                                    <n-number-animation :from="0" :to="2252000" :duration="1000" />
+                                    <n-number-animation :from="0" :to="11036659" :duration="1000" />
                                 </span>
                             </div>
                             <div class="info">
@@ -60,7 +60,7 @@
                                 </n-icon>
                                 <span>
                                     <span>领域</span>
-                                    <n-number-animation :from="0" :to="2252000" :duration="1000" />
+                                    <n-number-animation :from="0" :to="78963" :duration="1000" />
                                 </span>
                             </div>
                         </div>
@@ -338,6 +338,7 @@ const changeShowCard = () => {
             width: 50%;
 
             span {
+                margin-left: 5%;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;

@@ -46,7 +46,7 @@ onMounted(async () => {
     let res = await get(message, '/history/get/user', {
     })
     historyList.value = [];
-    res.map((item: any) => {
+    res?.map((item: any) => {
         const history: historyData = {
             key: item.paper_id,
             title: item.paper_name,
