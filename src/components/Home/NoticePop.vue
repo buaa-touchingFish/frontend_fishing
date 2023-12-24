@@ -71,9 +71,6 @@ onMounted(async () => {
         }
         noticeList.value.push(notice)
     })
-    res = await get(message, '/history/get/user', {
-    })
-    console.log(res);
 })
 
 const read = async (notice:noticeData) => {
