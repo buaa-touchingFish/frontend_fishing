@@ -1,11 +1,23 @@
 <template>
     <div class="detailContainer">
-        <n-card :title=fileDetail.title>
+        <n-card :title=fileDetail.title class="border">
             <n-grid :x-gap="12" :y-gap="8" :cols="36">
                 <n-grid-item :span="2" class="constFont">作者:</n-grid-item>
                 <n-grid-item :span="34">
                     <n-space :size="[12, 0]">
-                        <span v-for="(authorship, index) in fileDetail.authorships" :key=index>
+                        <span 
+                            class="author"
+                            v-for="(authorship, index) in fileDetail.authorships" :key=index
+                            @click="$router.push(
+                                {
+                                    path:'/scholarHome',
+                                    query:{
+                                        author_name:authorship.author.display_name,
+                                        author_id:authorship.author.id
+                                    }
+                                }
+                            )"
+                        >
                             {{ authorship.author.display_name }};
                         </span>
                     </n-space>
@@ -28,9 +40,69 @@
             </n-grid>
             
             <template #footer>
-                <n-button type="info">收藏</n-button>
-                <n-button type="info" class="button" @click="changeQuoteMask">引用</n-button>
-                <n-button type="info" class="button" @click="changeShowCommentInput">评论</n-button>
+                <n-popover trigger="hover" v-if="!fileDetail.isCollected">
+                    <template #trigger>
+                        <n-icon size="40" color="#0000ff" class="first_button" @click="collect">
+                            <Star12Regular />
+                        </n-icon>
+                    </template>
+                    <span>收藏</span>
+                </n-popover>
+
+                <n-popover trigger="hover" v-else>
+                    <template #trigger>
+                        <n-icon size="40" color="#0000ff" class="first_button" @click="undoCollect">
+                            <Star12Filled />
+                        </n-icon>
+                    </template>
+                    <span>取消收藏</span>
+                </n-popover>
+                
+                <n-popover trigger="hover">
+                    <template #trigger>
+                        <n-icon size="40" color="#0000ff" class="follow_buton"  @click="changeQuoteMask">
+                            <TextQuote16Filled />
+                        </n-icon>
+                    </template>
+                    <span>引用</span>
+                </n-popover>
+
+                <n-popover trigger="hover">
+                    <template #trigger>
+                        <n-icon size="40" color="#0000ff" class="follow_buton"  @click="changeShowCommentInput">
+                            <Comment12Regular />
+                        </n-icon>
+                    </template>
+                    <span>评论</span>
+                </n-popover>
+
+                <n-popover trigger="hover">
+                    <template #trigger>
+                        <n-icon size="40" color="#0000ff" class="follow_buton" v-show="fileDetail.doi != null && fileDetail.doi.length != 0" @click="link">
+                            <LinkSquare12Regular />
+                        </n-icon>
+                    </template>
+                    <span>链接</span>
+                </n-popover>
+                
+                <n-popover trigger="hover">
+                    <template #trigger>
+                        <n-icon size="40" color="#0000ff" class="follow_buton" v-show="fileDetail.oa_url != null && fileDetail.oa_url.length != 0" @click="download">
+                            <ArrowDownload20Filled />
+                        </n-icon>
+                    </template>
+                    <span>下载</span>
+                </n-popover>
+
+                <n-popover trigger="hover">
+                    <template #trigger>
+                        <n-icon size="40" color="#0000ff" class="follow_buton" @click="changeAppealMask">
+                            <Warning20Filled />
+                        </n-icon>
+                    </template>
+                    <span>申诉</span>
+                </n-popover>
+                
                 <div class="newComment" v-show="ifShowCommentInput">
                     <n-input
                         v-model:value="newComment"
@@ -47,7 +119,7 @@
         </n-card>
         
         <div class="commentsAndStatistics">
-            <n-card class="comments" :segmented="{content: true}">
+            <n-card class="comments border" :segmented="{content: true}">
                 <n-tabs type="line" animated>
                     <n-tab-pane name="评论" tab="评论">
                         <Comment v-for="(comment, index) in comments" :key=index :comment=comment></Comment>
@@ -66,7 +138,7 @@
                 </n-tabs>
             </n-card>
 
-            <n-card class="statistics" :segmented="{footer: 'soft'}">
+            <n-card class="statistics border" :segmented="{footer: 'soft'}">
                 <n-grid x-gap="12" :cols="4" class="constFont">
                     <n-gi>浏览量</n-gi>
                     <n-gi>收藏量</n-gi>
@@ -84,6 +156,7 @@
             </n-card>
         </div>
     </div>
+
     <n-modal v-model:show="quoteMask">
         <n-card
             style="width: 600px"
@@ -94,9 +167,27 @@
             aria-modal="true"
         >
             <n-card embedded id="foo">
-                {{citeContent}}
+                {{ citation }}
             </n-card>
-            <n-button tertiary type="info" class="copyCiteButton" @click="copy" data-clipboard-target="#foo">复制</n-button>
+            <n-button tertiary type="info" class="modalButton copyCiteButton" @click="copy" data-clipboard-target="#foo">复制</n-button>
+        </n-card>
+    </n-modal>
+
+    <n-modal v-model:show="appealMask">
+        <n-card
+            style="width: 600px"
+            title="申诉"
+            :bordered="false"
+            size="huge"
+            role="dialog"
+            aria-modal="true"
+        >
+            <n-input
+                v-model:value="appealContent"
+                type="textarea"
+                placeholder="输入申诉内容"
+            />
+            <n-button tertiary type="info" class="modalButton" @click="appeal">申诉</n-button>
         </n-card>
     </n-modal>
 </template>
@@ -110,42 +201,13 @@ import { post, get } from '@/api/axios'
 import { useMessage } from 'naive-ui'
 import { useRoute } from 'vue-router'
 import { Paper } from '@/models/model'
+import { Star12Regular, TextQuote16Filled, Comment12Regular, LinkSquare12Regular, ArrowDownload20Filled, Star12Filled, Warning20Filled } from '@vicons/fluent'
+import emitter from '@/eventBus/eventBus'
 
 const message = useMessage()
 const route = useRoute()
 
-const fileDetail:Ref<Paper> = ref({
-    id:"",
-    title:"",
-    publication_date:"",
-    authorships:[
-        {
-            author:{
-                id: "",
-                display_name: ""
-            },
-            institutions:[]
-        },
-    ],
-    abstract:"",
-    keywords:[],
-    cited_by_count:203,
-    oa_url: "",
-    doi: "",
-    type: "",
-    publisher: {
-        id: "",
-        display_name: ""
-    },
-    referenced_works: [],
-    related_works: [],
-    lan: "",
-    issn: "",
-    is_active: false,
-    browse: 0,
-    good: 0,
-    collect: 0
-})
+const fileDetail:Ref<Paper | any> = ref({})
 type paperItemType = {
     title:string,
     abstract:string,
@@ -161,14 +223,18 @@ type paperItemType = {
 type commentType = {
     sender_name:string,
     send_time:string,
-    content:string
+    content:string,
+    avatar:string
 }
+
+const props = defineProps(['paper_id'])
 
 const similarPapers:Ref<paperItemType[]> = ref([])
 const quotePapers:Ref<paperItemType[]> = ref([])
 const comments:Ref<commentType[]> = ref([])
+const citation:Ref<string> = ref("")
 onMounted(async () => {
-    const paperId = route.params.id
+    const paperId = props.paper_id != undefined ? props.paper_id : route.params.id
     let res = await post(
         message,"/paper/single",
         {
@@ -202,23 +268,23 @@ onMounted(async () => {
             "paper_id":fileDetail.value.id
         }
     )
+    console.log(res)
     comments.value = res
-    console.log(comments.value)
+
+    res = await post(
+        message,"/paper/getcitation",
+        {
+            "id":fileDetail.value.id
+        }
+    )
+    console.log(res)
+    citation.value = res
 })
 
 const quoteMask = ref(false)
 function changeQuoteMask(){
     quoteMask.value = !quoteMask.value
 }
-
-const citeContent = ref("[1]刘炜.48例肝内门静脉癌栓的超声诊断价值的探讨[J].中国医药指南, 2013, 11(32):2.DOI:CNKI:SUN:YYXK.0.2013-32-381.")
-
-const newComment = ref("")
-const ifShowCommentInput = ref(false)
-function changeShowCommentInput(){
-    ifShowCommentInput.value = !ifShowCommentInput.value
-}
-
 function copy() {
     const clipboard = new Clipboard('.copyCiteButton');
     clipboard.on('success', () => {
@@ -227,8 +293,31 @@ function copy() {
     })
 }
 
-function publishComment() {
-    const res = post(
+const appealMask = ref(false)
+function changeAppealMask(){
+    appealMask.value = !appealMask.value
+}
+const appealContent = ref("")
+async function appeal() {
+    const res = await post(
+        message,"/user/create/appeal",
+        {
+            "content":appealContent.value,
+            "paper_id":fileDetail.value.id
+        }
+    )
+    console.log(res)
+    appealMask.value = !appealMask.value
+    appealContent.value = ""
+}
+
+const newComment = ref("")
+const ifShowCommentInput = ref(false)
+function changeShowCommentInput(){
+    ifShowCommentInput.value = !ifShowCommentInput.value
+}
+async function publishComment() {
+    await post(
         message,"/comment",
         {
             "content":newComment.value,
@@ -236,18 +325,50 @@ function publishComment() {
             "sender_id":localStorage.getItem("uid"),
         }
     )
+
+    const res = await get(
+        message,"/comment",
+        {
+            "paper_id":fileDetail.value.id
+        }
+    )
     console.log(res)
-    
-    async () => {
-        const newComments =  await get(
-            message,"/comment",
-            {
-                "paper_id":fileDetail.value.id
-            }
-        )
-        comments.value = newComments
-        console.log(comments.value)
-    }
+    comments.value = res
+    newComment.value = ""
+    ifShowCommentInput.value = false
+}
+
+async function collect() {
+    const res = await post(
+        message,"/collect",
+        {
+            "user_id":localStorage.getItem("uid"),
+            "paper_id":fileDetail.value.id
+        }
+    )
+    console.log(res)
+    fileDetail.value.isCollected = true
+    emitter.emit("collectedChange", {paper_id:fileDetail.value.id, status:true})
+}
+async function undoCollect() {
+    const res = await post(
+        message,"/collect/delete",
+        {
+            "user_id":localStorage.getItem("uid"),
+            "paper_id":fileDetail.value.id
+        }
+    )
+    console.log(res)
+    fileDetail.value.isCollected = false
+    emitter.emit("collectedChange", {paper_id:fileDetail.value.id, status:false})
+}
+
+function link() {
+    window.open(fileDetail.value.doi, '_blank')
+}
+
+function download() {
+    window.open(fileDetail.value.oa_url, '_self')
 }
 </script>
 
@@ -264,8 +385,17 @@ function publishComment() {
 .constFont{
     color: gray;
 }
-.button{
-    margin-left: 20px;
+.author:hover{
+    color: blue;
+    cursor: pointer;
+    text-decoration: underline;
+}
+.first_button{
+    cursor: pointer;
+}
+.follow_buton{
+    cursor: pointer;
+    margin-left: 30px;
 }
 .commentsAndStatistics{
     display: flex;
@@ -285,7 +415,7 @@ function publishComment() {
     font-weight: 1000;
     font-size: large;
 }
-.copyCiteButton{
+.modalButton{
     float: right;
     margin-top: 10px;
 }
@@ -296,5 +426,9 @@ function publishComment() {
 .newCommentButton{
     margin-left: 10px;
     height: 55px;
+}
+
+.border{
+    border-radius: 25px;
 }
 </style>
