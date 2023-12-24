@@ -2,21 +2,13 @@
     <div class="platformTop">
         <n-h1 style="margin-left: 10%;">信息概况</n-h1>
         <div class="platformTopBottom">
-            <n-statistic class="item" label="今日访问" tabular-nums>
-                <template #prefix>
-                    <n-icon>
-                        <GlobeSearch24Filled />
-                    </n-icon>
-                </template>
-                <n-number-animation ref="numberAnimationInstRef" :from="0" :to="11451444" :duration="1000" />
-            </n-statistic>
             <n-statistic class="item" label="收录文章" tabular-nums>
                 <template #prefix>
                     <n-icon>
                         <DocumentBulletListMultiple24Filled></DocumentBulletListMultiple24Filled>
                     </n-icon>
                 </template>
-                <n-number-animation ref="numberAnimationInstRef" :from="0" :to="11451400" :duration="1000" />
+                <n-number-animation ref="numberAnimationInstRef" :from="0" :to="paperCount" :duration="1000" />
             </n-statistic>
             <n-statistic class="item" label="记录学者" tabular-nums>
                 <template #prefix>
@@ -53,9 +45,16 @@ onMounted(async () => {
         return;
     }
     scholarCount.value = res
+    res = await get(message, 'paper', {
+    })
+    if (res === false) {
+        return;
+    }
+    paperCount.value = res
 });
 
-const scholarCount = ref(123)
+const scholarCount = ref(0)
+const paperCount = ref(0)
 
 
 

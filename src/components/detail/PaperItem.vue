@@ -7,9 +7,22 @@
     <div>
         {{ paperItem.abstract.length>=150 ? paperItem.abstract.substring(0,150)+"..." : paperItem.abstract }}
     </div>
-    <div class="author">
+    <div>
         <n-space>
-            <span v-for="(author, index) in paperItem.authors" :key=index>
+            <span 
+                class="author"
+                v-for="(author, index) in paperItem.authors" :key=index  
+                v-show="index < 5" 
+                @click="$router.push(
+                    {
+                        path:'/scholarHome',
+                        query:{
+                            author_name:author.display_name,
+                            author_id:author.id
+                        }
+                    }
+                )"
+            >
                 {{ author.display_name }};
             </span>
         </n-space>
@@ -52,6 +65,10 @@ const paperItem:paperItemType = props.paperItem
 }
 .author{
     color: blue;
+}
+.author:hover{
+    cursor: pointer;
+    text-decoration: underline;
 }
 .foot{
     color: gray;

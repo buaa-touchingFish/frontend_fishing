@@ -6,19 +6,65 @@
                 <StarBackground></StarBackground>
             </div>
             <div class="homeHeaderDiv">
-                <n-button class="loginButton" @click="$router.push({
+                <n-button class="loginButton" type="primary" @click="$router.push({
                     path: '/scholarHome',
                     query: {
                         author_name: 'J. Russell Ramsay',
                         author_id: 'A5077915689'
                     }
                 });" href="/">设置</n-button>
-                <n-button class="loginButton" @click="$router.push('/login');" href="/">登录</n-button>
+                <n-button v-if="!isLogged" class="loginButton" type="primary" @click="$router.push('/login');" href="/">登录</n-button>
+                <n-button v-if="isLogged" class="loginButton" type="primary" @click="isLogged = false" href="/">退出登录</n-button>
                 <Subscribe class="loginButton"></Subscribe>
+                <Notice class="loginButton"></Notice>
+                <History class="loginButton"></History>
             </div>
             <div class="homeContentDiv">
                 <div class="homeContentLeft">
-                    <Clock></Clock>
+                    <!-- <Clock></Clock> -->
+                    <img src="../assets/AcadVista-长款.png" width="400" style="z-index: 1;" />
+                    <div class="infos">
+                        <div class="infosTop">
+                            <div class="info">
+                                <n-icon colar="white" :size="iconSize">
+                                    <PeopleQueue24Filled />
+                                </n-icon>
+                                <span>
+                                    <span>学者</span>
+                                    <n-number-animation :from="0" :to="2252000" :duration="1000" />
+                                </span>
+                            </div>
+                            <div class="info">
+                                <n-icon colar="white" :size="iconSize">
+                                    <BuildingSkyscraper20Filled />
+                                </n-icon>
+                                <span>
+                                    <span>机构</span>
+                                    <n-number-animation :from="0" :to="2252000" :duration="1000" />
+                                </span>
+                            </div>
+                        </div>
+                        <div class="infosBottom">
+                            <div class="info">
+                                <n-icon colar="white" :size="iconSize">
+                                    <DocumentBulletList24Filled />
+                                </n-icon>
+                                <span>
+                                    <span>论文</span>
+                                    <n-number-animation :from="0" :to="2252000" :duration="1000" />
+                                </span>
+                            </div>
+                            <div class="info">
+                                <n-icon colar="white" :size="iconSize">
+                                    <ChartMultiple24Filled />
+                                </n-icon>
+                                <span>
+                                    <span>领域</span>
+                                    <n-number-animation :from="0" :to="2252000" :duration="1000" />
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="homeContentRight">
                     <div class="search">
@@ -65,9 +111,11 @@
         <div class="menu">
             <Menu></Menu>
         </div>
-        <div class="main">
-            <router-view></router-view>
-        </div>
+        <n-scrollbar style="max-height: calc(100vh - 57px)">
+            <div class="main">
+                <router-view></router-view>
+            </div>
+        </n-scrollbar>
     </div>
 </template>
 
@@ -76,17 +124,19 @@ import { ref, watch, onMounted, Ref } from 'vue';
 import Header from '@/components/Home/Header.vue'
 import Menu from '@/components/Home/Menu.vue'
 import StarBackground from '@/components/Login/StarBackground.vue';
-import Clock from '@/components/Clock.vue';
+// import Clock from '@/components/Clock.vue';
 import { useRoute } from 'vue-router'
 import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
 import Stars from '@/components/Home/Stars.vue'
 import Subscribe from '@/components/Home/ScholarPop.vue'
-import { Search12Filled } from "@vicons/fluent";
+import Notice from '@/components/Home/NoticePop.vue'
+import History from '@/components/Home/HistoryPop.vue'
+import { Search12Filled, PeopleQueue24Filled, BuildingSkyscraper20Filled, DocumentBulletList24Filled, ChartMultiple24Filled } from "@vicons/fluent";
 import router from '@/router';
-import { useMessage } from 'naive-ui';
 
 const route = useRoute()
-const message = useMessage()
+const iconSize = ref(80)
+const isLogged = ref(false)
 
 // 判断是否需要展示首页
 const showHome = ref(true)
@@ -95,6 +145,9 @@ watch(() => route.path, (newValue) => {
 })
 onMounted(() => {
     showHome.value = (route.path == '/')
+    if (localStorage.getItem('uid')) {
+        isLogged.value = true
+    }
 })
 
 //搜索推荐的地方
@@ -262,8 +315,39 @@ const changeShowCard = () => {
     width: 50%;
     height: 100%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    .infos {
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        
+        width: 60%;
+
+        .infosTop {
+            display: flex;
+        }
+
+
+        .infosBottom {
+            display: flex;
+            margin-top: 10px;
+        }
+        .info {
+            display: flex;
+            width: 50%;
+
+            span {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                font-size: large;
+            }
+        }
+    }
 }
 
 .homeContentRight {
@@ -328,7 +412,8 @@ const changeShowCard = () => {
         transition: 200ms all linear;
     }
 }
-.completeSearchOptionIsSelect{
+
+.completeSearchOptionIsSelect {
     background-color: #ccc;
 }
 
@@ -363,7 +448,7 @@ const changeShowCard = () => {
 
 .advancedSearchDiv {
     width: 100%;
-    height: 100%;
+    height: 150%;
     background-color: var(--bg-100);
     border-radius: 10px;
     display: flex;

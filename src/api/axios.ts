@@ -37,7 +37,7 @@ export async function post(message: MessageApiInjection, url: string, props: any
         const res = await request.post(url, props);
         if (res.status === 200) {
             if (res.data.code === 200) {
-                message.success(res.data.message)
+                // message.success(res.data.message)
                 return res.data.data;
             } else {
                 let code = res.data.code
@@ -45,7 +45,10 @@ export async function post(message: MessageApiInjection, url: string, props: any
                     message.warning(res.data.message)
                 } else if (code === 401) {
                     message.warning(res.data.message)
-                    router.push('/login')
+                    if(url != '/history/create')
+                    {
+                        router.push('/login')
+                    }
                 }
                 return false;
             }

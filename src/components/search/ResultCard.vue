@@ -1,5 +1,5 @@
 <template>
-    <div class="resultCardContainer shadow" @click="$router.push('/detail/' + result.id);">
+    <div class="resultCardContainer shadow" @click="$router.push('/detail/' + result.id);post(message,'/history/create',{'paper_id':result.id});">
         <h1 class="title hoverTitle" :data-title="copyResult.title">
             <span class="ellipsis" v-html="result.title"></span>
         </h1>
@@ -23,7 +23,7 @@
             <div class="publish_time">
                 {{ result.publication_date }}
             </div>
-            <div class="publisher" :data-title="copyResult.publisher.display_name" v-show="copyResult.publisher.display_name!='暂无'">
+            <div class="publisher" :data-title="copyResult.publisher.display_name" v-show="copyResult.publisher.display_name!='暂无' && copyResult.publisher.display_name!=null">
                 <span class="ellipsis" v-html="result.publisher.display_name"
                     @click.stop="$router.push(
                         {
@@ -55,11 +55,14 @@ import { ref,Ref,onMounted,nextTick } from 'vue';
 import { Paper } from '@/models/model'
 import { Star20Regular,AlignLeft16Regular,ArrowDownload16Regular } from '@vicons/fluent'
 import { useRoute } from 'vue-router'
+import { post } from '@/api/axios'
+import { useMessage } from 'naive-ui'
 
 const props = defineProps<{
     result: Paper
 }>()
 const route = useRoute()
+const message = useMessage()
 
 const result: Ref<Paper> = ref(props.result)
 const copyResult:Ref<Paper> = ref(props.result)
@@ -221,13 +224,15 @@ nextTick(() => {
 .publisher{
     width: 30%;
     margin-left: 10%;
+    font-weight: 600;
+    color: var(--text-200);
 
     & span{
         display: block;
         width: 100%;
 
         &:hover{
-            color: var(--primary-100);
+            color: var(--primary-200);
             text-decoration: underline;
         }
     }
