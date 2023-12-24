@@ -23,7 +23,13 @@
                         </span>
                     </div>
                     <n-skeleton v-if="loading" block :width="146" height="30px" :sharp="false" size="small" />
-                    <span v-else class="briefInfo">
+                    <span v-else class="briefInfo" @click="$router.push({
+                        path: '/institutionHome',
+                        query: {
+                            institutionID: scholarInfo?.author.last_known_institution.id,
+                            institutionName: scholarInfo?.author.last_known_institution.display_name
+                        }
+                    })">
                         <n-icon size="22">
                             <BuildingHome20Filled />
                         </n-icon>
@@ -106,13 +112,15 @@
                         </n-icon>
                         文献统计</span>
                     <div class="filterDI">
-                        <n-select class="selectStyle" v-model:value="yearFilter" size="small" :options="yearFilterOption" />
-                        <n-select class="selectStyle" v-model:value="typeFilter" size="small" :options="typeFilterOption" />
+                        <n-select class="selectStyle" v-model:value="yearFilter" size="small" :options="yearFilterOption"
+                            @update:value="filterChanged" />
+                        <n-select class="selectStyle" v-model:value="typeFilter" size="small" :options="typeFilterOption"
+                            @update:value="filterChanged" />
                         <n-select class="selectStyle" v-model:value="cityOrTimeFilter" size="small"
-                            :options="cityOrTimeFilterOption" />
+                            :options="cityOrTimeFilterOption" @update:value="filterChanged" />
                     </div>
                     <n-skeleton v-if="loading" width="100%" style="margin-top: 5px;" height="220px" :sharp="false" />
-                    <div class="paperListDiv" v-else v-for="i in scholarInfo?.papers">
+                    <div class="paperListDiv" v-else v-for="i in filterPapers" :key="i.id">
                         <ResultCard :result="i" />
                         <div class="horizontalSplitDiv" />
                     </div>
@@ -230,6 +238,8 @@ const paperDataByYear: Ref<{
     labels: [],
     datasets: []
 });
+
+const filterPapers: Ref<Paper[] | undefined> = ref();
 const scholarName = ref(route.query.author_name);
 const scholarID = ref(route.query.author_id);
 let scholarInfo: Ref<{ author: Author, papers: Paper[], co_authors: CoAuthor[] } | undefined> = ref();
@@ -256,8 +266,55 @@ const cityOrTimeFilterOption = ref([{
 }]);
 const cityOrTimeFilter = ref("按年份降序");
 
-import { onMounted, onUnmounted } from 'vue';
+function filterChanged() {
+    console.log("whuat happend");
 
+    const selectedPapersByYear: Paper[] = [];
+    if (yearFilter.value == "全部年份") {
+        scholarInfo.value?.papers.forEach((paper) => {
+            selectedPapersByYear.push(paper);
+        })
+    } else {
+        scholarInfo.value?.papers.forEach((paper) => {
+            const date = new Date(paper.publication_date);
+            if (date.getFullYear().toString() == yearFilter.value) {
+                console.log(paper);
+
+                selectedPapersByYear.push(paper);
+            }
+        })
+    }
+    const selectedPapersByType: Paper[] = [];
+    if (typeFilter.value == "全部类型") {
+        selectedPapersByYear.forEach(paper => {
+            selectedPapersByType.push(paper);
+        })
+    } else {
+        selectedPapersByYear.forEach(paper => {
+            const paperType = transLabelName.get(paper.type);
+            if (paperType == typeFilter.value) {
+                selectedPapersByType.push(paper);
+            }
+        })
+    }
+    if (cityOrTimeFilter.value == "按年份降序") {
+        selectedPapersByType.sort((a, b) => {
+            const dateA = new Date(a.publication_date);
+            const dateB = new Date(b.publication_date);
+            return dateB.getFullYear() - dateA.getFullYear();
+        })
+    } else {
+        selectedPapersByType.sort((a, b) => {
+            return b.cited_by_count - a.cited_by_count;
+        });
+    }
+    filterPapers.value = selectedPapersByType;
+    console.log(selectedPapersByType);
+
+
+}
+
+import { onMounted, onUnmounted } from 'vue';
 onMounted(async () => {
     if (window.history) {
         history.pushState(null, "", document.URL)
@@ -267,56 +324,67 @@ onMounted(async () => {
     const data = await get(message, "/author", { "author_id": route.query.author_id });
     if (data) {
         scholarInfo.value = data;
-        const typeMap = new Map<string, number>();
-        const dateMap = new Map<number, number>();
-        const newPapers = scholarInfo.value?.papers.sort((a, b) => {
-            return new Date(a.publication_date).getTime() - new Date(b.publication_date).getTime()
-        });
-        newPapers?.slice(newPapers?.length - 20, undefined).forEach((paper) => {
-            const name = transLabelName.get(paper.type) ?? '';
-            typeMap.set(name, (typeMap.get(name) ?? 0) + 1);
-            const year = new Date(paper.publication_date).getFullYear();
-            dateMap.set(year, (dateMap.get(year) ?? 0) + 1);
-        });
-        var typeVals: {
-            label: string;
-            data: number[];
-            backgroundColor: string[];
-            borderColor: string[];
-            borderWidth: number;
-        } = {
-            label: '数量',
-            data: [],
-            backgroundColor: ['rgba(255, 159, 64, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(153, 102, 255, 0.2)'],
-            borderColor: ['rgb(255, 159, 64)', 'rgb(75, 192, 192)', 'rgb(54, 162, 235)', 'rgb(153, 102, 255)'],
-            borderWidth: 1
-        };
-        typeMap.forEach((val, key) => {
-            paperDataByType.value.labels.push(key);
-            typeVals.data.push(val);
-        });
-        paperDataByType.value.datasets.push(typeVals);
-        var yearVals: {
-            label: string;
-            data: number[];
-            backgroundColor: string[];
-            borderColor: string[];
-            borderWidth: number;
-        } = {
-            label: '文章数量',
-            data: [],
-            backgroundColor: [getComputedStyle(document.documentElement).getPropertyValue('--primary-100')],
-            borderColor: [getComputedStyle(document.documentElement).getPropertyValue('--primary-100')],
-            borderWidth: 1
+        {
+            const typeMap = new Map<string, number>();
+            const dateMap = new Map<number, number>();
+            const newPapers = scholarInfo.value?.papers.sort((a, b) => {
+                return new Date(a.publication_date).getTime() - new Date(b.publication_date).getTime()
+            });
+            newPapers?.slice(newPapers?.length - 20, undefined).forEach((paper) => {
+                const name = transLabelName.get(paper.type) ?? '';
+                typeMap.set(name, (typeMap.get(name) ?? 0) + 1);
+                const year = new Date(paper.publication_date).getFullYear();
+                dateMap.set(year, (dateMap.get(year) ?? 0) + 1);
+            });
+            var typeVals: {
+                label: string;
+                data: number[];
+                backgroundColor: string[];
+                borderColor: string[];
+                borderWidth: number;
+            } = {
+                label: '数量',
+                data: [],
+                backgroundColor: ['rgba(255, 159, 64, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(153, 102, 255, 0.2)'],
+                borderColor: ['rgb(255, 159, 64)', 'rgb(75, 192, 192)', 'rgb(54, 162, 235)', 'rgb(153, 102, 255)'],
+                borderWidth: 1
+            };
+            typeMap.forEach((val, key) => {
+                typeFilterOption.value.push({
+                    label: key,
+                    value: key
+                })
+                paperDataByType.value.labels.push(key);
+                typeVals.data.push(val);
+            });
+            paperDataByType.value.datasets.push(typeVals);
+            var yearVals: {
+                label: string;
+                data: number[];
+                backgroundColor: string[];
+                borderColor: string[];
+                borderWidth: number;
+            } = {
+                label: '文章数量',
+                data: [],
+                backgroundColor: [getComputedStyle(document.documentElement).getPropertyValue('--primary-100')],
+                borderColor: [getComputedStyle(document.documentElement).getPropertyValue('--primary-100')],
+                borderWidth: 1
+            }
+            let maxVal = 0;
+            dateMap.forEach((val, key) => {
+                yearFilterOption.value.push({
+                    label: key.toString(),
+                    value: key.toString()
+                })
+                paperDataByYear.value.labels.push(key.toString());
+                yearVals.data.push(val);
+                maxVal = Math.max(maxVal, val);
+            });
+            chartOptions.scales.y.suggestedMax = maxVal + 1;
+            paperDataByYear.value.datasets.push(yearVals);
         }
-        let maxVal = 0;
-        dateMap.forEach((val, key) => {
-            paperDataByYear.value.labels.push(key.toString());
-            yearVals.data.push(val);
-            maxVal = Math.max(maxVal, val);
-        });
-        chartOptions.scales.y.suggestedMax = maxVal + 1;
-        paperDataByYear.value.datasets.push(yearVals);
+        filterChanged();
         loading.value = false;
     }
 
@@ -454,6 +522,7 @@ function back() {
     font-size: medium;
     display: flex;
     color: var(--primary-100);
+    cursor: pointer;
 }
 
 .claimButton {

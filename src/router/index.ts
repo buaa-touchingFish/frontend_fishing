@@ -28,6 +28,9 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: '/collect',
         component: () => import('@/pages/user/Collect.vue'),
+      }, {
+        path: '/institutionHome',
+        component: () => import('@/pages/InstitutionHome.vue')
       }
     ]
   },

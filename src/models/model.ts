@@ -50,3 +50,23 @@ export type CoAuthor = {
     display_name: string;
     last_known_institution_display_name: string;
 }
+export type Institution = {
+    id: string;
+    display_name: string;
+    ror: string;
+    country_code: string;
+    works_count: number;
+    cited_by_count: number;
+    type: string;
+    homepage_url: string;
+    fields: string[];
+    associated_institutions: {
+        id: string;
+        ror: string;
+        display_name: string;
+        country_code: string;
+        type: string;
+        relationship: string;
+    }[];
+}
+
