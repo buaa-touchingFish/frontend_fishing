@@ -1,12 +1,21 @@
 <template>
     <div class="resultCardContainer shadow" @click="$router.push('/detail/' + result.id);">
-        <h1 class="title">
-            <n-ellipsis style="max-width: 100%;color: var(--text-100);">{{ result.title }}</n-ellipsis>
+        <h1 class="title hoverTitle" :data-title="copyResult.title">
+            <span class="ellipsis" v-html="result.title"></span>
         </h1>
         <div class="authors">
-            <div class="author" v-for="(authorship, index) in result.authorships" :key="index" v-show="index < 5">
-                <n-ellipsis style="max-width: 100px; color: var(--text-100);">{{ authorship.author.display_name
-                }}</n-ellipsis>
+            <div class="author" :data-title="copyResult.authorships[index].author.display_name" v-for="(authorship, index) in result.authorships" :key="index" v-show="index < 5">
+                <span class="ellipsis" 
+                    v-html="authorship.author.display_name" 
+                    @click.stop="$router.push(
+                        {
+                            path:'/scholarHome',
+                            query:{
+                                author_name:copyResult.authorships[index].author.display_name,
+                                author_id:copyResult.authorships[index].author.id
+                            }
+                        })"
+                ></span>
                 <div v-show="index != 4 && index != result.authorships.length - 1">,&nbsp;&nbsp;</div>
             </div>
         </div>
@@ -14,13 +23,23 @@
             <div class="publish_time">
                 {{ result.publication_date }}
             </div>
+            <div class="publisher" :data-title="copyResult.publisher.display_name" v-show="copyResult.publisher.display_name!='暂无'">
+                <span class="ellipsis" v-html="result.publisher.display_name"
+                    @click.stop="$router.push(
+                        {
+                            path:'/institutionHome',
+                            query:{
+                                institutionID:copyResult.publisher.id,
+                                institutionName:copyResult.publisher.display_name
+                            }
+                        })"
+                ></span>
+            </div>
             <div class="cited_by_count">
                 被引量：{{ result.cited_by_count }}
             </div>
         </div>
-        <div class="abstract">
-            {{ result.abstract.length >= 150 ? result.abstract.substring(0, 150) + "..." : result.abstract }}
-        </div>
+        <div class="abstract" v-html="result.abstract"></div>
         <div class="cardBottom">
             <div class="option">
                 <n-button strong secondary round type="info" class="optionButton" @click.stop=""><n-icon :size="18" :component="Star20Regular" /><span>收藏</span></n-button>
@@ -32,17 +51,43 @@
 </template>
 
 <script setup lang='ts'>
-import { ref } from 'vue';
+import { ref,Ref,onMounted,nextTick } from 'vue';
 import { Paper } from '@/models/model'
 import { Star20Regular,AlignLeft16Regular,ArrowDownload16Regular } from '@vicons/fluent'
+import { useRoute } from 'vue-router'
 
 const props = defineProps<{
     result: Paper
 }>()
+const route = useRoute()
 
-const result: Paper = props.result
+const result: Ref<Paper> = ref(props.result)
+const copyResult:Ref<Paper> = ref(props.result)
 
+onMounted(() => {
+    result.value = props.result
+    result.value.abstract = result.value.abstract.length >= 150 ? result.value.abstract.substring(0, 150) + "..." : result.value.abstract
+    copyResult.value = JSON.parse(JSON.stringify(props.result))
+})
 
+nextTick(() => {
+    const searchValue = route.query.wd;
+    const additionValue = route.query.ad;
+    if(searchValue && additionValue){
+        const replaceReg = new RegExp(searchValue as string, 'gi')
+        const replaceString = '<span style="color: var(--primary-100);font-weight: 600;">$&</span>'
+        if(additionValue == '文章'){
+            result.value.title = result.value.title.replace(replaceReg,replaceString)
+            result.value.abstract = result.value.abstract.replace(replaceReg,replaceString)
+        }else if(additionValue == '作者'){
+            result.value.authorships.forEach((item) => {
+                item.author.display_name = item.author.display_name.replace(replaceReg,replaceString)
+            })
+        }else if(additionValue == '期刊'){
+            result.value.publisher.display_name = result.value.publisher.display_name.replace(replaceReg,replaceString)
+        }
+    }
+})
 
 </script>
 
@@ -55,6 +100,32 @@ const result: Paper = props.result
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+}
+.hoverTitle[data-title] {
+    position: relative;
+    width: fit-content;
+    max-width: 100%;
+
+    &:hover:after { 
+        opacity: 1;
+        transition: all 0.1s ease 0.5s;
+        visibility: visible;
+    }
+    &:after {
+        content: attr(data-title);
+        background-color: var(--bg-200);
+        height: fit-content;
+        font-size: 12px;
+        position: absolute;
+        padding: 4px 10px;
+        right: 20px;
+        top: -1.5rem;
+        border-radius: 4px;
+        white-space: nowrap;
+        z-index: 99999;
+        visibility: hidden;
+        opacity: 0;
+    }
 }
 
 .resultCardContainer {
@@ -89,6 +160,7 @@ const result: Paper = props.result
     font-weight: 400;
     display: flex;
     align-items: center;
+    color: var(--text-100);
 
     cursor: pointer;
     /* view-transition-name: searchResultCardTitle; */
@@ -102,6 +174,43 @@ const result: Paper = props.result
 
 .author {
     display: flex;
+    color: var(--text-100);
+    overflow: hidden;
+
+    & span:hover{
+        color: var(--primary-100);
+        text-decoration: underline;
+    }
+}
+.author[data-title] {
+    position: relative;
+    width: fit-content;
+    max-width: 100%;
+    padding-top:20px;
+    margin-top: -20px;
+    padding-right: 60px;
+    margin-right: -60px;
+
+    &:hover:after { 
+        opacity: 1;
+        transition: all 0.1s ease 0.5s;
+        visibility: visible;
+    }
+    &:after {
+        content: attr(data-title);
+        background-color: var(--bg-200);
+        height: fit-content;
+        font-size: 12px;
+        position: absolute;
+        padding: 4px 10px;
+        left: 20px;
+        top: 0;
+        border-radius: 4px;
+        white-space: nowrap;
+        z-index: 99999;
+        visibility: hidden;
+        opacity: 0;
+    }
 }
 
 .publish_time_and_cited_by_count {
@@ -109,9 +218,48 @@ const result: Paper = props.result
     color: var(--text-200);
     display: flex;
 }
+.publisher{
+    width: 30%;
+    margin-left: 10%;
 
+    & span{
+        display: block;
+        width: 100%;
+
+        &:hover{
+            color: var(--primary-100);
+            text-decoration: underline;
+        }
+    }
+}
+.publisher[data-title] {
+    position: relative;
+    width: fit-content;
+    max-width: 30%;
+
+    &:hover:after { 
+        opacity: 1;
+        transition: all 0.1s ease 0.5s;
+        visibility: visible;
+    }
+    &:after {
+        content: attr(data-title);
+        background-color: var(--bg-200);
+        height: fit-content;
+        font-size: 12px;
+        position: absolute;
+        padding: 4px 10px;
+        right: 20px;
+        top: -1.5rem;
+        border-radius: 4px;
+        white-space: nowrap;
+        z-index: 99999;
+        visibility: hidden;
+        opacity: 0;
+    }
+}
 .cited_by_count {
-    margin-left: 20%;
+    margin-left: 10%;
 }
 
 .abstract {
@@ -152,5 +300,9 @@ const result: Paper = props.result
         line-height: 18px;
         margin-left: 3px;
     }
+}
+
+.search-text{
+    color: var(--primary-100);
 }
 </style>
