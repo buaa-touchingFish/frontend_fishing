@@ -6,7 +6,7 @@
                 <div class="title">{{ recommend.title }}</div>
             </div>
             <div class="clickVolume">
-                <n-icon :size="20" :component="CursorClick20Filled"></n-icon>
+                <n-icon :size="20" :component="CursorClick20Filled" color='var(--primary-100)'></n-icon>
                 &nbsp;点击量：{{ recommend.browse }}
             </div>
         </div>
@@ -74,6 +74,8 @@ onMounted(async () => {
 }
 .titleContainer[data-title] {
     position: relative;
+    width: fit-content;
+    max-width: 100%;
 
     &:hover:after { 
         opacity: 1;
@@ -91,7 +93,6 @@ onMounted(async () => {
         top: -1.5rem;
         border-radius: 4px;
         white-space: nowrap;
-        box-shadow: 0 0 4px rgba(0, 0, 0, 0.16);
         z-index: 99999;
         visibility: hidden;
         opacity: 0;

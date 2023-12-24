@@ -6,15 +6,16 @@
                 <StarBackground></StarBackground>
             </div>
             <div class="homeHeaderDiv">
-                <n-button class="loginButton" @click="$router.push({
+                <n-button class="loginButton" type="primary" @click="$router.push({
                     path: '/scholarHome',
                     query: {
                         author_name: 'J. Russell Ramsay',
                         author_id: 'A5077915689'
                     }
                 });" href="/">设置</n-button>
-                <n-button class="loginButton" @click="$router.push('/login');" href="/">登录</n-button>
+                <n-button class="loginButton" type="primary" @click="$router.push('/login');" href="/">登录</n-button>
                 <Subscribe class="loginButton"></Subscribe>
+                <Notice class="loginButton"></Notice>
             </div>
             <div class="homeContentDiv">
                 <div class="homeContentLeft">
@@ -81,6 +82,7 @@ import { useRoute } from 'vue-router'
 import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
 import Stars from '@/components/Home/Stars.vue'
 import Subscribe from '@/components/Home/ScholarPop.vue'
+import Notice from '@/components/Home/NoticePop.vue'
 import { Search12Filled } from "@vicons/fluent";
 import router from '@/router';
 import { useMessage } from 'naive-ui';
@@ -363,7 +365,7 @@ const changeShowCard = () => {
 
 .advancedSearchDiv {
     width: 100%;
-    height: 100%;
+    height: 150%;
     background-color: var(--bg-100);
     border-radius: 10px;
     display: flex;
