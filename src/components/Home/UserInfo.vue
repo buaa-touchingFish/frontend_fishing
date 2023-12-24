@@ -1,82 +1,72 @@
 <template>
-    <n-modal v-model:show="userInfoModal" class="custom-card" preset="card" style="width: 25vw;height: 60vh;"
-        title="个人信息" size="huge" :bordered="false" header-style="padding:20px" content-style="height:70%;">
-        <div class="info">
-            <div class="infoContentFirst">
-                <div class="infoAvatar">
-                    <n-upload ref="avatarUpload" abstract :custom-request="chooseAvatar"
-                        :default-file-list="fileList">
-                        <n-upload-trigger #="{ handleClick }" abstract>
-                            <div class="infoAvatarContainer" @click="handleClick">
-                                <n-avatar round :size="45" :src="currentAvatar" />
-                                <div class="changeAvatar">
-                                    <n-icon color="white" :size="30" :component="Camera20Filled" />
-                                </div>
-                            </div>
-                        </n-upload-trigger>
-                    </n-upload>
-                </div>
-                <div class="infoContent">
-                    <span>用户名</span>
-                    <span v-if="!showChangeInput[0]">{{ userName }}</span>
-                    <n-input v-else v-model:value="changeForm[0]" type="text" placeholder="请输入新用户名"></n-input>
-                </div>
-            </div>
-            <div class="operations">
-                <n-button v-if="!showChangeInput[0]" text type="primary"
-                    @click="showChangeInput[0] = !showChangeInput[0]">
-                    修改
-                </n-button>
-                <template v-else>
-                    <n-button text type="primary" @click="changeInfo(0)" style="margin-right: 10%;">
-                        保存
-                    </n-button>
-                    <n-button text type="default" @click="showChangeInput[0] = !showChangeInput[0]">
-                        取消
-                    </n-button>
-                </template>
+    <n-popover placement="bottom" trigger="hover" :show-arrow="false" style="margin-right: 40px;margin-top: 10px;border-radius: 15px;" @update:show="handleUpdateShow" :animated="false">
+      <template #trigger>
+        <div class="user">
+            <div class="avatar" :class="{enter:isEnter,leave:isLeave}">
+                <n-avatar round :size="40" :src="'http://'+currentAvatar" />
             </div>
         </div>
-        <div class="info">
-            <div class="infoContent">
+      </template>
+      <div class="userInfoContainer">
+            <div class="largeAvatar" :class="{appear:isEnter,disappear:isLeave}">
+                <n-upload ref="avatarUpload" abstract :custom-request="chooseAvatar"
+                    :default-file-list="fileList">
+                    <n-upload-trigger #="{ handleClick }" abstract>
+                        <div class="infoAvatarContainer" @click="handleClick">
+                            <n-avatar round :size="80" :src="'http://'+currentAvatar" />
+                            <div class="changeAvatar">
+                                <n-icon color="white" :size="30" :component="Camera20Filled" />
+                            </div>
+                        </div>
+                    </n-upload-trigger>
+                </n-upload>
+            </div>
+            <div class="useNameContainer">
+                <div class="userName">
+                    <span v-if="!showChangeInput[0]">{{ username }}</span>
+                    <n-input v-else v-model:value="changeForm[0]" type="text" @blur="changeInfo(0)" @keyup.enter.naive="changeInfo(0)" placeholder="请输入手机号"></n-input>
+                    <n-icon class="changeName" :size="22" :component="CalligraphyPen20Regular" v-show="!showChangeInput[0]" @click="showChangeInput[0] = !showChangeInput[0]"/>
+                </div>
+            </div>
+            <div class="subscribe_and_collect">
+                <div class="subscribe">
+                    <div class="subscribeNumber">{{ subscribeNumber }}</div>
+                    <span>订阅</span>
+                </div>
+                <div class="collect">
+                    <div class="collectNumber">{{ collectNumber }}</div>
+                    <span>收藏</span>
+                </div>
+            </div>
+            <div class="email">
+                    <span>邮箱</span>
+                    <span>{{ email }}</span>
+            </div>
+            <div class="phone">
                 <span>手机号</span>
                 <span v-if="!showChangeInput[1]">{{ phone }}</span>
-                <n-input v-else v-model:value="changeForm[1]" type="text" placeholder="请输入手机号"></n-input>
+                <n-input v-else v-model:value="changeForm[1]" type="text" @blur="changeInfo(1)" @keyup.enter.naive="changeInfo(1)" placeholder="请输入手机号"></n-input>
+                <div class="phoneOperations" v-show="!showChangeInput[1]">
+                    <n-button text type="primary" @click="showChangeInput[1] = !showChangeInput[1]">修改</n-button>
+                </div>
             </div>
             <div class="operations">
-                <n-button v-if="!showChangeInput[1]" text type="primary"
-                    @click="showChangeInput[1] = !showChangeInput[1]">
-                    修改
+                <n-button round type="info" @click="">
+                    修改密码
                 </n-button>
-                <template v-else>
-                    <n-button text type="primary" @click="changeInfo(1)" style="margin-right: 10%;">
-                        保存
-                    </n-button>
-                    <n-button text type="default" @click="showChangeInput[1] = !showChangeInput[1]">
-                        取消
-                    </n-button>
-                </template>
+                <n-button round type="error" @click="">
+                    退出登录
+                </n-button>
             </div>
         </div>
-        <div class="info">
-            <div class="infoContent">
-                <span>邮箱</span>
-                <span>{{ email }}</span>
-            </div>
-        </div>
-        <div class="changePassword">
-            <n-button text type="primary" style="margin-right: 10%;"
-                @click="changePasswordModal = !changePasswordModal">
-                修改密码
-            </n-button>
-        </div>
-    </n-modal>
+    </n-popover>
+
     <n-modal v-model:show="changeAvatarModal" preset="card" style="width: 30vw;height: 70vh;">
         <div style="width: 100%; height: 90%;">
-            <vueCropper ref="cropper" :img="imgbase" centerBox="true" autoCrop="true" outputSize="1"
+            <VueCropper ref="cropper" :img="imgbase" centerBox="true" autoCrop="true" outputSize="1"
                 outputType="png" fixedNumber="1" fixedBox="true" autoCropWidth="200" autoCropHeight="200"
                 limitMinSize="50">
-            </vueCropper>
+            </VueCropper>
         </div>
         <div class="changeAvatarButtons">
             <n-button strong secondary type="primary" style="margin-top: 20px;width: 20%;" @click="changeAvatar">
@@ -112,61 +102,86 @@
 </template>
 
 <script setup lang='ts'>
-import { watch,ref } from 'vue';
-import { post,postWithParam } from '@/api/axios'
+import { onMounted,ref } from 'vue';
+import { get,post } from '@/api/axios'
 import { NIcon, NButton, NAvatar, useMessage, UploadCustomRequestOptions } from 'naive-ui'
-import { Camera20Filled } from '@vicons/fluent'
+import { Camera20Filled,CalligraphyPen20Regular } from '@vicons/fluent'
+import 'vue-cropper/dist/index.css';
+import { VueCropper } from 'vue-cropper';
 
 const message = useMessage()
-const props = defineProps<{
-    userInfoModal:boolean
-}>()
-const emit = defineEmits(['close'])
 
-watch(() => props.userInfoModal,() => {
-    userInfoModal.value = props.userInfoModal
-})
+//控制显示
+const isLeave = ref(false)
+const isEnter = ref(false)
+const handleUpdateShow = (show:boolean) => {
+    isLeave.value = !show;
+    isEnter.value = show;
+}
 
 //个人信息
 const currentAvatar = ref('');
-const userInfoModal = ref(false)
-watch(userInfoModal,(newValue) => {
-    if(!newValue)
-        emit('close',newValue)
-})
-const userName = ref('');
+const username = ref('');
 const phone = ref('');
 const email = ref('');
-const changeForm = ref(['', '', '']);
-const showChangeInput = ref([false, false, false]);
+const author_id = ref('')
+const subscribeNumber = ref(0)
+const collectNumber = ref(0)
+const getInfo = async () => {
+    const res = await get(message,'/user/getInfo',{})
+    if(!res){
+        return;
+    }
+    username.value = res.username;
+    currentAvatar.value = res.avatar;
+    email.value = res.email
+    phone.value = res.phone
+    author_id.value = res.author_id;
+    changeForm.value[0] = res.username;
+    changeForm.value[1] = res.phone;
+}
+onMounted(async () => {
+    await getInfo()
+    let res = await get(message,'/subscribe',{uid:localStorage.getItem('uid')})
+    subscribeNumber.value = res ? res.length : 0;
+    res = await get(message,'/collect',{uid:localStorage.getItem('uid')})
+    collectNumber.value = res ? res.length : 0;
+})
+const changeForm = ref(['', '']);
+const showChangeInput = ref([false, false]);
 const changeInfo = async (index: number) => {
     //表单验证
-    const emailPattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    const phonePattern = /^(?:(?:\+|00)86)?1(?:(?:3[\d])|(?:4[5-79])|(?:5[0-35-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\d])|(?:9[1589]))\d{8}$/
-    if (!phonePattern.test(changeForm.value[1])) {
-        message.warning('请输入正确格式的手机号');
-        showChangeInput.value[1] = !showChangeInput.value[1];
-        changeForm.value[1] = phone.value;
-        return;
+    if(index == 1)
+    {
+        const phonePattern = /^(?:(?:\+|00)86)?1(?:(?:3[\d])|(?:4[5-79])|(?:5[0-35-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\d])|(?:9[1589]))\d{8}$/
+        if (!phonePattern.test(changeForm.value[1])) {
+            message.warning('请输入正确格式的手机号');
+            showChangeInput.value[1] = !showChangeInput.value[1];
+            changeForm.value[1] = phone.value;
+            return;
+        }
+    }else{
+        if(changeForm.value[0] == ''){
+            message.warning('用户名可不能为空哦');
+            showChangeInput.value[0] = false;
+            changeForm.value[0] = username.value;
+        }
     }
-    if (!emailPattern.test(changeForm.value[2])) {
-        message.warning('请输入正确格式的邮箱');
-        showChangeInput.value[2] = !showChangeInput.value[2];
-        changeForm.value[2] = email.value;
-        return;
-    }
-    const res = await post(message, '/user/changeInfo', {
+    const res = await post(message, '/user/changeinfo', {
         "username": changeForm.value[0],
+        "email": email.value,
         "phone": changeForm.value[1],
-        "email": changeForm.value[2]
+        "avatar": currentAvatar.value,
+        "uid": localStorage.getItem('uid'),
+        "author_id": author_id.value
     });
-    if (!res) {
+    if (res != null && !res) {
         return;
     }
-    userName.value = changeForm.value[0];
-    phone.value = changeForm.value[1];
-    email.value = changeForm.value[2];
-    showChangeInput.value[index] = !showChangeInput.value[index];
+    console.log(1);
+    
+    showChangeInput.value[index] = false;
+    await getInfo();
     message.success('修改成功！');
 }
 //修改头像
@@ -191,8 +206,9 @@ const changeAvatar = () => {
         const formData = new FormData();
         formData.append('key', `用户${localStorage.getItem('uid')}在${Date.now()}修改的头像`);
         formData.append('file', data as File);
-        const res = await postWithParam(message,'/user/upload', formData, {headers: { 'Content-Type': 'multipart/form-data' },})
+        const res = await post(message,'/user/upload', formData)
         currentAvatar.value = res.data;
+        await getInfo()
     })
     changeAvatarModal.value = !changeAvatarModal.value;
 }
@@ -225,94 +241,188 @@ const changePassword = async () => {
 </script>
 
 <style scoped>
-.info {
-    height: 33%;
+.user {
+    height: 40px;
+    width: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.avatar{
+    height: 100%;
     width: 100%;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.enter{
+    visibility: hidden;
+}
+.leave{
+    transform-origin: right top;
+    animation: shrink 200ms ease-out;
+}
+@keyframes magnify {
+    0%{
+        transform: scale(0.5,0.5);
+    }
+    100%{
+        
+    }
+}
+@keyframes shrink {
+    0%{
+        transform: scale(2,2);
+    }
+    100%{
+        
+    }
+}
+.userInfoContainer{
+    height: 300px;
+    width: 230px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position:relative;
+}
+.largeAvatar{
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border:1px var(--bg-100) solid;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top:-60px;
+    left: calc(50% - 40px);
+    cursor: pointer;
+
+    transform-origin: right top;
+    animation: magnify 200ms ease-out;
+}
+.infoAvatarContainer {
+    font-size: 0;
+    border-radius: 50%;
+    position: relative;
+
+    &:hover .changeAvatar {
+        cursor: pointer;
+        opacity: 1;
+        transition: .3s .5s linear;
+    }
+}
+.changeAvatar {
+    height: 80px;
+    width: 80px;
+    background-color: rgba(0, 0, 0, 0.46);
+    font-size: 0;
+    border-radius: 50%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+}
+.appear{
+    
+}
+.disappear{
+    visibility: hidden;
+}
+.useNameContainer{
+    margin-top: 30px;
+    height: 10%;
+    font-size: 20px;
+    font-weight: 600;
+}
+.userName{
+    display: felx;
+    align-items: center;
+    position: relative;
+}
+.changeName{
+    transform: rotateZ(45deg) translateY(5px);
+    opacity: 0.3;
+    font-size: 0;
+    cursor: pointer;
+    transition: 0.2s all linear;
+    position: absolute;
+    top: 3px;
+    right: -30px;
+
+    &:hover{
+        color: var(--primary-100);
+        opacity: 1;
+        transition: 0.2s all linear;
+    }
+}
+.subscribe_and_collect{
+    width: 90%;
+    height: 25%;
+    display: flex;
+
+}
+.subscribe{
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    & span{
+        font-size: 16px;
+    }
+}
+.subscribeNumber{
+    font-size: 23px;
+}
+.collect{
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    & span{
+        font-size: 16px;
+    }
+}
+.collectNumber{
+    font-size: 23px;
+}
+.email {
+    height: 20%;
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.phone{
+    height: 20%;
+    width: 90%;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.info::before {
-    content: '';
-    width: 80%;
-    height: 2px;
-    background-color: #eeee;
-    position: absolute;
-    left: 10%;
-    margin-bottom: 30%;
-}
 
-.info:first-child::before {
-    width: 100%;
-    left: 0;
-}
-
-.infoContentFirst {
+.phoneOperations {
     height: 100%;
-    width: 80%;
-    display: flex;
-    align-items: center;
-
-    .infoContent {
-        padding-left: 10px;
-    }
-}
-
-.infoAvatar {
-    height: 100%;
-    width: 20%;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-
-    .infoAvatarContainer {
-        font-size: 0;
-        border-radius: 50%;
-        position: relative;
-
-        .changeAvatar {
-            height: 45px;
-            width: 45px;
-            background-color: rgba(0, 0, 0, 0.46);
-            font-size: 0;
-            border-radius: 50%;
-            position: absolute;
-            left: 0;
-            top: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-        }
-
-        &:hover .changeAvatar {
-            cursor: pointer;
-            opacity: 1;
-            transition: .3s linear;
-        }
-    }
-}
-
-.infoContent {
-    height: 60%;
-    width: 70%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-
-    >span:first-child {
-        font-size: 17px;
-        color: rgb(96, 90, 131)
-    }
-}
-
-.operations {
-    height: 100%;
-    width: 30%;
+    width: 15%;
     display: flex;
     justify-content: flex-end;
     align-items: center;
+}
+.operations{
+    width: 90%;
+    height: 10%;
+    display:flex;
+    justify-content:space-between;
 }
 
 .changeAvatarButtons {
