@@ -2,14 +2,6 @@
     <div class="platformTop">
         <n-h1 style="margin-left: 10%;">信息概况</n-h1>
         <div class="platformTopBottom">
-            <!-- <n-statistic class="item" label="今日访问" tabular-nums>
-                <template #prefix>
-                    <n-icon>
-                        <GlobeSearch24Filled />
-                    </n-icon>
-                </template>
-                <n-number-animation ref="numberAnimationInstRef" :from="0" :to="11451444" :duration="1000" />
-            </n-statistic> -->
             <n-statistic class="item" label="收录文章" tabular-nums>
                 <template #prefix>
                     <n-icon>
