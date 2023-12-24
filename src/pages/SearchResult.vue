@@ -50,6 +50,7 @@
 </template>
 
 <script setup lang='ts'>
+//@ts-nocheck
 import { onMounted,watch,ref,Ref } from 'vue';
 import ResultCard from '@/components/search/ResultCard.vue'
 import SecondarySearchCard from '@/components/search/SecondarySearchCard.vue'
@@ -146,7 +147,7 @@ type secondarySearch = {
         "tr": number,
         "ca": number
     },
-    "type": {
+    type: {
         "article": number,
         "book-chapter": number,
         "book": number,
@@ -158,7 +159,7 @@ type secondarySearch = {
         "paratext": number,
         "editorial": number
     },
-    "publisher": {
+    publisher: {
         "null": 1382,
         "{\"id\": \"S106296714\", \"display_name\": \"Lecture Notes in Computer Science\"}": number,
         "{\"id\": \"S4306400194\", \"display_name\": \"arXiv (Cornell University)\"}": number,
@@ -169,7 +170,7 @@ type secondarySearch = {
         "{\"id\": \"S202381698\", \"display_name\": \"PLOS ONE\"}": number,
         "{\"id\": \"S4306463708\", \"display_name\": \"Oxford University Press eBooks\"}": number
     },
-    "date": {
+    date: {
         
     }
 }

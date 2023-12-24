@@ -51,6 +51,7 @@ const blackTheme: GlobalThemeOverrides =
   },
   // ...
 };
+// @ts-ignore
 const themeOverrides: Ref<GlobalThemeOverrides> = ref(whiteTheme);
 const theme: Ref<GlobalTheme | null> = ref(null);
 emitter.on("themeChange", (data: any) => {

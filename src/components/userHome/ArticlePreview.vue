@@ -99,6 +99,7 @@ const props = defineProps({
 
 const message = useMessage()
 
+//@ts-ignore
 const fileDetail: Ref<Paper> = ref({
   id: "",
   title: "",

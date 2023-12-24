@@ -46,7 +46,8 @@
     </n-space>
     <n-modal v-model:show="showModal" preset="dialog" title="新标签">
       <div :class="{ label_input: statusIsError }" :style="{ '--pseudo-content': `'${pseudoContent}'` }">
-        <n-input v-modal:value="newCreatingLabel" @input="updateCreatingStatus" :status="creatingStatus"
+        <n-input v-modal:value="newCreatingLabel" @input="updateCreatingStatus" 
+        :status="creatingStatus"
           placeholder="请输入标签名" />
       </div>
       <template #action>
@@ -67,6 +68,7 @@ import ArticlePreView from '@/components/userHome/ArticlePreview.vue'
 import { useCollectStore, Tag } from '@/store/collectStore'
 import { ref, computed, onMounted } from "vue";
 import { NTabs, NTabPane, NModal, NInput, NButton, useMessage, useDialog, NSpace, NCard, NSkeleton, NCheckbox, NIcon } from "naive-ui";
+import { FormValidationStatus } from 'naive-ui/es/form/src/interface';
 
 const collectStore = useCollectStore();
 
@@ -132,7 +134,7 @@ const tag_string_array = computed(() => {
 const hasClickedCreateBtn = ref(false);
 const newCreatingLabel = ref('');
 
-const creatingStatus = ref<string>();
+const creatingStatus = ref<FormValidationStatus>();
 const updateCreatingStatus = (value: string) => {
   // console.log(`newCreatingLabel.value=${value}`)
   newCreatingLabel.value = value;
