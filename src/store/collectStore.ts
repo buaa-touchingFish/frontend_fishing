@@ -220,6 +220,29 @@ export const useCollectStore = defineStore("collect", () => {
       .map((tag) => tag.name);
   });
 
+  const requestDeletePaper = async () => {
+    console.log("requestDeletePaper");
+    const paper_ids = Array.from(paper_checked.value);
+    const res = await api.post("/collect/delete", {
+      paper_id: paper_ids,
+    });
+    return res.data.code === 200;
+  };
+
+  const delete_checked_paper = () => {
+    for (const paper_id of paper_checked.value) {
+      if (paper_id === active_paper_id.value)
+        active_paper_id.value = "paper_id";
+      for (const tag of tags.value) {
+        tag.deletePaper(paper_id);
+      }
+    }
+    papers.value = papers.value.filter(
+      (item) => !paper_checked.value.has(item.paper_id)
+    );
+    paper_checked.value.clear();
+  };
+
   return {
     user_id,
     active_tag_name,
@@ -239,5 +262,7 @@ export const useCollectStore = defineStore("collect", () => {
     all_tags,
     requestAddTag,
     add_tag_to_paper,
+    requestDeletePaper,
+    delete_checked_paper,
   };
 });

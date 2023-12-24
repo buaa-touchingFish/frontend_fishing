@@ -12,13 +12,13 @@
                     全选
                   </n-checkbox>
                 </div>
-                <n-button text>
+                <n-button text @click="handleDelete">
                   <template #icon>
                     <n-icon>
-                      <Export />
+                      <TrashBinOutline />
                     </n-icon>
                   </template>
-                  导出引文
+                  取消收藏
                 </n-button>
               </div>
               <div v-for="paper in tag.papers" :key="paper.paper_id">
@@ -62,7 +62,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { OpenOutline as Export } from '@vicons/ionicons5';
+import { TrashBinOutline } from '@vicons/ionicons5';
 import api from '@/api/axios.ts';
 import ArticleItem from "@/components/userHome/ArticleItem.vue";
 import Detail from '@/pages/Detail.vue'
@@ -214,6 +214,28 @@ const handleClose = (name: string) => {
           message.success('删除标签成功');
         } else {
           message.success('删除标签失败');
+        }
+      })
+    },
+    onNegativeClick: () => {
+      message.info('取消')
+    }
+  })
+}
+
+const handleDelete = () => {
+  dialog.warning({
+    title: '取消收藏',
+    content: `将从收藏夹中删除选中的${collectStore.paper_checked.size}篇论文`,
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: () => {
+      collectStore.requestDeletePaper().then((res) => {
+        if (res === true) {
+          collectStore.delete_checked_paper();
+          message.success('取消收藏成功');
+        } else {
+          message.success('取消收藏失败');
         }
       })
     },
