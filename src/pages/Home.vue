@@ -15,6 +15,7 @@
                 });" href="/">设置</n-button>
                 <n-button class="loginButton" type="primary" @click="$router.push('/login');" href="/">登录</n-button>
                 <Subscribe class="loginButton"></Subscribe>
+                <Notice class="loginButton"></Notice>
             </div>
             <div class="homeContentDiv">
                 <div class="homeContentLeft">
@@ -81,6 +82,7 @@ import { useRoute } from 'vue-router'
 import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
 import Stars from '@/components/Home/Stars.vue'
 import Subscribe from '@/components/Home/ScholarPop.vue'
+import Notice from '@/components/Home/NoticePop.vue'
 import { Search12Filled } from "@vicons/fluent";
 import router from '@/router';
 import { useMessage } from 'naive-ui';

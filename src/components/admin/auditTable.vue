@@ -124,15 +124,15 @@ const deny = async (row: RowData) => {
 
 const columns: DataTableColumns = [
     {
-        title: '学者名',
+        title: '事务主体名',
         key: 'name',
     },
     {
-        title: '申请账户名',
+        title: '账户名',
         key: 'username',
     },
     {
-        title: '申请时间',
+        title: '时间',
         key: 'time',
     },
     {
