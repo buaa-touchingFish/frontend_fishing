@@ -66,7 +66,7 @@ emitter.on("themeChange", (data: any) => {
       colorStyle.setProperty('--accent-200', '#e1ffff');
       colorStyle.setProperty('--text-100', '#FFFFFF');
       colorStyle.setProperty('--text-200', '#9e9e9e');
-      colorStyle.setProperty('--bg-100', '#0c1117');
+      colorStyle.setProperty('--bg-100', '#18181c');
       colorStyle.setProperty('--bg-200', '#2d2d2d');
       colorStyle.setProperty('--bg-300', '#454545');
       colorStyle.setProperty('--bg-rendering', '#454545');
@@ -130,7 +130,7 @@ if (isDarkTheme.matches) { // 是深色
   --accent-200: #e1ffff;
   --text-100: #FFFFFF;
   --text-200: #9e9e9e;
-  --bg-100: #1E1E1E;
+  --bg-100: #18181c;
   --bg-200: #2d2d2d;
   --bg-300: #454545;
   --card-cover: rgb(225, 234, 243);
