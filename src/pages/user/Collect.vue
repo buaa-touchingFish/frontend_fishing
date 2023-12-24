@@ -28,7 +28,7 @@
               </div>
             </n-space>
             <div v-if="canLoadPreview" style="flex-grow: 1;">
-              <ArticlePreView :paper_id="collectStore.active_paper_id" />
+              <Detail :paper_id="collectStore.active_paper_id" />
             </div>
             <n-card v-else style="background-color: var(--bg-100);">
               <template #header>
@@ -65,7 +65,7 @@
 import { OpenOutline as Export } from '@vicons/ionicons5';
 import api from '@/api/axios.ts';
 import ArticleItem from "@/components/userHome/ArticleItem.vue";
-import ArticlePreView from '@/components/userHome/ArticlePreview.vue'
+import Detail from '@/pages/Detail.vue'
 import { useCollectStore, Tag } from '@/store/collectStore'
 import { ref, computed, onMounted } from "vue";
 import { NTabs, NTabPane, NModal, NInput, NButton, useMessage, useDialog, NSpace, NCard, NSkeleton, NCheckbox, NIcon } from "naive-ui";
@@ -76,8 +76,9 @@ const message = useMessage();
 const dialog = useDialog();
 
 onMounted(() => {
-  // collectStore.getAllCollects();
-  collectStore.fakeData();
+  if (collectStore.isFakeData)
+    collectStore.fakeData();
+  else collectStore.getAllCollects();
 })
 
 const handleItemClick = () => {
@@ -106,8 +107,8 @@ const allChecked = computed({
 });
 
 const canLoadPreview = computed(() => {
-  return true;
-  // return !collectStore.isFakeData && collectStore.active_paper_id !== 'paper_id';
+  // return true;
+  return !collectStore.isFakeData && collectStore.active_paper_id !== 'paper_id';
 })
 
 const tag2String = computed(() => {
@@ -156,16 +157,14 @@ const handleAdd = () => {
 }
 
 const requestCreateNewLabel = async (label_name: string) => {
-  /* const res = await api.post('/collect/label', {
-    params: {
-      user_id: collectStore.user_id,
-      paper_id: '',
-      label_name
-    }
+  const res = await api.post('/collect/label', {
+    // user_id: collectStore.user_id,
+    paper_id: '',
+    label_name: label_name
   });
-  console.log('requestCreateNewLabel', res.data);
-  return res.data.code === 0; */
-  return true;
+  // console.log('requestCreateNewLabel', res.data);
+  return res.data.code === 200;
+  // return true;
 }
 
 const createLabel = () => {
