@@ -1,5 +1,5 @@
 <template>
-    <div class="resultCardContainer shadow" @click="$router.push('/detail/' + result.id);">
+    <div class="resultCardContainer shadow" @click="$router.push('/detail/' + result.id);post(message,'/history/create',{'paper_id':result.id});">
         <h1 class="title hoverTitle" :data-title="copyResult.title">
             <span class="ellipsis" v-html="result.title"></span>
         </h1>
@@ -55,11 +55,14 @@ import { ref,Ref,onMounted,nextTick } from 'vue';
 import { Paper } from '@/models/model'
 import { Star20Regular,AlignLeft16Regular,ArrowDownload16Regular } from '@vicons/fluent'
 import { useRoute } from 'vue-router'
+import { post } from '@/api/axios'
+import { useMessage } from 'naive-ui'
 
 const props = defineProps<{
     result: Paper
 }>()
 const route = useRoute()
+const message = useMessage()
 
 const result: Ref<Paper> = ref(props.result)
 const copyResult:Ref<Paper> = ref(props.result)
