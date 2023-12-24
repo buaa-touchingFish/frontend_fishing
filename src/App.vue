@@ -119,7 +119,6 @@ if (isDarkTheme.matches) { // 是深色
   --bg-300: #cccccc;
   --bg-rendering: #e5ecf6;
   --card-cover: #dedeff;
-
 }
 
 .fafaffa {

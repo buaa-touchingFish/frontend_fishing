@@ -16,28 +16,17 @@ export interface ArticleDetail {
 export class Tag {
   public name: string;
   public papers: Paper[];
-  public papers_checked: Set<string>;
   constructor(name: string, papers: Paper[] = []) {
     this.name = name;
     this.papers = papers;
-    this.papers_checked = new Set<string>();
   }
   public addPaper(paper: Paper) {
     this.papers.push(paper);
   }
   public deletePaper(paper_id: string | undefined) {
     if (paper_id === undefined) return;
-    this.papers_checked.delete(paper_id);
     const i = this.papers.findIndex((item) => item.paper_id === paper_id);
     if (i !== -1) this.papers.splice(i, 1);
-  }
-  public setPaperChecked(paper_id: string | undefined) {
-    if (paper_id === undefined) return;
-    this.papers_checked.add(paper_id);
-  }
-  public setPaperUnchecked(paper_id: string | undefined) {
-    if (paper_id === undefined) return;
-    this.papers_checked.delete(paper_id);
   }
 }
 
@@ -76,6 +65,7 @@ export const useCollectStore = defineStore("collect", () => {
   const active_paper_id = ref("paper_id");
   const tags = ref([] as Tag[]);
   const papers = ref([] as Paper[]);
+  const paper_checked = ref(new Set<string>());
   const isFakeData = ref(true);
   const set_active_tag_name = (active_tag_name1: string | undefined) => {
     if (active_tag_name1 === undefined) return;
@@ -147,17 +137,13 @@ export const useCollectStore = defineStore("collect", () => {
     if (tag === undefined) return;
     tag.deletePaper(paper_id);
   };
-  const change_item_checked = (
-    tag_name: string | undefined,
+  const change_paper_checked = (
     paper_id: string | undefined,
     value: boolean | undefined
   ) => {
-    if (tag_name === undefined || paper_id === undefined || value === undefined)
-      return;
-    const tag_idx = tags.value.findIndex((tag) => tag.name === tag_name);
-    if (tag_idx === -1) return;
-    if (value === true) tags.value[tag_idx].setPaperChecked(paper_id);
-    else tags.value[tag_idx].setPaperUnchecked(paper_id);
+    if (paper_id === undefined || value === undefined) return;
+    if (value === true) paper_checked.value.add(paper_id);
+    else paper_checked.value.delete(paper_id);
   };
   const getAllCollects = async () => {
     get_user_id();
@@ -238,6 +224,7 @@ export const useCollectStore = defineStore("collect", () => {
     active_paper_id,
     tags,
     isFakeData,
+    paper_checked,
     set_active_tag_name,
     set_active_paper_id,
     getAllCollects,
@@ -245,7 +232,7 @@ export const useCollectStore = defineStore("collect", () => {
     requestDeleteTag,
     delete_whole_tag,
     delete_tag_from_paper,
-    change_item_checked,
+    change_paper_checked,
     fakeData,
     all_tags,
     requestAddTag,

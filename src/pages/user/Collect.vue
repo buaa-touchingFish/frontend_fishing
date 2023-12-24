@@ -4,7 +4,7 @@
       <n-tabs v-model:value="cur_tag_name" type="card" addable closable @close="handleClose" @add="handleAdd">
         <n-tab-pane v-for="tag in collectStore.tags" :key="tag.name" :closable="notAll(tag.name)" :name="tag.name"
           :tab="tag2String(tag)">
-          <n-space>
+          <n-space style="display: flex; flex-wrap: nowrap;">
             <n-space vertical>
               <div class="export-container">
                 <div class="check-all">
@@ -27,7 +27,9 @@
                   :tags="paper.tags" />
               </div>
             </n-space>
-            <ArticlePreView v-if="canLoadPreview" :paper_id="collectStore.active_paper_id" />
+            <div v-if="canLoadPreview" style="flex-grow: 1;">
+              <ArticlePreView :paper_id="collectStore.active_paper_id" />
+            </div>
             <n-card v-else style="background-color: var(--bg-100);">
               <template #header>
                 <n-space vertical>
@@ -86,25 +88,26 @@ const handleItemClick = () => {
 const allChecked = computed({
   get() {
     const tag = collectStore.tags.find(item => item.name === cur_tag_name.value);
-    if (tag) return tag.papers.length === tag.papers_checked.size;
+    if (tag) {
+      for (const paper of tag.papers) {
+        if (!collectStore.paper_checked.has(paper.paper_id)) {
+          return false;
+        }
+      }
+      return true;
+    }
     return false;
   },
   set(val) {
     const tag = collectStore.tags.find(item => item.name === cur_tag_name.value);
-    if (val === true) {
-      if (tag) {
-        tag.papers.forEach(item => tag.setPaperChecked(item.paper_id));
-      }
-    } else {
-      if (tag) {
-        tag.papers.forEach(item => tag.setPaperUnchecked(item.paper_id));
-      }
-    }
+    if (tag)
+      tag.papers.forEach(item => collectStore.change_paper_checked(item.paper_id, val));
   }
 });
 
 const canLoadPreview = computed(() => {
-  return !collectStore.isFakeData && collectStore.active_paper_id !== 'paper_id';
+  return true;
+  // return !collectStore.isFakeData && collectStore.active_paper_id !== 'paper_id';
 })
 
 const tag2String = computed(() => {
@@ -224,10 +227,18 @@ const handleClose = (name: string) => {
 </script>
 <style scoped>
 .collect-container {
+  /* position: absolute;
+  left: 50%;
+  transform: translateX(-50%); */
   margin-top: 15px;
   margin-bottom: 15px;
-  margin-left: 80px;
-  width: 100%;
+  padding-left: 74px;
+  padding-right: 14px;
+  /* margin-left: 80px; */
+  /* padding-right: 10px; */
+  width: 100vw;
+  /* width: 1800px; */
+  /* overflow-y: hidden; */
 
   .preview {
     width: 200px;

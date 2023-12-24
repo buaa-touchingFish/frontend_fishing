@@ -64,9 +64,11 @@
         <div class="menu">
             <Menu></Menu>
         </div>
-        <div class="main">
-            <router-view></router-view>
-        </div>
+        <n-scrollbar style="max-height: calc(100vh - 57px)">
+            <div class="main">
+                <router-view></router-view>
+            </div>
+        </n-scrollbar>
     </div>
 </template>
 
@@ -327,7 +329,8 @@ const changeShowCard = () => {
         transition: 200ms all linear;
     }
 }
-.completeSearchOptionIsSelect{
+
+.completeSearchOptionIsSelect {
     background-color: #ccc;
 }
 
