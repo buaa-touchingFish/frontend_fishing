@@ -1,9 +1,9 @@
 <template>
     <div class="detailContainer">
         <n-card :title=fileDetail.title class="border">
-            <n-grid :x-gap="12" :y-gap="8" :cols="36">
+            <n-grid :x-gap="12" :y-gap="8" :cols="24">
                 <n-grid-item :span="2" class="constFont">作者:</n-grid-item>
-                <n-grid-item :span="34">
+                <n-grid-item :span="22">
                     <n-space :size="[12, 0]">
                         <span 
                             class="author"
@@ -24,10 +24,10 @@
                 </n-grid-item>
 
                 <n-grid-item :span="2" class="constFont">摘要:</n-grid-item>
-                <n-grid-item :span="34">{{ fileDetail.abstract }}</n-grid-item>
+                <n-grid-item :span="22">{{ fileDetail.abstract }}</n-grid-item>
 
                 <n-grid-item :span="2" class="constFont">关键词:</n-grid-item>
-                <n-grid-item :span="34">
+                <n-grid-item :span="22">
                     <n-space :size="[12, 0]">
                         <span v-for="(word, index) in fileDetail.keywords" :key=index>
                             {{ word }};
@@ -36,7 +36,7 @@
                 </n-grid-item>
 
                 <n-grid-item :span="2" class="constFont">时间:</n-grid-item>
-                <n-grid-item :span="34">{{ fileDetail.publication_date }}</n-grid-item>
+                <n-grid-item :span="22">{{ fileDetail.publication_date }}</n-grid-item>
             </n-grid>
             
             <template #footer>
@@ -195,7 +195,7 @@
 <script setup lang='ts'>
 import Comment from '@/components/detail/Comment.vue'
 import PaperItem from '@/components/detail/PaperItem.vue'
-import { ref, onMounted, Ref } from 'vue'
+import { ref, onMounted, Ref, watch } from 'vue'
 import Clipboard from 'clipboard'
 import { post, get } from '@/api/axios'
 import { useMessage } from 'naive-ui'
@@ -227,13 +227,61 @@ type commentType = {
 }
 
 const props = defineProps(['paper_id'])
+const props_paper_id = props.paper_id
+watch(props_paper_id, async (newVal) => {
+    let res = await post(
+        message,"/paper/single",
+        {
+            "id":newVal
+        }
+    )
+    console.log(res)
+    fileDetail.value = res
+    
+    res = await post(
+        message,"/paper/getRel",
+        {
+            "rel":fileDetail.value.related_works
+        }
+    )
+    similarPapers.value = res
+    console.log(similarPapers.value)
+
+    res = await post(
+        message,"/paper/getRef",
+        {
+            "ref":fileDetail.value.referenced_works
+        }
+    )
+    quotePapers.value = res
+    console.log(quotePapers.value)
+
+    res = await get(
+        message,"/comment",
+        {
+            "paper_id":fileDetail.value.id
+        }
+    )
+    console.log(res)
+    comments.value = res
+
+    res = await post(
+        message,"/paper/getcitation",
+        {
+            "id":fileDetail.value.id
+        }
+    )
+    console.log(res)
+    citation.value = res
+})
 
 const similarPapers:Ref<paperItemType[]> = ref([])
 const quotePapers:Ref<paperItemType[]> = ref([])
 const comments:Ref<commentType[]> = ref([])
 const citation:Ref<string> = ref("")
+
 onMounted(async () => {
-    const paperId = props.paper_id != undefined ? props.paper_id : route.params.id
+    const paperId = props_paper_id != undefined ? props_paper_id : route.params.id
     let res = await post(
         message,"/paper/single",
         {
