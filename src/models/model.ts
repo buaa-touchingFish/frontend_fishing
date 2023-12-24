@@ -23,6 +23,7 @@ export type Paper = {
     issn: string;
     is_active: boolean;
     abstract: string;
+    isCollected:boolean;
     //统计数据
     cited_by_count: number;
     browse: number;

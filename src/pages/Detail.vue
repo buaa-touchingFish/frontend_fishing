@@ -28,13 +28,22 @@
             </n-grid>
             
             <template #footer>
-                <n-popover trigger="hover">
+                <n-popover trigger="hover" v-if="!fileDetail.isCollected">
                     <template #trigger>
-                        <n-icon size="40" color="#0000ff" class="button">
+                        <n-icon size="40" color="#0000ff" class="button" @click="collect">
                             <Star12Regular />
                         </n-icon>
                     </template>
                     <span>收藏</span>
+                </n-popover>
+
+                <n-popover trigger="hover" v-else>
+                    <template #trigger>
+                        <n-icon size="40" color="#0000ff" class="button" @click="undoCollect">
+                            <Star12Filled />
+                        </n-icon>
+                    </template>
+                    <span>取消收藏</span>
                 </n-popover>
                 
                 <n-popover trigger="hover">
@@ -55,14 +64,33 @@
                     <span>评论</span>
                 </n-popover>
 
-                <!-- <n-popover trigger="hover">
+                <n-popover trigger="hover">
                     <template #trigger>
-                        <n-icon size="40" color="#0000ff" class="follow_buton" >
-                            <Comment12Regular />
+                        <n-icon size="40" color="#0000ff" class="follow_buton" v-show="fileDetail.doi != null && fileDetail.doi.length != 0" @click="link">
+                            <LinkSquare12Regular />
                         </n-icon>
                     </template>
                     <span>链接</span>
-                </n-popover> -->
+                </n-popover>
+                
+                <n-popover trigger="hover">
+                    <template #trigger>
+                        <n-icon size="40" color="#0000ff" class="follow_buton" v-show="fileDetail.oa_url != null && fileDetail.oa_url.length != 0" @click="download">
+                            <ArrowDownload20Filled />
+                        </n-icon>
+                    </template>
+                    <span>下载</span>
+                </n-popover>
+
+                <n-popover trigger="hover">
+                    <template #trigger>
+                        <n-icon size="40" color="#0000ff" class="follow_buton" @click="changeAppealMask">
+                            <Warning20Filled />
+                        </n-icon>
+                    </template>
+                    <span>申诉</span>
+                </n-popover>
+                
                 <div class="newComment" v-show="ifShowCommentInput">
                     <n-input
                         v-model:value="newComment"
@@ -129,7 +157,25 @@
             <n-card embedded id="foo">
                 {{citeContent}}
             </n-card>
-            <n-button tertiary type="info" class="copyCiteButton" @click="copy" data-clipboard-target="#foo">复制</n-button>
+            <n-button tertiary type="info" class="modalButton copyCiteButton" @click="copy" data-clipboard-target="#foo">复制</n-button>
+        </n-card>
+    </n-modal>
+
+    <n-modal v-model:show="appealMask">
+        <n-card
+            style="width: 600px"
+            title="申诉"
+            :bordered="false"
+            size="huge"
+            role="dialog"
+            aria-modal="true"
+        >
+            <n-input
+                v-model:value="appealContent"
+                type="textarea"
+                placeholder="输入申诉内容"
+            />
+            <n-button tertiary type="info" class="modalButton" @click="appeal">申诉</n-button>
         </n-card>
     </n-modal>
 </template>
@@ -139,11 +185,11 @@ import Comment from '@/components/detail/Comment.vue'
 import PaperItem from '@/components/detail/PaperItem.vue'
 import { ref, onMounted, Ref } from 'vue'
 import Clipboard from 'clipboard'
-import { post, get } from '@/api/axios'
+import { post, get, deleteApi } from '@/api/axios'
 import { useMessage } from 'naive-ui'
 import { useRoute } from 'vue-router'
 import { Paper } from '@/models/model'
-import { Star12Regular, TextQuote16Filled, Comment12Regular } from '@vicons/fluent'
+import { Star12Regular, TextQuote16Filled, Comment12Regular, LinkSquare12Regular, ArrowDownload20Filled, Star12Filled, Warning20Filled } from '@vicons/fluent'
 
 const message = useMessage()
 const route = useRoute()
@@ -213,15 +259,7 @@ const quoteMask = ref(false)
 function changeQuoteMask(){
     quoteMask.value = !quoteMask.value
 }
-
 const citeContent = ref("[1]刘炜.48例肝内门静脉癌栓的超声诊断价值的探讨[J].中国医药指南, 2013, 11(32):2.DOI:CNKI:SUN:YYXK.0.2013-32-381.")
-
-const newComment = ref("")
-const ifShowCommentInput = ref(false)
-function changeShowCommentInput(){
-    ifShowCommentInput.value = !ifShowCommentInput.value
-}
-
 function copy() {
     const clipboard = new Clipboard('.copyCiteButton');
     clipboard.on('success', () => {
@@ -230,6 +268,29 @@ function copy() {
     })
 }
 
+const appealMask = ref(false)
+function changeAppealMask(){
+    appealMask.value = !appealMask.value
+}
+const appealContent = ref("")
+async function appeal() {
+    const res = await post(
+        message,"/user/create/appeal",
+        {
+            "content":appealContent.value,
+            "paper_id":fileDetail.value.id
+        }
+    )
+    console.log(res)
+    appealMask.value = !appealMask.value
+    appealContent.value = ""
+}
+
+const newComment = ref("")
+const ifShowCommentInput = ref(false)
+function changeShowCommentInput(){
+    ifShowCommentInput.value = !ifShowCommentInput.value
+}
 async function publishComment() {
     await post(
         message,"/comment",
@@ -248,6 +309,38 @@ async function publishComment() {
     )
     console.log(res)
     comments.value = res
+    newComment.value = ""
+    ifShowCommentInput.value = false
+}
+
+async function collect() {
+    const res = await post(
+        message,"/collect",
+        {
+            "user_id":localStorage.getItem("uid"),
+            "paper_id":fileDetail.value.id
+        }
+    )
+    console.log(res)
+    fileDetail.value.isCollected = true
+}
+async function undoCollect() {
+    const res = await deleteApi(
+        message,"/collect",
+        {
+            "user_id":localStorage.getItem("uid"),
+            "paper_id":fileDetail.value.id
+        }
+    )
+    console.log(res)
+}
+
+function link() {
+    window.open(fileDetail.value.doi, '_blank')
+}
+
+function download() {
+    window.open(fileDetail.value.oa_url, '_self')
 }
 </script>
 
@@ -269,7 +362,7 @@ async function publishComment() {
 }
 .follow_buton{
     cursor: pointer;
-    margin-left: 20px;
+    margin-left: 30px;
 }
 .commentsAndStatistics{
     display: flex;
@@ -289,7 +382,7 @@ async function publishComment() {
     font-weight: 1000;
     font-size: large;
 }
-.copyCiteButton{
+.modalButton{
     float: right;
     margin-top: 10px;
 }

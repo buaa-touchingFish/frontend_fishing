@@ -48,6 +48,7 @@ const paperItem:paperItemType = props.paperItem
 }
 .title:hover{
     cursor: pointer;
+    text-decoration: underline;
 }
 .author{
     color: blue;
