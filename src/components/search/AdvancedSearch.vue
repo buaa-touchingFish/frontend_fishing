@@ -33,7 +33,7 @@
             </n-form-item>
         </n-form>
         <div class="search">
-            <n-button type="success" @click="search">搜索</n-button>
+            <n-button type="primary" @click="search">搜索</n-button>
         </div>
     </div>
 </template>
