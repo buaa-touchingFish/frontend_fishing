@@ -5,13 +5,13 @@
                 <div class="imageDiv">
                     <n-avatar round :size="128"
                         src="https://x0.ifengimg.com/res/2020/79AF4AE1EC8333953CBE4B3B3D0529A6E1FB6186_size217_w1080_h1171.jpeg" />
-                    <n-button class="claimButton" @click="$router.push({
-                        path: '/claimScholar',
-                        query: {
-                            author_name: scholarName,
-                            author_id: scholarID
-                        }
-                    })">我要认证</n-button>
+                    <n-button class="claimButton" @click="subscribed = !subscribed;">
+                        <n-icon size="24">
+                            <AlertOff20Filled v-if="subscribed" />
+                            <Alert20Regular v-else />
+                        </n-icon>
+                        {{ subscribed ? "取消" : "" }}订阅
+                    </n-button>
                 </div>
                 <div class="verticalSplitDiv"></div>
                 <div class="infoDiv">
@@ -21,72 +21,90 @@
                         <span class="idSpan">scholarID :
                             {{ scholarID }}
                         </span>
-                    </div>
-                    <n-skeleton v-if="loading" block :width="146" height="30px" :sharp="false" size="small" />
-                    <span v-else class="briefInfo" @click="$router.push({
-                        path: '/institutionHome',
-                        query: {
-                            institution_id: scholarInfo?.author.last_known_institution.id,
-                            institution_name: scholarInfo?.author.last_known_institution.display_name
-                        }
-                    })">
-                        <n-icon size="22">
-                            <BuildingHome20Filled />
-                        </n-icon>
-                        {{ scholarInfo?.author.last_known_institution.display_name }}
-                    </span>
-                    <div class="infoDataDiv">
-                        <div class="infoDataBoxDiv">
-                            <span class="infoBoxTitleSpan">
-                                <n-icon>
-                                    <TextQuote16Filled />
-                                </n-icon>
-                                被引次数
-                            </span>
-                            <n-skeleton v-if="loading" width="100%" height="25px" :sharp="false" size="small" />
-                            <span v-else class="infoBoxValueSpan">
-                                {{ scholarInfo?.author.cited_by_count }}
-                            </span>
-                        </div>
-                        <n-divider vertical></n-divider>
-                        <div class="infoDataBoxDiv">
-                            <span class="infoBoxTitleSpan">
-                                <n-icon>
-                                    <Document16Filled />
-                                </n-icon>
-                                成果数
-                            </span>
 
-                            <n-skeleton v-if="loading" width="100%" height="25px" :sharp="false" size="small" />
-                            <span v-else class="infoBoxValueSpan">
-                                {{ scholarInfo?.author.works_count }}
-                            </span>
-                        </div>
-                        <n-divider vertical></n-divider>
-                        <div class="infoDataBoxDiv">
-                            <span class="infoBoxTitleSpan">
-                                <n-icon>
-                                    <Eye16Filled />
+                    </div>
+                    <div class="briefInfoDiv">
+                        <div class="briefInfoLeftDiv">
+                            <n-skeleton v-if="loading" block :width="146" height="30px" :sharp="false" size="small" />
+                            <span v-else class="briefInfo" @click="$router.push({
+                                path: '/institutionHome',
+                                query: {
+                                    institution_id: scholarInfo?.author.last_known_institution.id,
+                                    institution_name: scholarInfo?.author.last_known_institution.display_name
+                                }
+                            })">
+                                <n-icon size="22">
+                                    <BuildingHome20Filled />
                                 </n-icon>
-                                被关注数
+                                {{ scholarInfo?.author.last_known_institution.display_name }}
                             </span>
-                            <n-skeleton v-if="loading" width="100%" height="25px" :sharp="false" size="small" />
-                            <span v-else class="infoBoxValueSpan">1.3W</span>
+                            <div class="infoDataDiv">
+                                <div class="infoDataBoxDiv">
+                                    <span class="infoBoxTitleSpan">
+                                        <n-icon>
+                                            <TextQuote16Filled />
+                                        </n-icon>
+                                        被引次数
+                                    </span>
+                                    <n-skeleton v-if="loading" width="100%" height="25px" :sharp="false" size="small" />
+                                    <span v-else class="infoBoxValueSpan">
+                                        {{ scholarInfo?.author.cited_by_count }}
+                                    </span>
+                                </div>
+                                <n-divider vertical></n-divider>
+                                <div class="infoDataBoxDiv">
+                                    <span class="infoBoxTitleSpan">
+                                        <n-icon>
+                                            <Document16Filled />
+                                        </n-icon>
+                                        成果数
+                                    </span>
+
+                                    <n-skeleton v-if="loading" width="100%" height="25px" :sharp="false" size="small" />
+                                    <span v-else class="infoBoxValueSpan">
+                                        {{ scholarInfo?.author.works_count }}
+                                    </span>
+                                </div>
+                                <n-divider vertical></n-divider>
+                                <div class="infoDataBoxDiv">
+                                    <span class="infoBoxTitleSpan">
+                                        <n-icon>
+                                            <Eye16Filled />
+                                        </n-icon>
+                                        被关注数
+                                    </span>
+                                    <n-skeleton v-if="loading" width="100%" height="25px" :sharp="false" size="small" />
+                                    <span v-else class="infoBoxValueSpan">1.3W</span>
+                                </div>
+                                <n-divider vertical></n-divider>
+                                <div class="infoDataBoxDiv">
+                                    <span class="infoBoxTitleSpan">
+                                        <n-icon>
+                                            <ArrowTrending16Filled />
+                                        </n-icon>
+                                        h指数
+                                    </span>
+                                    <n-skeleton v-if="loading" width="100%" height="25px" :sharp="false" size="small" />
+                                    <span v-else class="infoBoxValueSpan">
+                                        {{ scholarInfo?.author.h_index }}
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                        <n-divider vertical></n-divider>
-                        <div class="infoDataBoxDiv">
-                            <span class="infoBoxTitleSpan">
-                                <n-icon>
-                                    <ArrowTrending16Filled />
-                                </n-icon>
-                                h指数
-                            </span>
-                            <n-skeleton v-if="loading" width="100%" height="25px" :sharp="false" size="small" />
-                            <span v-else class="infoBoxValueSpan">
-                                {{ scholarInfo?.author.h_index }}
-                            </span>
+                        <div class="briefInfoRightDiv">
+                            暂无个人简介
+                            <n-button v-if="!claimed" style="width:fit-content" @click="$router.push({
+                                path: '/claimScholar',
+                                query: {
+                                    author_name: scholarName,
+                                    author_id: scholarID
+                                }
+                            })">
+                                我要认证
+                            </n-button>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -126,37 +144,50 @@
                     </div>
                 </div>
             </div>
-            <div class="coScholarListDiv">
-                <span class="titleSpan">
-                    <n-icon class="titleIcon">
-                        <PeopleCommunity20Filled />
-                    </n-icon>
-                    合著学者</span>
-                <n-skeleton v-if="loading" width="100%" :sharp="false" height="100px" style="margin-top: 10px;" />
-                <div v-else v-for="(sch, index) in  scholarInfo?.co_authors " :key="index" class="coScholarDiv">
-                    <n-avatar round :size="48" style="margin: 5px;" class="schoAva"
-                        src="https://x0.ifengimg.com/res/2020/79AF4AE1EC8333953CBE4B3B3D0529A6E1FB6186_size217_w1080_h1171.jpeg" />
-                    <div class="verticalSplitDiv" />
-                    <div class="coScholarInfoDiv">
-                        <n-ellipsis style="max-width: calc(100%);">
-                            <router-link class="coScholarName" :to="{
-                                path: '/scholarHome',
-                                query: {
-                                    author_name: sch.display_name,
-                                    author_id: sch.id
-                                }
-                            }">
-                                {{ sch.display_name }}
-                            </router-link>
-                        </n-ellipsis>
-                        <n-ellipsis style="max-width: 100%; margin-bottom: 5px; display: block; color:var(--text-100)"
-                            :tooltip="false">
-                            {{ sch.last_known_institution_display_name }}
-                        </n-ellipsis>
-                        <div class="horizontalSplitDiv" style="width: calc(100%);" />
+            <div class="rightDiv">
+                <div class="coScholarListDiv">
+                    <span class="titleSpan">
+                        <n-icon class="titleIcon">
+                            <PeopleCommunity20Filled />
+                        </n-icon>
+                        合著学者</span>
+                    <n-skeleton v-if="loading" width="100%" :sharp="false" height="100px" style="margin-top: 10px;" />
+                    <div v-else v-for="(sch, index) in  scholarInfo?.co_authors " :key="index" class="coScholarDiv">
+                        <n-avatar round :size="48" style="margin: 5px;" class="schoAva"
+                            src="https://x0.ifengimg.com/res/2020/79AF4AE1EC8333953CBE4B3B3D0529A6E1FB6186_size217_w1080_h1171.jpeg" />
+                        <div class="verticalSplitDiv" />
+                        <div class="coScholarInfoDiv">
+                            <n-ellipsis style="max-width: calc(100%);">
+                                <router-link class="coScholarName" :to="{
+                                    path: '/scholarHome',
+                                    query: {
+                                        author_name: sch.display_name,
+                                        author_id: sch.id
+                                    }
+                                }">
+                                    {{ sch.display_name }}
+                                </router-link>
+                            </n-ellipsis>
+                            <n-ellipsis style="max-width: 100%; margin-bottom: 5px; display: block; color:var(--text-100)"
+                                :tooltip="false">
+                                {{ sch.last_known_institution_display_name }}
+                            </n-ellipsis>
+                            <div class="horizontalSplitDiv" style="width: calc(100%);" />
+                        </div>
+                    </div>
+                </div>
+                <div class="netDiv">
+                    <span class="titleSpan">
+                        <n-icon class="titleIcon">
+                            <PeopleCommunity20Filled />
+                        </n-icon>
+                        关系网络
+                    </span>
+                    <div style="height: 300px; width: 300px;align-self: center;" id="echartDiv">
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </template>
@@ -170,7 +201,7 @@ import { useMessage } from 'naive-ui'
 import { Author, CoAuthor, Paper } from '@/models/model'
 import {
     BuildingHome20Filled, TextQuote16Filled, ArrowTrending16Filled, Eye16Filled, Document16Filled,
-    DataPie20Filled, PeopleCommunity20Filled, DocumentBulletListMultiple20Filled
+    DataPie20Filled, PeopleCommunity20Filled, DocumentBulletListMultiple20Filled, Alert20Regular, AlertOff20Filled
 } from '@vicons/fluent'
 import emitter from '@/eventBus/eventBus';
 const io = new IntersectionObserver((entries) => {
@@ -244,7 +275,11 @@ const scholarName = ref(route.query.author_name);
 const scholarID = ref(route.query.author_id);
 let scholarInfo: Ref<{ author: Author, papers: Paper[], co_authors: CoAuthor[] } | undefined> = ref();
 const loading = ref(true);
-
+const subscribed = ref(false);
+const claimed = ref(false);
+onMounted(async () => {
+    
+});
 const yearFilterOption = ref([{
     label: "全部年份",
     value: "全部年份"
@@ -267,7 +302,6 @@ const cityOrTimeFilterOption = ref([{
 const cityOrTimeFilter = ref("按年份降序");
 
 function filterChanged() {
-    console.log("whuat happend");
 
     const selectedPapersByYear: Paper[] = [];
     if (yearFilter.value == "全部年份") {
@@ -315,6 +349,7 @@ function filterChanged() {
 }
 
 import { onMounted, onUnmounted } from 'vue';
+import * as echarts from 'echarts';
 onMounted(async () => {
     if (window.history) {
         history.pushState(null, "", document.URL)
@@ -386,6 +421,74 @@ onMounted(async () => {
         }
         filterChanged();
         loading.value = false;
+        //绘制关系网络
+        const mychart = echarts.init(document.getElementById("echartDiv"));
+        mychart.hideLoading();
+        const chartData: { nodes: { name: string, symbolSize: number, label: { show: boolean } }[], links: { source: string, target: string }[] } = {
+            nodes: [
+                // Add more nodes as needed
+            ],
+            links: [
+                // Add more links as needed
+            ],
+        };
+        //添加nodes
+        //首先添加自己
+        const mapper = new Map<string, number>();
+        mapper.set(scholarName.value?.toString() ?? "", 30);
+        //然后添加一级关系和二级关系
+        for (const item of scholarInfo.value?.co_authors ?? []) {
+            mapper.set(item.display_name, 20);
+            chartData.links.push({
+                source: item.display_name,
+                target: scholarName.value?.toString() ?? ""
+            });
+            const result = await get(message, "/author", { "author_id": item.id }) as { author: Author, papers: Paper[], co_authors: CoAuthor[] };
+            if (!result) return;
+            result.co_authors.forEach((item1) => {
+                console.log(item1);
+                if (!mapper.has(item1.display_name))
+                    mapper.set(item1.display_name, 10);
+                chartData.links.push({
+                    source: item.display_name,
+                    target: item1.display_name,
+                });
+            })
+        }
+        mapper.forEach((val, key) => {
+            chartData.nodes.push({
+                name: key,
+                symbolSize: val,
+                label: {
+                    show: val > 10
+                }
+            })
+        });
+        console.log(chartData);
+
+        // ECharts option for the relationship network
+        const option = {
+            title: {
+                text: '',
+            },
+            tooltip: {},
+            series: [
+                {
+                    type: 'graph',
+                    layout: 'force',
+                    data: chartData.nodes,
+                    links: chartData.links,
+                    roam: false,
+                    zoom: 2.0
+                    // force: {
+                    //     repulsion: 300, // Adjust as needed
+                    // },
+                },
+            ],
+        };
+
+        // Set the option and render the chart
+        mychart.setOption(option);
     }
 
 });
@@ -490,6 +593,24 @@ function back() {
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
+}
+
+.briefInfoDiv {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+}
+
+.briefInfoLeftDiv {
+    width: 60%;
+}
+
+.briefInfoRightDiv {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
     justify-content: space-between;
 }
 
@@ -636,8 +757,14 @@ function back() {
     margin: 10px;
 }
 
-.coScholarListDiv {
+.rightDiv {
+    display: flex;
+    flex-direction: column;
     width: calc(90% - 700px);
+}
+
+.coScholarListDiv {
+    width: 100%;
     height: fit-content;
     display: flex;
     flex-direction: column;
@@ -671,5 +798,19 @@ function back() {
     color: var(--primary-100);
     text-decoration: none;
     display: block;
+}
+
+.netDiv {
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    padding: 30px;
+    background-color: var(--bg-100);
+    margin-left: 10px;
+    border-radius: 10px;
+    margin-top: 30px;
 }
 </style>
