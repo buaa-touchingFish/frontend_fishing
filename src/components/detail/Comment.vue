@@ -46,8 +46,7 @@ onMounted(
         else display_date.value = sends[0]
         
         display_time.value = sends[1]
-        console.log(comment.avatar)
-        console.log(test == undefined)
+        comment.avatar = "http://" + comment.avatar
     }
 ) 
 const props = defineProps(['comment', 'test'])
@@ -58,8 +57,6 @@ type commentType = {
     avatar:string
 }
 const comment:commentType = props.comment
-const test = props.test
-
 </script>
 
 <style scoped>

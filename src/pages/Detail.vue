@@ -202,7 +202,6 @@ import { useMessage } from 'naive-ui'
 import { useRoute } from 'vue-router'
 import { Paper } from '@/models/model'
 import { Star12Regular, TextQuote16Filled, Comment12Regular, LinkSquare12Regular, ArrowDownload20Filled, Star12Filled, Warning20Filled } from '@vicons/fluent'
-import emitter from '@/eventBus/eventBus'
 
 const message = useMessage()
 const route = useRoute()
@@ -338,6 +337,7 @@ async function publishComment() {
     ifShowCommentInput.value = false
 }
 
+const emit = defineEmits(['collectedChange'])
 async function collect() {
     const res = await post(
         message,"/collect",
@@ -348,7 +348,7 @@ async function collect() {
     )
     console.log(res)
     fileDetail.value.isCollected = true
-    emitter.emit("collectedChange", {paper_id:fileDetail.value.id, status:true})
+    emit("collectedChange", fileDetail.value.id, true)
 }
 async function undoCollect() {
     const res = await post(
@@ -360,7 +360,7 @@ async function undoCollect() {
     )
     console.log(res)
     fileDetail.value.isCollected = false
-    emitter.emit("collectedChange", {paper_id:fileDetail.value.id, status:false})
+    emit("collectedChange", fileDetail.value.id, false)
 }
 
 function link() {

@@ -1,6 +1,9 @@
 <template>
     <div class="searchRasultContainer" v-if="!showSkeleton">
-        <div class="secondarySearch">
+        <div class="secondarySearch" v-if="!showSecondarySearchSkeleton">
+            <n-skeleton v-for="i in 3" :key="i" height="150px" width="100%" style="margin-bottom:20px;border-radius: 5px;"/>
+        </div>
+        <div class="secondarySearch" v-else>
             <SecondarySearchCard v-for="(secondarySearch,index) in secondarySearchList" :key="index" :secondarySearch="secondarySearch"></SecondarySearchCard>
         </div>
         <div class="searchResults">
@@ -18,7 +21,7 @@
             <div class="resultCardsContainer">
                 <ResultCard v-for="(result) in resultList" :key="result.id" :result="result"></ResultCard>
             </div>
-            <div class="paginator shadow" v-show="totalresultList.length>10">
+            <div class="paginator shadow" v-show="resultNumber>10">
                 <n-pagination v-model:page="page" :page-count="pageCount" :page-slot="7" />
             </div>
         </div>
@@ -63,6 +66,7 @@ const route = useRoute()
 
 //骨架屏
 const showSkeleton = ref(false)
+const showSecondarySearchSkeleton = ref(false)
 
 // 结果数量
 const resultNumber = ref(0)
@@ -71,8 +75,8 @@ const resultNumber = ref(0)
 const page = ref(1)
 const pageCount = ref(10)
 
-watch(page,(newValue) => {
-    resultList.value = totalresultList.value.slice((newValue-1)*10,(newValue-1)*10+10)
+watch(page,() => {
+    search()
 })
 
 // 排序
@@ -94,7 +98,7 @@ watch(sortValue,() => {
         resultList.value = totalresultList.value.slice((page.value-1)*10,(page.value-1)*10+10)
     }else{
         totalresultList.value.sort((a,b) => {
-            return new Date(a.publication_date) > new Date(b.publication_date) ? 1 : -1;
+            return new Date(a.publication_date) < new Date(b.publication_date) ? 1 : -1;
         })
         resultList.value = totalresultList.value.slice((page.value-1)*10,(page.value-1)*10+10)
     }
@@ -103,8 +107,7 @@ watch(sortValue,() => {
 // 搜索
 const resultList:Ref<Paper[]> = ref([]);
 const totalresultList:Ref<Paper[]> = ref([]);
-onMounted(async () => {
-    showSkeleton.value = true;
+const search = async () => {
     const additionValue = route.query.ad;
     const searchValue = route.query.wd;
     const res = await post(
@@ -120,17 +123,55 @@ onMounted(async () => {
     totalresultList.value = res
     resultList.value = totalresultList.value.slice(0,10);
     copyedTotalresultList.value = JSON.parse(JSON.stringify(res));
+}
+onMounted(async () => {
+    showSkeleton.value = true;
+    await search();
     showSkeleton.value = false;
     console.log(copyedTotalresultList.value);
 })
 
 //二级搜索
 type secondarySearch = {
-    type:string,
-    content:{
-        name:string,
-        count:number
-    }[]
+    sum: number,
+    lan:{
+        "en": number,
+        "es": number,
+        "": number,
+        "de": number,
+        "fr": number,
+        "pt": number,
+        "id": number,
+        "ko": number,
+        "tr": number,
+        "ca": number
+    },
+    "type": {
+        "article": number,
+        "book-chapter": number,
+        "book": number,
+        "other": number,
+        "reference-entry": number,
+        "dataset": number,
+        "dissertation": number,
+        "report": number,
+        "paratext": number,
+        "editorial": number
+    },
+    "publisher": {
+        "null": 1382,
+        "{\"id\": \"S106296714\", \"display_name\": \"Lecture Notes in Computer Science\"}": number,
+        "{\"id\": \"S4306400194\", \"display_name\": \"arXiv (Cornell University)\"}": number,
+        "{\"id\": \"S52395412\", \"display_name\": \"Bioinformatics\"}": number,
+        "{\"id\": \"S4306402567\", \"display_name\": \"bioRxiv (Cold Spring Harbor Laboratory)\"}": number,
+        "{\"id\": \"S9692511\", \"display_name\": \"Frontiers in Psychology\"}": number,
+        "{\"id\": \"S4306525036\", \"display_name\": \"PubMed\"}": number,
+        "{\"id\": \"S202381698\", \"display_name\": \"PLOS ONE\"}": number,
+        "{\"id\": \"S4306463708\", \"display_name\": \"Oxford University Press eBooks\"}": number
+    },
+    "date": {
+        
+    }
 }
 const secondarySearchList:secondarySearch[] = [
     {
@@ -187,6 +228,22 @@ const secondarySearchList:secondarySearch[] = [
             {name:"化学工程与技术",count:200}]
     },
 ]
+onMounted(async () => {
+    showSecondarySearchSkeleton.value = true;
+    const additionValue = route.query.ad;
+    const searchValue = route.query.wd;
+    const res = await post(
+        message,'/paper/aggregate',{
+            "pageNum": 0,
+            "keyword": additionValue == '文章' ? searchValue : "",
+            "author": additionValue == '作者' ? searchValue : "",
+            "institution": additionValue == '机构' ? searchValue : "",
+            "publisher": additionValue == '期刊' ? searchValue : "",
+        }
+    )
+    resultNumber.value = res.sum;
+    pageCount.value = resultNumber.value/10;
+})
 </script>
 
 <style scoped>

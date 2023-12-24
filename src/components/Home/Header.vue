@@ -52,9 +52,7 @@
                 </div>
             </div>
             <div class="headerRight">
-                <div class="user" @click="userInfoModal = true">
-                    <n-icon size="23" color="var(--primary-100)" :component="Person32Filled" />
-                </div>
+                <UserInfo />
                 <div class="setting">
                     <n-icon size="23" color="var(--primary-100)" :component="Settings32Filled" />
                 </div>
@@ -62,14 +60,13 @@
             </div>
         </div>
     </div>
-    <UserInfo :userInfoModal="userInfoModal" @close="closeUserInfo" />
 </template>
 
 <script setup lang='ts'>
 import { watch, ref, Ref } from 'vue';
 import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
 import UserInfo from '@/components/Home/UserInfo.vue'
-import { Search12Filled, Person32Filled, Settings32Filled } from '@vicons/fluent';
+import { Search12Filled, Settings32Filled } from '@vicons/fluent';
 import emitter from '@/eventBus/eventBus';
 import router from '@/router'
 import { useRoute } from 'vue-router'
@@ -78,19 +75,22 @@ import { storeToRefs } from 'pinia';
 const themeStore = useThemeStore();
 const { isDark } = storeToRefs(themeStore);
 import { post } from '@/api/axios'
+import { useMessage } from 'naive-ui'
 
 const route = useRoute()
+const message = useMessage()
+
 // 输入框
 const searchValue = ref("")
 const showComplete = ref(false)
-const completeSearchOptionsSuffix = ref(['@gmail.com', '@163.com', '@qq.com'])
 const currentCompleteSearchOptionIndex = ref(-1)
 const copySearchValue = ref("")
-let completeSearchOptions: Ref<{ label: string, isSelect: boolean }[]>;
+const completeSearchOptions: Ref<{ label: string, isSelect: boolean }[]> = ref([]);
 const searchInput: Ref<any> = ref(null)
 let time: any;
 const searchComplete = async () => {
     copySearchValue.value = searchValue.value;
+    let res = null;
     if (!searchValue.value) {
         showComplete.value = false;
         return
@@ -98,19 +98,23 @@ const searchComplete = async () => {
     if (time) {
         clearTimeout(time);
     }
-    time = setTimeout(() => {
-        // await post()
+    time = setTimeout(async () => {
+        res = await post(message,'/paper/suggest',{
+            query:searchValue.value
+        })
+        if(!res || res.length == 0){
+            showComplete.value = false;
+        }else{
+            completeSearchOptions.value = res.map((suffix:string) => {
+                return {
+                    label: suffix,
+                    isSelect: false
+                }
+            })
+            showComplete.value = true;
+        }
     }, 200)
     currentCompleteSearchOptionIndex.value = -1;
-    completeSearchOptions = ref(completeSearchOptionsSuffix.value.map((suffix) => {
-        const prefix = searchValue.value
-        return {
-            label: prefix + suffix,
-            isSelect: false
-        }
-    }))
-
-    showComplete.value = true;
 }
 const key_up = () => {
     if (currentCompleteSearchOptionIndex.value != -1)
@@ -175,12 +179,6 @@ watch(() => route.query, (newValue) => {
         additionValue.value = newValue.ad as string
     }
 }, { immediate: true, deep: true })
-
-//个人信息
-const userInfoModal = ref(false);
-const closeUserInfo = (value:boolean) => {
-    userInfoModal.value = value
-}
 </script>
 
 <style scoped>
@@ -225,7 +223,8 @@ const closeUserInfo = (value:boolean) => {
     height: 100%;
     /* background-color: blue; */
     display: flex;
-    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: flex-end;
 }
 
 .logo {
@@ -335,23 +334,6 @@ const closeUserInfo = (value:boolean) => {
     padding: 20px;
     box-sizing: border-box;
     background-color: var(--bg-100);
-}
-
-.headerRight {
-    width: 30%;
-    height: 100%;
-    /* background-color: blue; */
-    display: flex;
-    flex-direction: row-reverse;
-}
-
-.user {
-    height: 100%;
-    width: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
 }
 
 .setting {
