@@ -23,7 +23,7 @@
             <div class="publish_time">
                 {{ result.publication_date }}
             </div>
-            <div class="publisher" :data-title="copyResult.publisher.display_name" v-show="copyResult.publisher.display_name!='暂无'">
+            <div class="publisher" :data-title="copyResult.publisher.display_name" v-show="copyResult.publisher.display_name!='暂无' && copyResult.publisher.display_name!=null">
                 <span class="ellipsis" v-html="result.publisher.display_name"
                     @click.stop="$router.push(
                         {
@@ -221,13 +221,15 @@ nextTick(() => {
 .publisher{
     width: 30%;
     margin-left: 10%;
+    font-weight: 600;
+    color: var(--text-200);
 
     & span{
         display: block;
         width: 100%;
 
         &:hover{
-            color: var(--primary-100);
+            color: var(--primary-200);
             text-decoration: underline;
         }
     }
