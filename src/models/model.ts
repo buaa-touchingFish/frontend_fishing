@@ -61,7 +61,7 @@ export type Institution = {
     type: string;
     homepage_url: string;
     fields: string[];
-    associated_institutions: {
+    associated_institutions?: {
         id: string;
         ror: string;
         display_name: string;

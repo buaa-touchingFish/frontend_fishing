@@ -26,8 +26,8 @@
                     <span v-else class="briefInfo" @click="$router.push({
                         path: '/institutionHome',
                         query: {
-                            institutionID: scholarInfo?.author.last_known_institution.id,
-                            institutionName: scholarInfo?.author.last_known_institution.display_name
+                            institution_id: scholarInfo?.author.last_known_institution.id,
+                            institution_name: scholarInfo?.author.last_known_institution.display_name
                         }
                     })">
                         <n-icon size="22">
@@ -321,7 +321,7 @@ onMounted(async () => {
         window.addEventListener('popstate', back, false);
     }
     io.observe(document.getElementById("authorName")!);
-    const data = await get(message, "/author", { "author_id": route.query.author_id });
+    const data = await get(message, "/author", { "author_id": route.query.author_id, "paper_id": route.query.paper_id });
     if (data) {
         scholarInfo.value = data;
         {

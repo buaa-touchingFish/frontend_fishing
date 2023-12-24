@@ -132,8 +132,8 @@ import {
 import emitter from '@/eventBus/eventBus';
 const route = useRoute();
 const message = useMessage();
-const institutionID = ref(route.query.institutionID);
-const institutionName = ref(route.query.institutionName);
+const institutionID = ref(route.query.institution_id);
+const institutionName = ref(route.query.institution_name);
 const loading = ref(true);
 const io = new IntersectionObserver((entries) => {
     if (entries[0].isIntersecting)
@@ -289,7 +289,8 @@ onMounted(async () => {
         return;
     }
     res.value = result;
-    associatedInstData.value = res.value?.institution.associated_institutions;
+    console.log(res);
+    associatedInstData.value = res.value?.institution.associated_institutions ?? [];
     console.log(res.value?.authorList);
     authorsData.value = res.value?.authorList;
     const random = new Random(res.value?.institution.id);
@@ -464,10 +465,10 @@ class Random {
 
 .loadingSpin {
     width: 100%;
-    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    min-height: 100px
 }
 
 .authorsDiv {
