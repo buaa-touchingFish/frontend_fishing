@@ -167,7 +167,7 @@
             aria-modal="true"
         >
             <n-card embedded id="foo">
-                {{citeContent}}
+                {{ citation }}
             </n-card>
             <n-button tertiary type="info" class="modalButton copyCiteButton" @click="copy" data-clipboard-target="#foo">复制</n-button>
         </n-card>
@@ -202,6 +202,7 @@ import { useMessage } from 'naive-ui'
 import { useRoute } from 'vue-router'
 import { Paper } from '@/models/model'
 import { Star12Regular, TextQuote16Filled, Comment12Regular, LinkSquare12Regular, ArrowDownload20Filled, Star12Filled, Warning20Filled } from '@vicons/fluent'
+import emitter from '@/eventBus/eventBus'
 
 const message = useMessage()
 const route = useRoute()
@@ -222,14 +223,18 @@ type paperItemType = {
 type commentType = {
     sender_name:string,
     send_time:string,
-    content:string
+    content:string,
+    avatar:string
 }
+
+const props = defineProps(['paper_id'])
 
 const similarPapers:Ref<paperItemType[]> = ref([])
 const quotePapers:Ref<paperItemType[]> = ref([])
 const comments:Ref<commentType[]> = ref([])
+const citation:Ref<string> = ref("")
 onMounted(async () => {
-    const paperId = route.params.id
+    const paperId = props.paper_id != undefined ? props.paper_id : route.params.id
     let res = await post(
         message,"/paper/single",
         {
@@ -265,13 +270,21 @@ onMounted(async () => {
     )
     console.log(res)
     comments.value = res
+
+    res = await post(
+        message,"/paper/getcitation",
+        {
+            "id":fileDetail.value.id
+        }
+    )
+    console.log(res)
+    citation.value = res
 })
 
 const quoteMask = ref(false)
 function changeQuoteMask(){
     quoteMask.value = !quoteMask.value
 }
-const citeContent = ref("[1]刘炜.48例肝内门静脉癌栓的超声诊断价值的探讨[J].中国医药指南, 2013, 11(32):2.DOI:CNKI:SUN:YYXK.0.2013-32-381.")
 function copy() {
     const clipboard = new Clipboard('.copyCiteButton');
     clipboard.on('success', () => {
@@ -335,6 +348,7 @@ async function collect() {
     )
     console.log(res)
     fileDetail.value.isCollected = true
+    emitter.emit("collectedChange", {paper_id:fileDetail.value.id, status:true})
 }
 async function undoCollect() {
     const res = await post(
@@ -346,6 +360,7 @@ async function undoCollect() {
     )
     console.log(res)
     fileDetail.value.isCollected = false
+    emitter.emit("collectedChange", {paper_id:fileDetail.value.id, status:false})
 }
 
 function link() {

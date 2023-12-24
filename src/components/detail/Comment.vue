@@ -3,7 +3,7 @@
         <n-avatar
             round
             size="medium"
-            src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"
+            :src="comment.avatar"
         />
         <div class="nameAndDate">
             <n-space>
@@ -46,15 +46,19 @@ onMounted(
         else display_date.value = sends[0]
         
         display_time.value = sends[1]
+        console.log(comment.avatar)
+        console.log(test == undefined)
     }
 ) 
-const props = defineProps(['comment'])
+const props = defineProps(['comment', 'test'])
 type commentType = {
     sender_name:string,
     send_time:string,
-    content:string
+    content:string,
+    avatar:string
 }
 const comment:commentType = props.comment
+const test = props.test
 
 </script>
 
