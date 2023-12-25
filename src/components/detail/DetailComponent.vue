@@ -69,7 +69,14 @@
 
             <n-popover trigger="hover">
                 <template #trigger>
-                    <n-icon size="40" color="var(--primary-100)" class="follow_buton" @click="changeShowCommentInput">
+                    <n-icon size="40" color="var(--primary-100)" class="follow_buton" 
+                        @click="
+                            ifShowCommentInput = !ifShowCommentInput;
+                            nextTick(() => {
+                                inputRef.focus()
+                            })
+                        "
+                    >
                         <Comment12Regular />
                     </n-icon>
                 </template>
@@ -79,25 +86,12 @@
             <n-popover trigger="hover">
                 <template #trigger>
                     <n-icon size="40" color="var(--primary-100)" class="follow_buton"
-                        v-show="fileDetail.doi != null && fileDetail.doi.length != 0"
-                        @click="link"
+                        @click="getPaper"
                     >
                         <LinkSquare12Regular />
                     </n-icon>
                 </template>
-                <span>链接</span>
-            </n-popover>
-
-            <n-popover trigger="hover">
-                <template #trigger>
-                        <n-icon size="40" color="var(--primary-100)" class="follow_buton"
-                            v-show="fileDetail.oa_url != null && fileDetail.oa_url.length != 0" 
-                            @click="download"
-                        >
-                            <ArrowDownload20Filled />
-                        </n-icon>
-                </template>
-                <span>下载</span>
+                <span>获取</span>
             </n-popover>
 
             <n-popover trigger="hover">
@@ -110,10 +104,13 @@
             </n-popover>
 
             <div class="newComment" v-show="ifShowCommentInput">
-                <n-input v-model:value="newComment" placeholder="请输入评论" type="textarea" :autosize="{
-                    minRows: 2,
-                    maxRows: 5
-                }" />
+                <n-input 
+                    v-model:value="newComment" 
+                    placeholder="请输入评论" 
+                    type="textarea" 
+                    :autosize="{minRows: 2,maxRows: 5}"
+                    ref="inputRef"
+                />
                 <n-button type="info" class="newCommentButton" @click="publishComment">发布</n-button>
             </div>
         </template>
@@ -179,7 +176,7 @@
 <script setup lang='ts'>
 import Comment from '@/components/detail/Comment.vue'
 import PaperItem from '@/components/detail/PaperItem.vue'
-import { ref, onMounted, Ref, watch } from 'vue'
+import { ref, onMounted, Ref, watch, nextTick } from 'vue'
 import Clipboard from 'clipboard'
 import { post, get } from '@/api/axios'
 import { useMessage } from 'naive-ui'
@@ -220,6 +217,16 @@ watch(() => props.paper_id, async (newVal) => {
     console.log(res)
     fileDetail.value = res
 
+    res = await post(
+        message, "/paper/iscollect",
+        {
+            "id": fileDetail.value.id
+        }
+    )
+    console.log(res)
+    if(res == undefined) res = false
+    fileDetail.value.isCollected = res
+    
     res = await post(
         message, "/paper/getRel",
         {
@@ -307,6 +314,16 @@ onMounted(async () => {
     )
     console.log(res)
     citation.value = res
+
+    res = await post(
+        message, "/paper/iscollect",
+        {
+            "id": fileDetail.value.id
+        }
+    )
+    console.log(res)
+    if(res == undefined) res = false
+    fileDetail.value.isCollected = res
 })
 
 const quoteMask = ref(false)
@@ -339,12 +356,14 @@ async function appeal() {
     appealContent.value = ""
 }
 
+const inputRef = ref()
 const newComment = ref("")
 const ifShowCommentInput = ref(false)
-function changeShowCommentInput() {
-    ifShowCommentInput.value = !ifShowCommentInput.value
-}
 async function publishComment() {
+    if(newComment.value.length == 0) {
+        message.warning('还没输入评论哦')
+        return
+    }
     await post(
         message, "/comment",
         {
@@ -375,8 +394,10 @@ async function collect() {
         }
     )
     console.log(res)
-    fileDetail.value.isCollected = true
-    emit("collectedChange", fileDetail.value.id, true)
+    if(res === null) {
+        fileDetail.value.isCollected = true
+        emit("collectedChange", fileDetail.value.id, true)
+    }
 }
 async function undoCollect() {
     const res = await post(
@@ -386,17 +407,23 @@ async function undoCollect() {
         }
     )
     console.log(res)
-    fileDetail.value.isCollected = false
-    emit("collectedChange", fileDetail.value.id, false)
+    if(res === null) {
+        fileDetail.value.isCollected = false
+        emit("collectedChange", fileDetail.value.id, false)
+    }
 }
 
-function link() {
-    window.open(fileDetail.value.doi, '_blank')
+function getPaper() {
+    if(fileDetail.value.oa_url != null && fileDetail.value.oa_url.length != 0) {
+        window.open(fileDetail.value.oa_url, '_self')
+    } else if(fileDetail.value.doi != null && fileDetail.value.doi.length != 0) {
+        window.open(fileDetail.value.doi, '_blank')
+    } else {
+        message.warning('无法获取')
+    }
 }
 
-function download() {
-    window.open(fileDetail.value.oa_url, '_self')
-}
+
 </script>
 
 <style scoped>
