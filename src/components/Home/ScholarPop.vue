@@ -7,7 +7,7 @@
                 </n-icon>
             </template>
 
-            <div class="scholarBg" v-for="(scholar, index) in scholarList" @click="$router.push({
+            <div v-if="scholarList.length > 0" class="scholarBg" v-for="(scholar, index) in scholarList" @click="$router.push({
                 path: '/scholarHome',
                 query: {
                     author_name: scholar.name,
@@ -36,6 +36,9 @@
                     </div>
                 </div>
             </div>
+            <div v-else>
+                <n-empty></n-empty>
+            </div>
         </n-popover>
     </div>
 </template>
@@ -60,7 +63,7 @@ onMounted(async () => {
         user_id: localStorage.getItem('uid')
     })
     scholarList.value = [];
-    res.map((item: any) => {
+    res?.map((item: any) => {
         const scholar: ScholarData = {
             key: item.id,
             name: item.display_name,

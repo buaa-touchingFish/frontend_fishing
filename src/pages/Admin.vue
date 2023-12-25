@@ -9,7 +9,7 @@
             </div>
             <div class="adminBottomRight">
               <platformTable v-if = "branch === 'platform'"></platformTable>
-              <scholarTable v-if = "branch === 'scholar'"></scholarTable>
+              <!-- <scholarTable v-if = "branch === 'scholar'"></scholarTable> -->
               <auditTable v-if = "branch === 'audit'"></auditTable>
               <historyTable v-if = "branch === 'history'"></historyTable>
             </div>
@@ -41,11 +41,11 @@ const menuOptions: MenuOption[] = [
     key: 'platform',
     icon: renderIcon(BookOpenGlobe24Filled),
   },
-  {
-    label: '已入驻学者',
-    key: 'scholar',
-    icon: renderIcon(PeopleAudience24Regular),
-  },
+  // {
+  //   label: '已入驻学者',
+  //   key: 'scholar',
+  //   icon: renderIcon(PeopleAudience24Regular),
+  // },
   {
     label: '待审核信息',
     key: 'audit',
