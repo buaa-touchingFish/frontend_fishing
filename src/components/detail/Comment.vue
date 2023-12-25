@@ -3,7 +3,7 @@
         <n-avatar
             round
             size="medium"
-            :src="comment.avatar"
+            :src="src"
         />
         <div class="nameAndDate">
             <n-space>
@@ -46,7 +46,6 @@ onMounted(
         else display_date.value = sends[0]
         
         display_time.value = sends[1]
-        comment.avatar = "http://" + comment.avatar
     }
 ) 
 const props = defineProps(['comment', 'test'])
@@ -57,6 +56,7 @@ type commentType = {
     avatar:string
 }
 const comment:commentType = props.comment
+const src:string = "http://" + comment.avatar
 </script>
 
 <style scoped>

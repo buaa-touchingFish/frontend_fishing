@@ -75,7 +75,9 @@
                 <n-popover trigger="hover">
                     <template #trigger>
                         <n-icon size="40" color="#0000ff" class="follow_buton"
-                            v-show="fileDetail.doi != null && fileDetail.doi.length != 0" @click="link">
+                            v-show="fileDetail.doi != null && fileDetail.doi.length != 0"
+                            @click="link"
+                        >
                             <LinkSquare12Regular />
                         </n-icon>
                     </template>
@@ -84,10 +86,12 @@
 
                 <n-popover trigger="hover">
                     <template #trigger>
-                        <n-icon size="40" color="#0000ff" class="follow_buton"
-                            v-show="fileDetail.oa_url != null && fileDetail.oa_url.length != 0" @click="download">
-                            <ArrowDownload20Filled />
-                        </n-icon>
+                            <n-icon size="40" color="#0000ff" class="follow_buton"
+                                v-show="fileDetail.oa_url != null && fileDetail.oa_url.length != 0" 
+                                @click="download"
+                            >
+                                <ArrowDownload20Filled />
+                            </n-icon>
                     </template>
                     <span>下载</span>
                 </n-popover>
@@ -203,8 +207,8 @@ type commentType = {
 }
 
 const props = defineProps(['paper_id'])
-const props_paper_id = props.paper_id
-watch(props_paper_id, async (newVal) => {
+watch(() => props.paper_id, async (newVal) => {
+    console.log(newVal)
     let res = await post(
         message, "/paper/single",
         {
@@ -256,7 +260,7 @@ const quotePapers: Ref<paperItemType[]> = ref([])
 const comments: Ref<commentType[]> = ref([])
 const citation: Ref<string> = ref("")
 onMounted(async () => {
-    const paperId = props_paper_id != undefined ? props_paper_id : route.params.id
+    const paperId = props.paper_id != undefined ? props.paper_id : route.params.id
     let res = await post(
         message, "/paper/single",
         {
@@ -344,7 +348,7 @@ async function publishComment() {
         {
             "content": newComment.value,
             "paper_id": fileDetail.value.id,
-            "sender_id": localStorage.getItem("uid"),
+            // "sender_id": localStorage.getItem("uid"),
         }
     )
 
@@ -365,7 +369,6 @@ async function collect() {
     const res = await post(
         message, "/collect",
         {
-            "user_id": localStorage.getItem("uid"),
             "paper_id": fileDetail.value.id
         }
     )
@@ -377,8 +380,7 @@ async function undoCollect() {
     const res = await post(
         message, "/collect/delete",
         {
-            "user_id": localStorage.getItem("uid"),
-            "paper_id": fileDetail.value.id
+            "paper_id": [fileDetail.value.id]
         }
     )
     console.log(res)
