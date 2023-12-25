@@ -1,7 +1,8 @@
 <template>
   <div class="collect-container">
     <n-space>
-      <n-tabs v-model:value="cur_tag_name" type="card" addable closable @close="handleClose" @add="handleAdd">
+      <n-tabs v-if="hasCollect" v-model:value="cur_tag_name" type="card" addable closable @close="handleClose"
+        @add="handleAdd">
         <n-tab-pane v-for="tag in collectStore.tags" :key="tag.name" :closable="notAll(tag.name)" :name="tag.name"
           :tab="tag2String(tag)">
           <n-space style="display: flex; flex-wrap: nowrap;">
@@ -29,7 +30,7 @@
             </n-space>
             <div v-if="canLoadPreview" style="flex-grow: 1;">
               <div class="detailContainer">
-                <DetailComponent :paper_id="collectStore.active_paper_id" />
+                <DetailComponent :paper_id="collectStore.active_paper_id" @collectedChange="handleCollectedChange" />
               </div>
             </div>
             <n-card v-else style="background-color: var(--bg-100);">
@@ -48,10 +49,12 @@
         </n-tab-pane>
       </n-tabs>
     </n-space>
+    <div v-if="!hasCollect" class="result">
+      <n-result status="404" title="还没有收藏" description="把文章加入收藏夹试试" size="huge" />
+    </div>
     <n-modal v-model:show="showModal" preset="dialog" title="新标签">
       <div :class="{ label_input: statusIsError }" :style="{ '--pseudo-content': `'${pseudoContent}'` }">
-        <n-input v-modal:value="newCreatingLabel" @input="updateCreatingStatus" 
-        :status="creatingStatus"
+        <n-input v-modal:value="newCreatingLabel" @input="updateCreatingStatus" :status="creatingStatus"
           placeholder="请输入标签名" />
       </div>
       <template #action>
@@ -71,8 +74,8 @@ import ArticleItem from "@/components/userHome/ArticleItem.vue";
 import DetailComponent from '@/components/detail/DetailComponent.vue'
 import { useCollectStore, Tag } from '@/store/collectStore'
 import { ref, computed, onMounted } from "vue";
-import { NTabs, NTabPane, NModal, NInput, NButton, useMessage, useDialog, NSpace, NCard, NSkeleton, NCheckbox, NIcon } from "naive-ui";
 import { FormValidationStatus } from 'naive-ui/es/form/src/interface';
+import { NTabs, NTabPane, NModal, NInput, NButton, useMessage, useDialog, NSpace, NCard, NSkeleton, NCheckbox, NIcon, NResult } from "naive-ui";
 
 const collectStore = useCollectStore();
 
@@ -80,9 +83,13 @@ const message = useMessage();
 const dialog = useDialog();
 
 onMounted(() => {
-  if (collectStore.isFakeData)
-    collectStore.fakeData();
-  else collectStore.getAllCollects();
+  // if (collectStore.isFakeData)
+  //   collectStore.fakeData();
+  collectStore.getAllCollects();
+})
+
+const hasCollect = computed(() => {
+  return collectStore.tags[0]?.papers.length !== 0;
 })
 
 const handleItemClick = () => {
@@ -214,6 +221,8 @@ const handleClose = (name: string) => {
     onPositiveClick: () => {
       collectStore.requestDeleteTag(name).then((res) => {
         if (res === true) {
+          if (name === cur_tag_name.value)
+            cur_tag_name.value = '全部'
           collectStore.delete_whole_tag(name);
           message.success('删除标签成功');
         } else {
@@ -236,7 +245,7 @@ const handleDelete = () => {
     onPositiveClick: () => {
       collectStore.requestDeletePaper().then((res) => {
         if (res === true) {
-          collectStore.delete_checked_paper();
+          collectStore.delete_papers(collectStore.paper_checked);
           message.success('取消收藏成功');
         } else {
           message.success('取消收藏失败');
@@ -249,9 +258,15 @@ const handleDelete = () => {
   })
 }
 
+const handleCollectedChange = (paper_id: string, collected: boolean) => {
+  if (collected === false)
+    collectStore.delete_papers([paper_id]);
+}
+
 </script>
 <style scoped>
 .collect-container {
+  /* position: relative; */
   /* position: absolute;
   left: 50%;
   transform: translateX(-50%); */
@@ -262,8 +277,13 @@ const handleDelete = () => {
   /* margin-left: 80px; */
   /* padding-right: 10px; */
   width: 100vw;
+  /* height: 100%; */
   /* width: 1800px; */
   /* overflow-y: hidden; */
+
+  .result {
+    margin-top: 160px;
+  }
 
   .preview {
     width: 200px;

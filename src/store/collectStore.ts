@@ -59,9 +59,9 @@ export class Paper {
   }
 }
 
+const fake_authors = ["佚名"];
+const fake_publisher = "未知期刊";
 export const useCollectStore = defineStore("collect", () => {
-  const fake_authors = ["佚名"];
-  const fake_publisher = "未知期刊";
   const user_id = ref(1);
   const active_tag_name = ref("全部");
   const active_paper_id = ref("paper_id");
@@ -105,9 +105,10 @@ export const useCollectStore = defineStore("collect", () => {
   const requestDeleteTag = async (tag_name: string, paper_id: string = "") => {
     const res = await api.post("/collect/label/delete", {
       // user_id: user_id.value,
-      paper_id,
+      paper_id: paper_id,
       label_name: tag_name,
     });
+    // console.log("requestDeleteTag", res);
     return res.data.code === 200;
     // return true;
   };
@@ -145,21 +146,28 @@ export const useCollectStore = defineStore("collect", () => {
   };
   const getAllCollects = async () => {
     get_user_id();
-    const res = await api.get("/collect", {
-      // params: {
-      //   user_id: user_id.value,
-      // },
-    });
+    const labelMap = new Map<string, Tag>();
+    const res_label = await api.get("/collect/label");
+    const label_list = res_label.data.data.label_list;
+    // console.log("label_list", label_list);
+    for (const item of label_list) {
+      const { name, count } = item;
+      labelMap.set(name, new Tag(name));
+    }
+
+    const res = await api.get("/collect");
     // console.log(res);
     const datas = res.data.data;
     // console.log(datas);
-    const labelMap = new Map<string, Tag>();
     // 此时按照文章遍历, 将文章加入到指定的标签数据结构中
+    console.log("datas", datas);
     const tagAll = new Tag("全部");
     for (const data of datas) {
-      const { paper_id, title, authors, publisher, cited_by_count, labels } =
+      let { paper_id, title, authors, publisher, cited_by_count, labels } =
         data;
       // console.log(paper_id, title, authors, publisher, cited_by_count, labels);
+      if (authors.length === 0) authors = fake_authors;
+      if (publisher.length === 0) publisher = fake_publisher;
       const paper = new Paper(
         paper_id,
         title,
@@ -172,9 +180,6 @@ export const useCollectStore = defineStore("collect", () => {
       papers.value.push(paper);
       tagAll.addPaper(paper);
       for (const label of labels) {
-        if (!labelMap.has(label)) {
-          labelMap.set(label, new Tag(label));
-        }
         const tag = labelMap.get(label);
         tag?.addPaper(paper);
       }
@@ -229,8 +234,8 @@ export const useCollectStore = defineStore("collect", () => {
     return res.data.code === 200;
   };
 
-  const delete_checked_paper = () => {
-    for (const paper_id of paper_checked.value) {
+  const delete_papers = (paper_ids: Iterable<string>) => {
+    for (const paper_id of paper_ids) {
       if (paper_id === active_paper_id.value)
         active_paper_id.value = "paper_id";
       for (const tag of tags.value) {
@@ -263,6 +268,6 @@ export const useCollectStore = defineStore("collect", () => {
     requestAddTag,
     add_tag_to_paper,
     requestDeletePaper,
-    delete_checked_paper,
+    delete_papers,
   };
 });
