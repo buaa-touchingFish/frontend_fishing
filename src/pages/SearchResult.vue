@@ -82,6 +82,7 @@ watch(page,() => {
 
 // 排序
 const sortValue = ref('相关性')
+const currentUrl = ref('/paper/ultraSearch')
 const sortOptions = [
     {label:'相关性',value:'相关性'},
     {label:'被引量',value:'被引量'},
@@ -89,12 +90,13 @@ const sortOptions = [
 ]
 watch(sortValue,() => {
     if(sortValue.value == '相关性'){
-
+        currentUrl.value = '/paper/ultraSearch'
     }else if(sortValue.value == '被引量'){
-
+        currentUrl.value = '/paper/citeSearch'
     }else{
-
+        currentUrl.value = '/paper/timeSearch'
     }
+    search()
 })
 
 // 搜索
@@ -102,7 +104,7 @@ const resultList:Ref<Paper[]> = ref([]);
 const search = async () => {
     const query = route.query;
     const res = await post(
-        message,"/paper/ultraSearch",
+        message,currentUrl.value,
         {
             "pageNum": page.value-1,
             "keyword": query.keyword?? '',
@@ -117,6 +119,7 @@ const search = async () => {
         }
     )
     resultList.value = res;
+    window.scrollTo(0, 0)
 }
 onMounted(async () => {
     showSkeleton.value = true;
