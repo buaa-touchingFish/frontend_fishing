@@ -15,9 +15,6 @@
                 });" href="/">设置</n-button>
                 <n-button v-if="!isLogged" class="loginButton" type="primary" @click="$router.push('/login');" href="/">登录</n-button>
                 <n-button v-if="isLogged" class="loginButton" type="primary" @click="logout" href="/">退出登录</n-button>
-                <Subscribe class="loginButton"></Subscribe>
-                <Notice class="loginButton"></Notice>
-                <History class="loginButton"></History>
             </div>
             <div class="homeContentDiv">
                 <div class="homeContentLeft">
@@ -80,7 +77,7 @@
                                         </template>
                                         <template #suffix>
                                             <div class="selectPlaceHolder"></div>
-                                            <n-icon style="cursor: pointer;" size="28" color="blue"
+                                            <n-icon style="cursor: pointer;" size="28" color="var(--primary-100)"
                                                 :component="Search12Filled" @click="search(searchValue)" />
                                         </template>
                                     </n-input>
@@ -128,9 +125,6 @@ import StarBackground from '@/components/Login/StarBackground.vue';
 import { useRoute } from 'vue-router'
 import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
 import Stars from '@/components/Home/Stars.vue'
-import Subscribe from '@/components/Home/ScholarPop.vue'
-import Notice from '@/components/Home/NoticePop.vue'
-import History from '@/components/Home/HistoryPop.vue'
 import { Search12Filled, PeopleQueue24Filled, BuildingSkyscraper20Filled, DocumentBulletList24Filled, ChartMultiple24Filled } from "@vicons/fluent";
 import router from '@/router';
 
@@ -150,8 +144,10 @@ watch(() => route.path, (newValue) => {
 })
 onMounted(() => {
     showHome.value = (route.path == '/')
-    if (localStorage.getItem('uid')) {
+    if (localStorage.getItem('uid') !== null) {
         isLogged.value = true
+    } else {
+        isLogged.value = false
     }
 })
 
@@ -378,12 +374,7 @@ const changeShowCard = () => {
 }
 
 .searchIcon {
-    position: absolute;
-    left: 0;
-    top: 18%;
-    box-shadow: 0 0 20px 10px var(--bg-100);
-    border-radius: 50%;
-    animation: shining 2.5s linear infinite;
+    color: var(--primary-100);
 }
 
 .searchInput :deep(.n-input__input) {

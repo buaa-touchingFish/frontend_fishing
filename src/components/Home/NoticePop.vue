@@ -7,7 +7,7 @@
                 </n-icon>
             </template>
 
-            <div class="noticeBg" v-for="(notice, index) in noticeList" @click="read(notice)">
+            <div class="noticeBg" v-if="noticeList.length > 0" v-for="(notice, index) in noticeList" @click="read(notice)">
                 <n-divider v-if="index > 0"></n-divider>
                 <div class="noticeItem">
                     <div class="noticeItemLeft">
@@ -34,6 +34,9 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div v-else>
+                <n-empty></n-empty>
             </div>
         </n-popover>
     </div>
