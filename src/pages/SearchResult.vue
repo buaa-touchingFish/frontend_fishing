@@ -1,6 +1,6 @@
 <template>
     <div class="searchRasultContainer" v-if="!showSkeleton">
-        <div class="secondarySearch" v-if="!showSecondarySearchSkeleton">
+        <div class="secondarySearch" v-if="showSecondarySearchSkeleton">
             <n-skeleton v-for="i in 3" :key="i" height="150px" width="100%" style="margin-bottom:20px;border-radius: 5px;"/>
         </div>
         <div class="secondarySearch" v-else>
@@ -87,163 +87,75 @@ const sortOptions = [
     {label:'被引量',value:'被引量'},
     {label:'时间',value:'时间'},
 ]
-const copyedTotalresultList:Ref<Paper[]> = ref([]);
 watch(sortValue,() => {
     if(sortValue.value == '相关性'){
-        totalresultList.value = JSON.parse(JSON.stringify(copyedTotalresultList.value))
-        resultList.value = totalresultList.value.slice((page.value-1)*10,(page.value-1)*10+10)
+
     }else if(sortValue.value == '被引量'){
-        totalresultList.value.sort((a,b) => {
-            return b.cited_by_count- a.cited_by_count;
-        })
-        resultList.value = totalresultList.value.slice((page.value-1)*10,(page.value-1)*10+10)
+
     }else{
-        totalresultList.value.sort((a,b) => {
-            return new Date(a.publication_date) < new Date(b.publication_date) ? 1 : -1;
-        })
-        resultList.value = totalresultList.value.slice((page.value-1)*10,(page.value-1)*10+10)
+
     }
 })
 
 // 搜索
 const resultList:Ref<Paper[]> = ref([]);
-const totalresultList:Ref<Paper[]> = ref([]);
 const search = async () => {
-    const additionValue = route.query.ad;
-    const searchValue = route.query.wd;
+    const query = route.query;
     const res = await post(
-        message,"/paper/search",
+        message,"/paper/ultraSearch",
         {
             "pageNum": page.value-1,
-            "keyword": additionValue == '文章' ? searchValue : "",
-            "author": additionValue == '作者' ? searchValue : "",
-            "institution": additionValue == '机构' ? searchValue : "",
-            "publisher": additionValue == '期刊' ? searchValue : "",
+            "keyword": query.keyword?? '',
+            "author": query.author?? '',
+            "type": query.type?? '',
+            "issn": query.issn?? '',
+            "language": query.language?? '',
+            "institution": query.institution?? '',
+            "publisher": query.publisher?? '',
+            "from_date": query.from_date?? '',
+            "to_date": query.to_date?? ''
         }
     )
-    totalresultList.value = res
-    resultList.value = totalresultList.value.slice(0,10);
-    copyedTotalresultList.value = JSON.parse(JSON.stringify(res));
+    resultList.value = res;
 }
 onMounted(async () => {
     showSkeleton.value = true;
     await search();
     showSkeleton.value = false;
-    console.log(copyedTotalresultList.value);
 })
 
 //二级搜索
 type secondarySearch = {
-    sum: number,
-    lan:{
-        "en": number,
-        "es": number,
-        "": number,
-        "de": number,
-        "fr": number,
-        "pt": number,
-        "id": number,
-        "ko": number,
-        "tr": number,
-        "ca": number
-    },
-    type: {
-        "article": number,
-        "book-chapter": number,
-        "book": number,
-        "other": number,
-        "reference-entry": number,
-        "dataset": number,
-        "dissertation": number,
-        "report": number,
-        "paratext": number,
-        "editorial": number
-    },
-    publisher: {
-        "null": 1382,
-        "{\"id\": \"S106296714\", \"display_name\": \"Lecture Notes in Computer Science\"}": number,
-        "{\"id\": \"S4306400194\", \"display_name\": \"arXiv (Cornell University)\"}": number,
-        "{\"id\": \"S52395412\", \"display_name\": \"Bioinformatics\"}": number,
-        "{\"id\": \"S4306402567\", \"display_name\": \"bioRxiv (Cold Spring Harbor Laboratory)\"}": number,
-        "{\"id\": \"S9692511\", \"display_name\": \"Frontiers in Psychology\"}": number,
-        "{\"id\": \"S4306525036\", \"display_name\": \"PubMed\"}": number,
-        "{\"id\": \"S202381698\", \"display_name\": \"PLOS ONE\"}": number,
-        "{\"id\": \"S4306463708\", \"display_name\": \"Oxford University Press eBooks\"}": number
-    },
-    date: {
-        
-    }
+    title:string,
+    items:{type:string,count:number}[]
 }
-const secondarySearchList:secondarySearch[] = [
-    {
-        type:"时间",
-        content:[
-            {name:"2023以来",count:400},
-            {name:"2022以来",count:300},
-            {name:"2021以来",count:200}]
-    },
-    {
-        type:"领域",
-        content:[
-            {name:"教育学",count:400},
-            {name:"建筑学",count:300},
-            {name:"冶金",count:200},
-            {name:"电子科学与技术",count:400},
-            {name:"通信工程",count:300},
-            {name:"化学工程与技术",count:200}]
-    },
-    {
-        type:"核心",
-        content:[
-            {name:"北大核心期刊",count:400},
-            {name:"中国科技核心期刊",count:300}
-        ]
-    },{
-        type:"领域",
-        content:[
-            {name:"教育学",count:400},
-            {name:"建筑学",count:300},
-            {name:"冶金",count:200},
-            {name:"电子科学与技术",count:400},
-            {name:"通信工程",count:300},
-            {name:"化学工程与技术",count:200}]
-    },
-    {
-        type:"领域",
-        content:[
-            {name:"教育学",count:400},
-            {name:"建筑学",count:300},
-            {name:"冶金",count:200},
-            {name:"电子科学与技术",count:400},
-            {name:"通信工程",count:300},
-            {name:"化学工程与技术",count:200}]
-    },
-    {
-        type:"领域",
-        content:[
-            {name:"教育学",count:400},
-            {name:"建筑学",count:300},
-            {name:"冶金",count:200},
-            {name:"电子科学与技术",count:400},
-            {name:"通信工程",count:300},
-            {name:"化学工程与技术",count:200}]
-    },
-]
+const secondarySearchList:Ref<secondarySearch[]> = ref([]);
 onMounted(async () => {
     showSecondarySearchSkeleton.value = true;
-    const additionValue = route.query.ad;
-    const searchValue = route.query.wd;
+    const query = route.query;
     const res = await post(
         message,'/paper/aggregate',{
-            "pageNum": 0,
-            "keyword": additionValue == '文章' ? searchValue : "",
-            "author": additionValue == '作者' ? searchValue : "",
-            "institution": additionValue == '机构' ? searchValue : "",
-            "publisher": additionValue == '期刊' ? searchValue : "",
+            "pageNum": page.value-1,
+            "keyword": query.keyword?? '',
+            "author": query.author?? '',
+            "type": query.type?? '',
+            "issn": query.issn?? '',
+            "language": query.language?? '',
+            "institution": query.institution?? '',
+            "publisher": query.publisher?? '',
+            "from_date": query.from_date?? '',
+            "to_date": query.to_date?? ''
         }
     )
+    secondarySearchList.value.push({title:'时间',items:res.date})
+    secondarySearchList.value.push({title:'语言',items:res.lan})
+    secondarySearchList.value.push({title:'期刊',items:res.publisher})
+    secondarySearchList.value.push({title:'期刊类型',items:res.type})
     resultNumber.value = res.sum;
-    pageCount.value = resultNumber.value/10;
+    pageCount.value = Math.ceil(resultNumber.value/10);
+    showSecondarySearchSkeleton.value = false;
+    console.log(res);
+    
 })
 </script>
 

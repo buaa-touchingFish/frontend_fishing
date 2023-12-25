@@ -1,11 +1,14 @@
 <template>
     <div class="container">
-        <DetailComponent/>
+        <DetailComponent :paper_id="route.params.id"/>
     </div>
 </template>
 
 <script setup lang='ts'>
 import DetailComponent from '@/components/detail/DetailComponent.vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
 </script>
 
 <style scoped>

@@ -57,14 +57,14 @@ const paperItem:paperItemType = props.paperItem
 <style scoped>
 .title{
     font-size: large;
-    color: blue;
+    color: var(--primary-100);
 }
 .title:hover{
     cursor: pointer;
     text-decoration: underline;
 }
 .author{
-    color: blue;
+    color: var(--primary-100);
 }
 .author:hover{
     cursor: pointer;
