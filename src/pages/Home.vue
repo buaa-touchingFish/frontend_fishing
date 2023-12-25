@@ -6,15 +6,10 @@
                 <StarBackground></StarBackground>
             </div>
             <div class="homeHeaderDiv">
-                <n-button class="loginButton" type="primary" @click="$router.push({
-                    path: '/scholarHome',
-                    query: {
-                        author_name: 'J. Russell Ramsay',
-                        author_id: 'A5077915689'
-                    }
-                });" href="/">设置</n-button>
-                <n-button v-if="!isLogged" class="loginButton" type="primary" @click="$router.push('/login');" href="/">登录</n-button>
-                <n-button v-if="isLogged" class="loginButton" type="primary" @click="logout" href="/">退出登录</n-button>
+                <n-icon v-if="!isLogged" class="loginButton" size="32" @click="$router.push('/login');">
+                    <VideoPersonSparkle28Regular />
+                </n-icon>
+                <UserInfo style="margin-right: 20%;" v-else></UserInfo>
             </div>
             <div class="homeContentDiv">
                 <div class="homeContentLeft">
@@ -122,19 +117,28 @@ import Header from '@/components/Home/Header.vue'
 import Menu from '@/components/Home/Menu.vue'
 import StarBackground from '@/components/Login/StarBackground.vue';
 // import Clock from '@/components/Clock.vue';
+import UserInfo from '@/components/Home/UserInfo.vue'
 import { useRoute } from 'vue-router'
 import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
 import Stars from '@/components/Home/Stars.vue'
-import { Search12Filled, PeopleQueue24Filled, BuildingSkyscraper20Filled, DocumentBulletList24Filled, ChartMultiple24Filled } from "@vicons/fluent";
+import { Search12Filled, PeopleQueue24Filled, BuildingSkyscraper20Filled, DocumentBulletList24Filled, ChartMultiple24Filled, VideoPersonSparkle28Regular } from "@vicons/fluent";
+
 import router from '@/router';
+import { useMessage } from 'naive-ui';
+import { post } from '@/api/axios';
 
 const route = useRoute()
 const iconSize = ref(80)
 const isLogged = ref(false)
+const message = useMessage()
 
+import { useAxiosStore } from '@/store/axiosStore';
+
+const axiosStore = useAxiosStore()
 const logout = () => {
-    isLogged.value = false; 
+    isLogged.value = false;
     localStorage.removeItem('uid')
+    axiosStore.removeAuthorizationHeader()
 }
 
 // 判断是否需要展示首页
@@ -154,14 +158,14 @@ onMounted(() => {
 //搜索推荐的地方
 const searchValue = ref("")
 const showComplete = ref(false)
-const completeSearchOptionsSuffix = ref(['@gmail.com', '@163.com', '@qq.com'])
 const currentCompleteSearchOptionIndex = ref(-1)
 const copySearchValue = ref("")
-let completeSearchOptions: Ref<{ label: string, isSelect: boolean }[]>;
+const completeSearchOptions: Ref<{ label: string, isSelect: boolean }[]> = ref([]);
 const searchInput: Ref<any> = ref(null)
 let time: any;
 const searchComplete = async () => {
     copySearchValue.value = searchValue.value;
+    let res = null;
     if (!searchValue.value) {
         showComplete.value = false;
         return
@@ -169,19 +173,23 @@ const searchComplete = async () => {
     if (time) {
         clearTimeout(time);
     }
-    time = setTimeout(() => {
-        // await post()
+    time = setTimeout(async () => {
+        res = await post(message,'/paper/suggest',{
+            query:searchValue.value
+        })
+        if(!res || res.length == 0){
+            showComplete.value = false;
+        }else{
+            completeSearchOptions.value = res.map((suffix:string) => {
+                return {
+                    label: suffix,
+                    isSelect: false
+                }
+            })
+            showComplete.value = true;
+        }
     }, 200)
     currentCompleteSearchOptionIndex.value = -1;
-    completeSearchOptions = ref(completeSearchOptionsSuffix.value.map((suffix) => {
-        const prefix = searchValue.value
-        return {
-            label: prefix + suffix,
-            isSelect: false
-        }
-    }))
-
-    showComplete.value = true;
 }
 const key_up = () => {
     if (currentCompleteSearchOptionIndex.value != -1)
@@ -219,8 +227,7 @@ const search = async (value: string) => {
     router.push({
         path: '/search',
         query: {
-            wd: value,
-            ad: '文章'
+            keyword: value,
         }
     })
 }
@@ -303,7 +310,8 @@ const changeShowCard = () => {
 }
 
 .loginButton {
-    margin-right: 20px;
+    margin-right: 20%;
+    cursor: pointer;
 }
 
 .homeContentDiv {
@@ -324,7 +332,7 @@ const changeShowCard = () => {
         z-index: 1;
         display: flex;
         flex-direction: column;
-        
+
         width: 60%;
 
         .infosTop {
@@ -336,6 +344,7 @@ const changeShowCard = () => {
             display: flex;
             margin-top: 10px;
         }
+
         .info {
             display: flex;
             width: 50%;

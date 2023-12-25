@@ -1,4 +1,5 @@
 <template>
+    <div>
     <n-popover placement="bottom" trigger="hover" :show-arrow="false" style="margin-right: 40px;margin-top: 10px;border-radius: 15px;" @update:show="handleUpdateShow" :animated="false">
       <template #trigger>
         <div class="user">
@@ -33,7 +34,7 @@
                     <div class="subscribeNumber">{{ subscribeNumber }}</div>
                     <span>订阅</span>
                 </div>
-                <div class="collect">
+                <div class="collect" @click="$router.push('/collect')">
                     <div class="collectNumber">{{ collectNumber }}</div>
                     <span>收藏</span>
                 </div>
@@ -49,6 +50,18 @@
                 <div class="phoneOperations" v-show="!showChangeInput[1]">
                     <n-button text type="primary" @click="showChangeInput[1] = !showChangeInput[1]">修改</n-button>
                 </div>
+            </div>
+            <div v-if="author_id !== null" class="scholar" @click="$router.push({
+                path: '/scholarHome',
+                query: {
+                    author_name: author_name,
+                    author_id: author_id
+                }
+            });">
+                <n-icon color="var(-primary--100)" size="20">
+                    <Door16Filled></Door16Filled>
+                </n-icon>
+                <span>我的学者门户</span>
             </div>
             <div class="operations">
                 <n-button round type="info" @click="changePasswordModal = true">
@@ -99,13 +112,14 @@
             </n-button>
         </div>
     </n-modal>
+</div>
 </template>
 
 <script setup lang='ts'>
 import { onMounted,ref } from 'vue';
 import { get,post } from '@/api/axios'
 import { NIcon, NButton, NAvatar, useMessage, UploadCustomRequestOptions } from 'naive-ui'
-import { Camera20Filled,CalligraphyPen20Regular } from '@vicons/fluent'
+import { Camera20Filled,CalligraphyPen20Regular, Door16Filled } from '@vicons/fluent'
 import 'vue-cropper/dist/index.css';
 import { VueCropper } from 'vue-cropper';
 import router from '@/router';
@@ -126,6 +140,7 @@ const username = ref('');
 const phone = ref('');
 const email = ref('');
 const author_id = ref('')
+const author_name = ref('')
 const subscribeNumber = ref(0)
 const collectNumber = ref(0)
 const getInfo = async () => {
@@ -138,6 +153,7 @@ const getInfo = async () => {
     email.value = res.email
     phone.value = res.phone
     author_id.value = res.author_id;
+    author_name.value = res.author_name;
     changeForm.value[0] = res.username;
     changeForm.value[1] = res.phone;
 }
@@ -239,11 +255,17 @@ const changePassword = async () => {
     changePasswordModal.value = false;
 }
 
+import { useAxiosStore } from '@/store/axiosStore';
+const axiosStore = useAxiosStore()
 //退出登陆
 const logout = () => {
     localStorage.removeItem('uid')
     localStorage.removeItem('token')
-    message.success('已退出登录!')
+    message.success('已退出登录!') 
+    axiosStore.removeAuthorizationHeader()   
+    if (location.hash === '#/') {
+        location.reload()
+    }
     router.push('/')
 }
 </script>
@@ -396,6 +418,7 @@ const logout = () => {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
     & span{
         font-size: 16px;
     }
@@ -418,6 +441,18 @@ const logout = () => {
     align-items: center;
 }
 
+.scholar {
+    height: 20%;
+    width: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    span {
+        margin-left: 10%;
+    }
+}
 
 .phoneOperations {
     height: 100%;

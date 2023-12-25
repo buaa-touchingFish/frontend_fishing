@@ -26,7 +26,7 @@ onMounted(async () => {
     }
     loading.value = false
     data.value = []
-    res.map((item: any) => {
+    res?.map((item: any) => {
         const row: RowData = {
             key: item.claimRequest.id + '@claim',
             name: item.author.display_name,
@@ -43,7 +43,7 @@ onMounted(async () => {
     if (res === false) {
         return
     }
-    res.map((item: any) => {
+    res?.map((item: any) => {
         const row: RowData = {
             key: item.paperAppeal.id + '@appeal',
             name: item.paper.title,
