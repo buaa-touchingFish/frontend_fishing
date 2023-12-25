@@ -1,20 +1,22 @@
 <template>
-    <div class="resultCardContainer shadow"
-        @click="$router.push('/detail/' + result.id); post(message, '/history/create', { 'paper_id': result.id });">
+    <div class="resultCardContainer shadow" @click="gotoDetail">
         <h1 class="title hoverTitle" :data-title="copyResult.title">
             <span class="ellipsis" v-html="result.title"></span>
         </h1>
         <div class="authors">
-            <div class="author" :data-title="copyResult.authorships[index].author.display_name"
-                v-for="(authorship, index) in result.authorships" :key="index" v-show="index < 5">
-                <span class="ellipsis" v-html="authorship.author.display_name" @click.stop="$router.push(
-                    {
-                        path: '/scholarHome',
-                        query: {
-                            author_name: copyResult.authorships[index].author.display_name,
-                            author_id: copyResult.authorships[index].author.id
-                        }
-                    })"></span>
+            <div class="author" :data-title="copyResult.authorships[index].author.display_name" v-for="(authorship, index) in result.authorships" :key="index" v-show="index < 5">
+                <span class="ellipsis" 
+                    v-html="authorship.author.display_name" 
+                    @click.stop="$router.push(
+                        {
+                            path:'/scholarHome',
+                            query:{
+                                author_name:copyResult.authorships[index].author.display_name,
+                                author_id:copyResult.authorships[index].author.id,
+                                paper_id:copyResult.id
+                            }
+                        })"
+                ></span>
                 <div v-show="index != 4 && index != result.authorships.length - 1">,&nbsp;&nbsp;</div>
             </div>
         </div>
@@ -58,6 +60,7 @@ import { Star20Regular, AlignLeft16Regular, ArrowDownload16Regular } from '@vico
 import { useRoute } from 'vue-router'
 import { post } from '@/api/axios'
 import { useMessage } from 'naive-ui'
+import router from '@/router';
 
 const props = defineProps<{
     result: Paper
@@ -75,24 +78,29 @@ onMounted(() => {
 })
 
 nextTick(() => {
-    const searchValue = route.query.wd;
-    const additionValue = route.query.ad;
-    if (searchValue && additionValue) {
-        const replaceReg = new RegExp(searchValue as string, 'gi')
-        const replaceString = '<span style="color: var(--primary-100);font-weight: 600;">$&</span>'
-        if (additionValue == '文章') {
-            result.value.title = result.value.title.replace(replaceReg, replaceString)
-            result.value.abstract = result.value.abstract.replace(replaceReg, replaceString)
-        } else if (additionValue == '作者') {
-            result.value.authorships.forEach((item) => {
-                item.author.display_name = item.author.display_name.replace(replaceReg, replaceString)
-            })
-        } else if (additionValue == '期刊') {
-            result.value.publisher.display_name = result.value.publisher.display_name.replace(replaceReg, replaceString)
-        }
+    const query = route.query;
+    const replaceString = '<span style="color: var(--primary-100);font-weight: 600;">$&</span>'
+    if(query.keyword){
+        const replaceReg = new RegExp(query.keyword as string, 'gi')
+        result.value.title = result.value.title.replace(replaceReg,replaceString)
+        result.value.abstract = result.value.abstract.replace(replaceReg,replaceString)
+    }
+    if(query.author){
+        const replaceReg = new RegExp(query.author as string, 'gi')
+        result.value.authorships.forEach((item) => {
+            item.author.display_name = item.author.display_name.replace(replaceReg,replaceString)
+        })
+    }
+    if(query.publisher){
+        const replaceReg = new RegExp(query.publisher as string, 'gi')
+        result.value.publisher.display_name = result.value.publisher.display_name.replace(replaceReg,replaceString)
     }
 })
 
+const gotoDetail = async () => {
+    await post(message,'/history/create',{'paper_id':result.value.id});
+    router.push('/detail/' + result.value.id); 
+}
 </script>
 
 <style scoped>

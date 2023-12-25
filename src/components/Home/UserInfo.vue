@@ -51,10 +51,10 @@
                 </div>
             </div>
             <div class="operations">
-                <n-button round type="info" @click="">
+                <n-button round type="info" @click="changePasswordModal = true">
                     修改密码
                 </n-button>
-                <n-button round type="error" @click="">
+                <n-button round type="error" @click="logout">
                     退出登录
                 </n-button>
             </div>
@@ -108,6 +108,7 @@ import { NIcon, NButton, NAvatar, useMessage, UploadCustomRequestOptions } from 
 import { Camera20Filled,CalligraphyPen20Regular } from '@vicons/fluent'
 import 'vue-cropper/dist/index.css';
 import { VueCropper } from 'vue-cropper';
+import router from '@/router';
 
 const message = useMessage()
 
@@ -204,8 +205,7 @@ const chooseAvatar = ({
 const changeAvatar = () => {
     cropper.value.getCropBlob(async (data: Blob) => {
         const formData = new FormData();
-        formData.append('key', `用户${localStorage.getItem('uid')}在${Date.now()}修改的头像`);
-        formData.append('file', data as File);
+        formData.append('file', new File([data],`用户${localStorage.getItem('uid')}在${Date.now()}修改的头像`));
         const res = await post(message,'/user/upload', formData)
         currentAvatar.value = res.data;
         await getInfo()
@@ -227,16 +227,24 @@ const changePasswordRules = {
 const changePassword = async () => {
     const res = await post(
         message,
-        '/user/changePwd',
+        '/user/changepwd1',
         {
-            "oldPassword": changePasswordModel.value.oldPassword,
-            "newPassword": changePasswordModel.value.newPassword,
+            "oldpwd": changePasswordModel.value.oldPassword,
+            "newpwd": changePasswordModel.value.newPassword,
         });
-    if (!res) {
+    if (res!=null && !res) {
         return;
     }
     message.success('修改成功！')
     changePasswordModal.value = false;
+}
+
+//退出登陆
+const logout = () => {
+    localStorage.removeItem('uid')
+    localStorage.removeItem('token')
+    message.success('已退出登录!')
+    router.push('/')
 }
 </script>
 

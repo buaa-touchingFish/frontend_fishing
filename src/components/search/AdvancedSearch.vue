@@ -39,11 +39,13 @@
 </template>
 
 <script setup lang="ts">
-import { FormInst, InputInst, useMessage } from 'naive-ui';
-import { ref, Ref } from 'vue';
-import { post } from '@/api/axios.ts'
+import { FormInst, useMessage } from 'naive-ui';
+import { onMounted, ref, Ref } from 'vue';
+import router from '@/router';
+import { useRoute } from 'vue-router';
 
 const message = useMessage()
+const route = useRoute()
 
 //高级搜索卡片
 const formRef = ref<FormInst | null>(null)
@@ -90,8 +92,8 @@ const languageOptions = [
         value: 'pt'
     },
     {
-        label: 'id',
-        value: 'id'
+        label: 'it',
+        value: 'it'
     },
     {
         label: 'ko',
@@ -181,21 +183,30 @@ const search = async () => {
             to_date = new Date(searchCardModel.value.timestamp[1])
         }
     }
-
-    let res = await post(message, '/paper/ultraSearch', {
-        "pageNum": 0,
-        "keyword": searchCardModel.value.keyword,
-        "author": searchCardModel.value.author,
-        "type": type.value,
-        "issn": searchCardModel.value.issn,
-        "language": language.value,
-        "institution": searchCardModel.value.institution,
-        "publisher": searchCardModel.value.publication,
-        "from_date": from_date !== null ? (from_date.getFullYear() + '-' + (from_date.getMonth() <= 8 ? '0' + (from_date.getMonth() + 1) : (from_date.getMonth() + 1)) + '-' + '01') : '',
-        "to_date": to_date !== null ? (to_date.getFullYear() + '-' + (to_date.getMonth() <= 8 ? '0' + (to_date.getMonth() + 1) : (to_date.getMonth() + 1)) + '-' + '01') : '',
+    router.push({
+        path:'/search',
+        query:{
+            "keyword": searchCardModel.value.keyword,
+            "author": searchCardModel.value.author,
+            "type": type.value,
+            "issn": searchCardModel.value.issn,
+            "language": language.value,
+            "institution": searchCardModel.value.institution,
+            "publisher": searchCardModel.value.publication,
+            "from_date": from_date !== null ? (from_date.getFullYear() + '-' + (from_date.getMonth() <= 8 ? '0' + (from_date.getMonth() + 1) : (from_date.getMonth() + 1)) + '-' + '01') : '',
+            "to_date": to_date !== null ? (to_date.getFullYear() + '-' + (to_date.getMonth() <= 8 ? '0' + (to_date.getMonth() + 1) : (to_date.getMonth() + 1)) + '-' + '01') : '',
+        }
     })
-    console.log(res);
 }
+onMounted(() => {
+    searchCardModel.value.keyword = (route.query.keyword ??"") as string
+    searchCardModel.value.author = (route.query.author ??"") as string
+    searchCardModel.value.institution = (route.query.institution ??"") as string
+    searchCardModel.value.publication = (route.query.publication ??"") as string
+    searchCardModel.value.issn = (route.query.issn ??"") as string
+    searchCardModel.value.type = (route.query.type ??"") as string
+    searchCardModel.value.language = (route.query.language ??"") as string
+})
 </script>
 
 <style scoped>
