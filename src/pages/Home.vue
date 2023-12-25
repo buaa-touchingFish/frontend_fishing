@@ -127,6 +127,8 @@ import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
 import Stars from '@/components/Home/Stars.vue'
 import { Search12Filled, PeopleQueue24Filled, BuildingSkyscraper20Filled, DocumentBulletList24Filled, ChartMultiple24Filled } from "@vicons/fluent";
 import router from '@/router';
+import { useMessage } from 'naive-ui';
+import { post } from '@/api/axios';
 
 const route = useRoute()
 const iconSize = ref(80)
@@ -154,7 +156,6 @@ onMounted(() => {
 //搜索推荐的地方
 const searchValue = ref("")
 const showComplete = ref(false)
-const completeSearchOptionsSuffix = ref(['@gmail.com', '@163.com', '@qq.com'])
 const currentCompleteSearchOptionIndex = ref(-1)
 const copySearchValue = ref("")
 let completeSearchOptions: Ref<{ label: string, isSelect: boolean }[]>;
@@ -162,6 +163,7 @@ const searchInput: Ref<any> = ref(null)
 let time: any;
 const searchComplete = async () => {
     copySearchValue.value = searchValue.value;
+    let res = null;
     if (!searchValue.value) {
         showComplete.value = false;
         return
@@ -169,19 +171,23 @@ const searchComplete = async () => {
     if (time) {
         clearTimeout(time);
     }
-    time = setTimeout(() => {
-        // await post()
+    time = setTimeout(async () => {
+        res = await post(message,'/paper/suggest',{
+            query:searchValue.value
+        })
+        if(!res || res.length == 0){
+            showComplete.value = false;
+        }else{
+            completeSearchOptions.value = res.map((suffix:string) => {
+                return {
+                    label: suffix,
+                    isSelect: false
+                }
+            })
+            showComplete.value = true;
+        }
     }, 200)
     currentCompleteSearchOptionIndex.value = -1;
-    completeSearchOptions = ref(completeSearchOptionsSuffix.value.map((suffix) => {
-        const prefix = searchValue.value
-        return {
-            label: prefix + suffix,
-            isSelect: false
-        }
-    }))
-
-    showComplete.value = true;
 }
 const key_up = () => {
     if (currentCompleteSearchOptionIndex.value != -1)
@@ -219,8 +225,7 @@ const search = async (value: string) => {
     router.push({
         path: '/search',
         query: {
-            wd: value,
-            ad: '文章'
+            keyword: value,
         }
     })
 }
