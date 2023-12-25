@@ -29,7 +29,7 @@ onMounted(async () => {
     }
     
     data.value = []
-    res.map((item: any) => {
+    res?.map((item: any) => {
         const row: RowData = {
             key: item.claimRequest.id,
             type: '门户认领',
@@ -43,7 +43,7 @@ onMounted(async () => {
     if (res === false) {
         return
     }
-    res.map((item: any) => {
+    res?.map((item: any) => {
         const row: RowData = {
             key: item.paperAppeal.id,
             type: '文章申诉',

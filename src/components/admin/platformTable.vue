@@ -23,7 +23,7 @@
     <div class="platformBottom">
         <n-h1 style="margin-left: 10%;">近日访问</n-h1>
         <div class="card">
-            <Chart type="line" :data="chartData" :options="chartOptions" :height="300" :width="400"/>
+            <Chart type="line" :data="chartData" :options="chartOptions" :height="300" :width="400" />
         </div>
     </div>
 </template>
@@ -65,16 +65,16 @@ const message = useMessage()
 const setChartData = async () => {
     const documentStyle = getComputedStyle(document.documentElement);
     const today = new Date();
-    const labels : string[] = []
-    labels.push((today.getMonth()+1) + "-" + today.getDate())
+    const labels: string[] = []
+    labels.push((today.getMonth() + 1) + "-" + today.getDate())
     for (var i = 0; i < 6; i++) {
         today.setTime(today.getTime() - 24 * 60 * 60 * 1000);
-        labels.push((today.getMonth()+1) + "-" + today.getDate())
+        labels.push((today.getMonth() + 1) + "-" + today.getDate())
     }
-    let res : string[]= await post(message, '/history/logincnt', {
-        days:"7"
+    let res: string[] = await post(message, '/history/logincnt', {
+        days: "7"
     })
-    
+
     return {
         labels: labels.reverse(),
         datasets: [
@@ -90,20 +90,11 @@ const setChartData = async () => {
 };
 const setChartOptions = () => {
     const documentStyle = getComputedStyle(document.documentElement);
-    const textColor = documentStyle.getPropertyValue('--text-color');
-    const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
+    const textColor = documentStyle.getPropertyValue('--text-100');
+    const textColorSecondary = documentStyle.getPropertyValue('--text-200');
     const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
 
-    return {
-        maintainAspectRatio: false,
-        aspectRatio: 0.6,
-        plugins: {
-            legend: {
-                labels: {
-                    color: textColor
-                }
-            }
-        },
+    return {       
         scales: {
             x: {
                 ticks: {

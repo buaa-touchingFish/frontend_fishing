@@ -15,7 +15,7 @@ export async function get(message: MessageApiInjection, url: string, params: any
                 let code = res.data.code
                 if (code === 400) {
                     message.warning(res.data.message)
-                } else if (code === 401) {
+                } else if (code === 403) {
                     message.warning(res.data.message)
                     router.push('/login')
                 }
@@ -43,7 +43,7 @@ export async function post(message: MessageApiInjection, url: string, props: any
                 let code = res.data.code
                 if (code === 400) {
                     message.warning(res.data.message)
-                } else if (code === 401) {
+                } else if (code === 403) {
                     message.warning(res.data.message)
                     if(url != '/history/create')
                     {
@@ -75,7 +75,7 @@ export async function deleteApi(message: MessageApiInjection, url: string, props
                 let code = res.data.code
                 if (code === 400) {
                     message.warning(res.data.message)
-                } else if (code === 401) {
+                } else if (code === 403) {
                     message.warning(res.data.message)
                     router.push('/login')
                 }
@@ -103,7 +103,7 @@ export async function postWithParam(message: MessageApiInjection, url: string, p
                 let code = res.data.code
                 if (code === 400) {
                     message.warning(res.data.message)
-                } else if (code === 401) {
+                } else if (code === 403) {
                     message.warning(res.data.message)
                     router.push('/login')
                 }

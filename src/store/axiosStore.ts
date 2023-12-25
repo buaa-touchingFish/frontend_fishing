@@ -17,5 +17,8 @@ export const useAxiosStore = defineStore('axiosStore', {
         updateAuthorizationHeader(newToken: string) {
             this.axiosInstance.defaults.headers['Authorization'] = newToken;
         },
+        removeAuthorizationHeader() {
+            this.axiosInstance.defaults.headers['Authorization'] = '';
+        },
     },
 });
