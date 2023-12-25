@@ -1,9 +1,14 @@
 <template>
-    <n-card :title=fileDetail.title class="border">
+    <n-card class="border">
+        <template #header>
+            <span class="header">
+                {{ fileDetail.title }}
+            </span>
+        </template>
         <n-grid :x-gap="12" :y-gap="8" :cols="24">
             <n-grid-item :span="2" class="constFont">作者:</n-grid-item>
             <n-grid-item :span="22">
-                <n-space :size="[12, 0]">
+                <n-space :size="[16, 0]">
                     <span class="author" v-for="(authorship, index) in fileDetail.authorships" :key=index @click="$router.push(
                         {
                             path: '/scholarHome',
@@ -22,8 +27,8 @@
             <n-grid-item :span="22">{{ fileDetail.abstract }}</n-grid-item>
 
             <n-grid-item :span="2" class="constFont">关键词:</n-grid-item>
-            <n-grid-item :span="22">
-                <n-space :size="[12, 0]">
+            <n-grid-item :span="22" class="keywords">
+                <n-space :size="[16, 0]">
                     <span v-for="(word, index) in fileDetail.keywords" :key=index>
                         {{ word }};
                     </span>
@@ -37,7 +42,7 @@
         <template #footer>
             <n-popover trigger="hover" v-if="!fileDetail.isCollected">
                 <template #trigger>
-                    <n-icon size="40" color="#0000ff" class="first_button" @click="collect">
+                    <n-icon size="40" color="var(--primary-100)" class="first_button" @click="collect">
                         <Star12Regular />
                     </n-icon>
                 </template>
@@ -46,7 +51,7 @@
 
             <n-popover trigger="hover" v-else>
                 <template #trigger>
-                    <n-icon size="40" color="#0000ff" class="first_button" @click="undoCollect">
+                    <n-icon size="40" color="var(--primary-100)" class="first_button" @click="undoCollect">
                         <Star12Filled />
                     </n-icon>
                 </template>
@@ -55,7 +60,7 @@
 
             <n-popover trigger="hover">
                 <template #trigger>
-                    <n-icon size="40" color="#0000ff" class="follow_buton" @click="changeQuoteMask">
+                    <n-icon size="40" color="var(--primary-100)" class="follow_buton" @click="changeQuoteMask">
                         <TextQuote16Filled />
                     </n-icon>
                 </template>
@@ -64,7 +69,7 @@
 
             <n-popover trigger="hover">
                 <template #trigger>
-                    <n-icon size="40" color="#0000ff" class="follow_buton" @click="changeShowCommentInput">
+                    <n-icon size="40" color="var(--primary-100)" class="follow_buton" @click="changeShowCommentInput">
                         <Comment12Regular />
                     </n-icon>
                 </template>
@@ -73,7 +78,7 @@
 
             <n-popover trigger="hover">
                 <template #trigger>
-                    <n-icon size="40" color="#0000ff" class="follow_buton"
+                    <n-icon size="40" color="var(--primary-100)" class="follow_buton"
                         v-show="fileDetail.doi != null && fileDetail.doi.length != 0"
                         @click="link"
                     >
@@ -85,7 +90,7 @@
 
             <n-popover trigger="hover">
                 <template #trigger>
-                        <n-icon size="40" color="#0000ff" class="follow_buton"
+                        <n-icon size="40" color="var(--primary-100)" class="follow_buton"
                             v-show="fileDetail.oa_url != null && fileDetail.oa_url.length != 0" 
                             @click="download"
                         >
@@ -97,7 +102,7 @@
 
             <n-popover trigger="hover">
                 <template #trigger>
-                    <n-icon size="40" color="#0000ff" class="follow_buton" @click="changeAppealMask">
+                    <n-icon size="40" color="var(--primary-100)" class="follow_buton" @click="changeAppealMask">
                         <Warning20Filled />
                     </n-icon>
                 </template>
@@ -178,12 +183,10 @@ import { ref, onMounted, Ref, watch } from 'vue'
 import Clipboard from 'clipboard'
 import { post, get } from '@/api/axios'
 import { useMessage } from 'naive-ui'
-import { useRoute } from 'vue-router'
 import { Paper } from '@/models/model'
 import { Star12Regular, TextQuote16Filled, Comment12Regular, LinkSquare12Regular, ArrowDownload20Filled, Star12Filled, Warning20Filled } from '@vicons/fluent'
 
 const message = useMessage()
-const route = useRoute()
 
 const fileDetail: Ref<Paper | any> = ref({})
 type paperItemType = {
@@ -259,7 +262,7 @@ const quotePapers: Ref<paperItemType[]> = ref([])
 const comments: Ref<commentType[]> = ref([])
 const citation: Ref<string> = ref("")
 onMounted(async () => {
-    const paperId = props.paper_id != undefined ? props.paper_id : route.params.id
+    const paperId = props.paper_id
     let res = await post(
         message, "/paper/single",
         {
@@ -397,22 +400,19 @@ function download() {
 </script>
 
 <style scoped>
-.detailContainer {
-    /* width: 100%; */
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
+.header{
+    font-weight: 800;
+    font-size: 25px;
 }
-
-/* .detailContainer :deep(.n-card-header__main){
-    view-transition-name: searchResultCardTitle !important;
-} */
 .constFont {
     color: gray;
 }
 
+.author{
+    font-style: italic;
+    color: var(--primary-100);
+}
 .author:hover {
-    color: blue;
     cursor: pointer;
     text-decoration: underline;
 }
@@ -443,7 +443,7 @@ function download() {
 }
 
 .statValueFont {
-    color: blue;
+    color: var(--primary-100);
     font-weight: 1000;
     font-size: large;
 }
@@ -464,6 +464,10 @@ function download() {
 }
 
 .border {
-    border-radius: 25px;
+    border-radius: 15px;
+}
+
+.keywords{
+    font-weight: bold;
 }
 </style>
