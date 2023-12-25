@@ -6,11 +6,9 @@
         <div class="headerContainer">
             <div class="headerLeft">
                 <div class="logo" @click="$router.push('/')">
-                    <img src="@/assets/AcadVista-长款.png" width="150"/>
+                    <img src="../../assets/AcadVista-长款.png" width="150"/>
                 </div>
                 <div class="searchInput">
-                    <!-- <n-auto-complete v-model:value="searchValue" :options="searchOptions">
-                    <template #default="{ handleInput, handleBlur, handleFocus, value: slotValue }"> -->
                     <n-popover :show="showComplete" placement="bottom" trigger="manual" :show-arrow="false" raw>
                         <template #trigger>
                             <n-input ref="searchInput" class="searchInput" type="text" placeholder="" size="large"
@@ -26,8 +24,6 @@
                                         :component="Search12Filled" @click="search(searchValue)" />
                                 </template>
                             </n-input>
-                            <!-- </template>
-                </n-auto-complete> -->
                         </template>
                         <div class="completeSearch">
                             <div v-for="(completeSearchOption, index) in completeSearchOptions" :key="index"
@@ -52,10 +48,11 @@
                 </div>
             </div>
             <div class="headerRight">
-                <UserInfo />
-                <div class="setting">
-                    <n-icon size="23" color="var(--primary-100)" :component="Settings32Filled" />
-                </div>
+                <n-button text v-if="!ifLogin" @click="$router.push('/login')">去登录</n-button>
+                <UserInfo v-if="ifLogin"></UserInfo>
+                <Subscribe v-if="ifLogin"></Subscribe>
+                <Notice v-if="ifLogin"></Notice>
+                <History v-if="ifLogin"></History>
                 <n-switch v-model:value="isDark" secondary @update:value="handleChange" />
             </div>
         </div>
@@ -63,9 +60,12 @@
 </template>
 
 <script setup lang='ts'>
-import { watch, ref, Ref } from 'vue';
+import { watch, ref, Ref, onMounted } from 'vue';
 import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
 import UserInfo from '@/components/Home/UserInfo.vue'
+import Subscribe from '@/components/Home/ScholarPop.vue'
+import Notice from '@/components/Home/NoticePop.vue'
+import History from '@/components/Home/HistoryPop.vue' 
 import { Search12Filled, Settings32Filled } from '@vicons/fluent';
 import emitter from '@/eventBus/eventBus';
 import router from '@/router'
@@ -102,10 +102,10 @@ const searchComplete = async () => {
         res = await post(message, '/paper/suggest', {
             query: searchValue.value
         })
-        if (!res || res.length == 0) {
+        if(!res || res.length == 0){
             showComplete.value = false;
-        } else {
-            completeSearchOptions.value = res.map((suffix: string) => {
+        }else{
+            completeSearchOptions.value = res.map((suffix:string) => {
                 return {
                     label: suffix,
                     isSelect: false
@@ -156,12 +156,24 @@ const options = [
 const currentSearchResultPageNumber = ref(0)
 emitter.on("currentSearchResultPageNumber", (data: any) => currentSearchResultPageNumber.value = data)
 const search = async (value: string) => {
+    let query:{[key:string]:any} =  {}
+    switch (additionValue.value) {
+        case '文章':
+            query.keyword = value;
+            break;
+        case '作者':
+            query.author = value;
+            break;
+        case '期刊':
+            query.publisher = value;
+            break;
+        case '机构':
+            query.institution = value;
+            break;
+    }
     router.push({
         path: '/search',
-        query: {
-            wd: value,
-            ad: additionValue.value
-        }
+        query,
     })
 }
 //标题
@@ -172,13 +184,37 @@ function handleChange(value: boolean) {
     emitter.emit("themeChange", value);
 }
 watch(() => route.query, (newValue) => {
-    if (newValue.wd) {
-        searchValue.value = newValue.wd as string
+    if (newValue.keyword) {
+        searchValue.value = newValue.keyword as string
+        additionValue.value = '文章'
+        return;
     }
-    if (newValue.ad) {
-        additionValue.value = newValue.ad as string
+    if (newValue.author) {
+        searchValue.value = newValue.author as string
+        additionValue.value = '作者'
+        return;
+    }
+    if (newValue.publisher) {
+        searchValue.value = newValue.publisher as string
+        additionValue.value = '期刊'
+        return;
+    }
+    if (newValue.institution) {
+        searchValue.value = newValue.institution as string
+        additionValue.value = '机构'
+        return;
     }
 }, { immediate: true, deep: true })
+
+//判断是否登录
+const ifLogin = ref(false)
+onMounted(() => {
+    if(localStorage.getItem('token')){
+        ifLogin.value = true
+    }else{
+        ifLogin.value = false
+    }
+})
 </script>
 
 <style scoped>
@@ -192,7 +228,6 @@ watch(() => route.query, (newValue) => {
     width: 180px;
     max-width: 180px;
     font-size: 16pt;
-    top: -5px;
     position: absolute;
     line-height: 50px;
     -webkit-line-clamp: 1;
