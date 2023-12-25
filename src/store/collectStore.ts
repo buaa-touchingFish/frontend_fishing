@@ -160,7 +160,7 @@ export const useCollectStore = defineStore("collect", () => {
     const datas = res.data.data;
     // console.log(datas);
     // 此时按照文章遍历, 将文章加入到指定的标签数据结构中
-    console.log("datas", datas);
+    // console.log("datas", datas);
     const tagAll = new Tag("全部");
     for (const data of datas) {
       let { paper_id, title, authors, publisher, cited_by_count, labels } =
@@ -226,7 +226,7 @@ export const useCollectStore = defineStore("collect", () => {
   });
 
   const requestDeletePaper = async () => {
-    console.log("requestDeletePaper");
+    // console.log("requestDeletePaper");
     const paper_ids = Array.from(paper_checked.value);
     const res = await api.post("/collect/delete", {
       paper_id: paper_ids,
