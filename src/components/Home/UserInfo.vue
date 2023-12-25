@@ -255,11 +255,14 @@ const changePassword = async () => {
     changePasswordModal.value = false;
 }
 
+import { useAxiosStore } from '@/store/axiosStore';
+const axiosStore = useAxiosStore()
 //退出登陆
 const logout = () => {
     localStorage.removeItem('uid')
     localStorage.removeItem('token')
-    message.success('已退出登录!')    
+    message.success('已退出登录!') 
+    axiosStore.removeAuthorizationHeader()   
     if (location.hash === '#/') {
         location.reload()
     }
