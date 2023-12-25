@@ -138,7 +138,7 @@ onMounted(async () => {
     const query = route.query;
     const res = await post(
         message,'/paper/aggregate',{
-            "pageNum": page.value-1,
+            "pageNum": 0,
             "keyword": query.keyword?? '',
             "author": query.author?? '',
             "type": query.type?? '',
