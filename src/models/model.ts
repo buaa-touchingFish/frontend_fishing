@@ -23,7 +23,7 @@ export type Paper = {
     issn: string;
     is_active: boolean;
     abstract: string;
-    isCollected:boolean;
+    isCollected: boolean;
     //统计数据
     cited_by_count: number;
     browse: number;
@@ -43,7 +43,7 @@ export type Author = {
     };
     fields: string[];
     h_index: number;
-    claim_uid: null;
+    claim_uid: number;
     updated_date: string;
 }
 export type CoAuthor = {
