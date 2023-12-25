@@ -3,7 +3,11 @@
         <div class="background">
             <StarBackground />
         </div>
+        <div class="logo" @click="$router.push('/')">
+            <img src="@/assets/AcadVista-长款.png" width="200" />
+        </div>
         <div class="login-in-container">
+
             <!-- <div class="login-left">
                 <Earth></Earth>
             </div> -->
@@ -23,11 +27,18 @@ import StarBackground from '@/components/Login/StarBackground.vue';
 <style scoped>
 .login-out-container {
     position: relative;
-    
+
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+
+    .logo {
+        position: absolute;
+        top: 0;
+        left: 5%;
+        z-index: 1;
+    }
 
     .background {
         position: absolute;
@@ -35,6 +46,7 @@ import StarBackground from '@/components/Login/StarBackground.vue';
         left: 0;
         z-index: 0;
     }
+
     .login-in-container {
         z-index: 1;
         width: 60%;
@@ -48,7 +60,8 @@ import StarBackground from '@/components/Login/StarBackground.vue';
         overflow: hidden;
         background-color: white;
         opacity: 0.9;
-        box-shadow: 0 0 10px 10px white;;
+        box-shadow: 0 0 10px 10px white;
+        ;
         backdrop-filter: blur(50px);
 
         .login-left {
@@ -70,4 +83,5 @@ import StarBackground from '@/components/Login/StarBackground.vue';
         }
     }
 
-}</style>
+}
+</style>

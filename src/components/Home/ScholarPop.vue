@@ -1,5 +1,5 @@
 <template>
-    <div style="margin-top: 2%;">
+    <div style="margin-top: 2%;cursor: pointer;">
         <n-popover class="scholarPop" trigger="hover" scrollable>
             <template #trigger>
                 <n-icon size="32" color="var(--primary-100)">
