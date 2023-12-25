@@ -122,6 +122,7 @@ import Stars from '@/components/Home/Stars.vue'
 import { Search12Filled, PeopleQueue24Filled, BuildingSkyscraper20Filled, DocumentBulletList24Filled, ChartMultiple24Filled } from "@vicons/fluent";
 import router from '@/router';
 import { useMessage } from 'naive-ui';
+import { post } from '@/api/axios';
 
 const route = useRoute()
 const iconSize = ref(80)
@@ -154,7 +155,6 @@ onMounted(() => {
 //搜索推荐的地方
 const searchValue = ref("")
 const showComplete = ref(false)
-const completeSearchOptionsSuffix = ref(['@gmail.com', '@163.com', '@qq.com'])
 const currentCompleteSearchOptionIndex = ref(-1)
 const copySearchValue = ref("")
 const completeSearchOptions: Ref<{ label: string, isSelect: boolean }[]> = ref([]);
@@ -171,13 +171,13 @@ const searchComplete = async () => {
         clearTimeout(time);
     }
     time = setTimeout(async () => {
-        res = await post(message, '/paper/suggest', {
-            query: searchValue.value
+        res = await post(message,'/paper/suggest',{
+            query:searchValue.value
         })
-        if (!res || res.length == 0) {
+        if(!res || res.length == 0){
             showComplete.value = false;
-        } else {
-            completeSearchOptions.value = res.map((suffix: string) => {
+        }else{
+            completeSearchOptions.value = res.map((suffix:string) => {
                 return {
                     label: suffix,
                     isSelect: false
@@ -224,8 +224,7 @@ const search = async (value: string) => {
     router.push({
         path: '/search',
         query: {
-            wd: value,
-            ad: '文章'
+            keyword: value,
         }
     })
 }

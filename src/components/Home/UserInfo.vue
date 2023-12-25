@@ -1,4 +1,5 @@
 <template>
+    <div>
     <n-popover placement="bottom" trigger="hover" :show-arrow="false" style="margin-right: 40px;margin-top: 10px;border-radius: 15px;" @update:show="handleUpdateShow" :animated="false">
       <template #trigger>
         <div class="user">
@@ -99,6 +100,7 @@
             </n-button>
         </div>
     </n-modal>
+</div>
 </template>
 
 <script setup lang='ts'>
