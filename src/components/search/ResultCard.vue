@@ -1,21 +1,20 @@
 <template>
-    <div class="resultCardContainer shadow" @click="$router.push('/detail/' + result.id);post(message,'/history/create',{'paper_id':result.id});">
+    <div class="resultCardContainer shadow"
+        @click="$router.push('/detail/' + result.id); post(message, '/history/create', { 'paper_id': result.id });">
         <h1 class="title hoverTitle" :data-title="copyResult.title">
             <span class="ellipsis" v-html="result.title"></span>
         </h1>
         <div class="authors">
-            <div class="author" :data-title="copyResult.authorships[index].author.display_name" v-for="(authorship, index) in result.authorships" :key="index" v-show="index < 5">
-                <span class="ellipsis" 
-                    v-html="authorship.author.display_name" 
-                    @click.stop="$router.push(
-                        {
-                            path:'/scholarHome',
-                            query:{
-                                author_name:copyResult.authorships[index].author.display_name,
-                                author_id:copyResult.authorships[index].author.id
-                            }
-                        })"
-                ></span>
+            <div class="author" :data-title="copyResult.authorships[index].author.display_name"
+                v-for="(authorship, index) in result.authorships" :key="index" v-show="index < 5">
+                <span class="ellipsis" v-html="authorship.author.display_name" @click.stop="$router.push(
+                    {
+                        path: '/scholarHome',
+                        query: {
+                            author_name: copyResult.authorships[index].author.display_name,
+                            author_id: copyResult.authorships[index].author.id
+                        }
+                    })"></span>
                 <div v-show="index != 4 && index != result.authorships.length - 1">,&nbsp;&nbsp;</div>
             </div>
         </div>
@@ -23,17 +22,16 @@
             <div class="publish_time">
                 {{ result.publication_date }}
             </div>
-            <div class="publisher" :data-title="copyResult.publisher.display_name" v-show="copyResult.publisher.display_name!='暂无' && copyResult.publisher.display_name!=null">
-                <span class="ellipsis" v-html="result.publisher.display_name"
-                    @click.stop="$router.push(
-                        {
-                            path:'/institutionHome',
-                            query:{
-                                institutionID:copyResult.publisher.id,
-                                institutionName:copyResult.publisher.display_name
-                            }
-                        })"
-                ></span>
+            <div class="publisher" :data-title="copyResult.publisher?.display_name"
+                v-show="copyResult.publisher && copyResult.publisher.display_name != '暂无' && copyResult.publisher.display_name != null">
+                <span class="ellipsis" v-html="result.publisher?.display_name" @click.stop="$router.push(
+                    {
+                        path: '/institutionHome',
+                        query: {
+                            institutionID: copyResult.publisher.id,
+                            institutionName: copyResult.publisher.display_name
+                        }
+                    })"></span>
             </div>
             <div class="cited_by_count">
                 被引量：{{ result.cited_by_count }}
@@ -42,18 +40,21 @@
         <div class="abstract" v-html="result.abstract"></div>
         <div class="cardBottom">
             <div class="option">
-                <n-button strong secondary round type="info" class="optionButton" @click.stop=""><n-icon :size="18" :component="Star20Regular" /><span>收藏</span></n-button>
-                <n-button strong secondary round type="info" class="optionButton" @click.stop=""><n-icon :size="18" :component="AlignLeft16Regular" /><span>引用</span></n-button>
-                <n-button strong secondary round type="info" class="optionButton" @click.stop=""><n-icon :size="18" :component="ArrowDownload16Regular" /><span>全文下载</span></n-button>
+                <n-button strong secondary round type="info" class="optionButton" @click.stop=""><n-icon :size="18"
+                        :component="Star20Regular" /><span>收藏</span></n-button>
+                <n-button strong secondary round type="info" class="optionButton" @click.stop=""><n-icon :size="18"
+                        :component="AlignLeft16Regular" /><span>引用</span></n-button>
+                <n-button strong secondary round type="info" class="optionButton" @click.stop=""><n-icon :size="18"
+                        :component="ArrowDownload16Regular" /><span>全文下载</span></n-button>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang='ts'>
-import { ref,Ref,onMounted,nextTick } from 'vue';
+import { ref, Ref, onMounted, nextTick } from 'vue';
 import { Paper } from '@/models/model'
-import { Star20Regular,AlignLeft16Regular,ArrowDownload16Regular } from '@vicons/fluent'
+import { Star20Regular, AlignLeft16Regular, ArrowDownload16Regular } from '@vicons/fluent'
 import { useRoute } from 'vue-router'
 import { post } from '@/api/axios'
 import { useMessage } from 'naive-ui'
@@ -65,7 +66,7 @@ const route = useRoute()
 const message = useMessage()
 
 const result: Ref<Paper> = ref(props.result)
-const copyResult:Ref<Paper> = ref(props.result)
+const copyResult: Ref<Paper> = ref(props.result)
 
 onMounted(() => {
     result.value = props.result
@@ -76,18 +77,18 @@ onMounted(() => {
 nextTick(() => {
     const searchValue = route.query.wd;
     const additionValue = route.query.ad;
-    if(searchValue && additionValue){
+    if (searchValue && additionValue) {
         const replaceReg = new RegExp(searchValue as string, 'gi')
         const replaceString = '<span style="color: var(--primary-100);font-weight: 600;">$&</span>'
-        if(additionValue == '文章'){
-            result.value.title = result.value.title.replace(replaceReg,replaceString)
-            result.value.abstract = result.value.abstract.replace(replaceReg,replaceString)
-        }else if(additionValue == '作者'){
+        if (additionValue == '文章') {
+            result.value.title = result.value.title.replace(replaceReg, replaceString)
+            result.value.abstract = result.value.abstract.replace(replaceReg, replaceString)
+        } else if (additionValue == '作者') {
             result.value.authorships.forEach((item) => {
-                item.author.display_name = item.author.display_name.replace(replaceReg,replaceString)
+                item.author.display_name = item.author.display_name.replace(replaceReg, replaceString)
             })
-        }else if(additionValue == '期刊'){
-            result.value.publisher.display_name = result.value.publisher.display_name.replace(replaceReg,replaceString)
+        } else if (additionValue == '期刊') {
+            result.value.publisher.display_name = result.value.publisher.display_name.replace(replaceReg, replaceString)
         }
     }
 })
@@ -104,16 +105,18 @@ nextTick(() => {
     text-overflow: ellipsis;
     overflow: hidden;
 }
+
 .hoverTitle[data-title] {
     position: relative;
     width: fit-content;
     max-width: 100%;
 
-    &:hover:after { 
+    &:hover:after {
         opacity: 1;
         transition: all 0.1s ease 0.5s;
         visibility: visible;
     }
+
     &:after {
         content: attr(data-title);
         background-color: var(--bg-200);
@@ -180,25 +183,27 @@ nextTick(() => {
     color: var(--text-100);
     overflow: hidden;
 
-    & span:hover{
+    & span:hover {
         color: var(--primary-100);
         text-decoration: underline;
     }
 }
+
 .author[data-title] {
     position: relative;
     width: fit-content;
     max-width: 100%;
-    padding-top:20px;
+    padding-top: 20px;
     margin-top: -20px;
     padding-right: 60px;
     margin-right: -60px;
 
-    &:hover:after { 
+    &:hover:after {
         opacity: 1;
         transition: all 0.1s ease 0.5s;
         visibility: visible;
     }
+
     &:after {
         content: attr(data-title);
         background-color: var(--bg-200);
@@ -221,32 +226,35 @@ nextTick(() => {
     color: var(--text-200);
     display: flex;
 }
-.publisher{
+
+.publisher {
     width: 30%;
     margin-left: 10%;
     font-weight: 600;
     color: var(--text-200);
 
-    & span{
+    & span {
         display: block;
         width: 100%;
 
-        &:hover{
+        &:hover {
             color: var(--primary-200);
             text-decoration: underline;
         }
     }
 }
+
 .publisher[data-title] {
     position: relative;
     width: fit-content;
     max-width: 30%;
 
-    &:hover:after { 
+    &:hover:after {
         opacity: 1;
         transition: all 0.1s ease 0.5s;
         visibility: visible;
     }
+
     &:after {
         content: attr(data-title);
         background-color: var(--bg-200);
@@ -263,6 +271,7 @@ nextTick(() => {
         opacity: 0;
     }
 }
+
 .cited_by_count {
     margin-left: 10%;
 }
@@ -300,14 +309,13 @@ nextTick(() => {
     display: flex;
     align-items: center;
 
-    & span{
+    & span {
         height: 18px;
         line-height: 18px;
         margin-left: 3px;
     }
 }
 
-.search-text{
+.search-text {
     color: var(--primary-100);
-}
-</style>
+}</style>

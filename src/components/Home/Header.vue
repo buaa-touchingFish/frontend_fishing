@@ -6,7 +6,7 @@
         <div class="headerContainer">
             <div class="headerLeft">
                 <div class="logo" @click="$router.push('/')">
-                    <img src="../../assets/AcadVista-长款.png" width="150"/>
+                    <img src="../../assets/AcadVista-长款.png" width="150" />
                 </div>
                 <div class="searchInput">
                     <!-- <n-auto-complete v-model:value="searchValue" :options="searchOptions">
@@ -99,13 +99,13 @@ const searchComplete = async () => {
         clearTimeout(time);
     }
     time = setTimeout(async () => {
-        res = await post(message,'/paper/suggest',{
-            query:searchValue.value
+        res = await post(message, '/paper/suggest', {
+            query: searchValue.value
         })
-        if(!res || res.length == 0){
+        if (!res || res.length == 0) {
             showComplete.value = false;
-        }else{
-            completeSearchOptions.value = res.map((suffix:string) => {
+        } else {
+            completeSearchOptions.value = res.map((suffix: string) => {
                 return {
                     label: suffix,
                     isSelect: false
@@ -175,7 +175,7 @@ watch(() => route.query, (newValue) => {
     if (newValue.wd) {
         searchValue.value = newValue.wd as string
     }
-    if(newValue.ad){
+    if (newValue.ad) {
         additionValue.value = newValue.ad as string
     }
 }, { immediate: true, deep: true })
@@ -192,6 +192,7 @@ watch(() => route.query, (newValue) => {
     width: 180px;
     max-width: 180px;
     font-size: 16pt;
+    top: -5px;
     position: absolute;
     line-height: 50px;
     -webkit-line-clamp: 1;

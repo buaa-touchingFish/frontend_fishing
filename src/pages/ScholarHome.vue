@@ -5,7 +5,7 @@
                 <div class="imageDiv">
                     <n-avatar round :size="128"
                         src="https://x0.ifengimg.com/res/2020/79AF4AE1EC8333953CBE4B3B3D0529A6E1FB6186_size217_w1080_h1171.jpeg" />
-                    <n-button class="claimButton" @click="subscribed = !subscribed;">
+                    <n-button class="claimButton" @click="subClicked">
                         <n-icon size="24">
                             <AlertOff20Filled v-if="subscribed" />
                             <Alert20Regular v-else />
@@ -36,7 +36,7 @@
                                 <n-icon size="22">
                                     <BuildingHome20Filled />
                                 </n-icon>
-                                {{ scholarInfo?.author.last_known_institution.display_name }}
+                                {{ scholarInfo?.author.last_known_institution?.display_name }}
                             </span>
                             <div class="infoDataDiv">
                                 <div class="infoDataBoxDiv">
@@ -196,7 +196,7 @@ import router from '@/router';
 import { Ref, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import ResultCard from '@/components/search/ResultCard.vue'
-import { get } from '@/api/axios'
+import { get, post } from '@/api/axios'
 import { useMessage } from 'naive-ui'
 import { Author, CoAuthor, Paper } from '@/models/model'
 import {
@@ -348,6 +348,15 @@ function filterChanged() {
     console.log(selectedPapersByType);
 
 
+}
+
+function subClicked() {
+    if (subscribed.value) {
+        post(message, '/subscribe/delete', { "author_id": scholarID.value });
+    } else {
+        post(message, '/subscribe', { "author_id": scholarID.value });
+    }
+    subscribed.value = !subscribed.value;
 }
 
 import { onMounted, onUnmounted } from 'vue';
@@ -615,6 +624,7 @@ function back() {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    color: var(--text-100)
 }
 
 .nameSpan {
