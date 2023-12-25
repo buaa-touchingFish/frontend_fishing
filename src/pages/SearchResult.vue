@@ -50,6 +50,7 @@
 </template>
 
 <script setup lang='ts'>
+//@ts-nocheck
 import { onMounted,watch,ref,Ref } from 'vue';
 import ResultCard from '@/components/search/ResultCard.vue'
 import SecondarySearchCard from '@/components/search/SecondarySearchCard.vue'
