@@ -1,11 +1,11 @@
 <template>
   <div class="collect-container">
     <n-space>
-      <n-tabs v-if="hasCollect" v-model:value="cur_tag_name" type="card" addable closable @close="handleClose"
-        @add="handleAdd">
+      <n-tabs v-if="hasCollect" v-model:value="cur_tag_name" :on-update:value="handleUpdatedValue" type="card" addable
+        closable @close="handleClose" @add="handleAdd">
         <n-tab-pane v-for="tag in collectStore.tags" :key="tag.name" :closable="notAll(tag.name)" :name="tag.name"
           :tab="tag2String(tag)">
-          <n-space style="display: flex; flex-wrap: nowrap;">
+          <n-space v-if="tag?.papers.length > 0" style="display: flex; flex-wrap: nowrap;">
             <n-space vertical>
               <div class="export-container">
                 <div class="check-all">
@@ -46,6 +46,15 @@
               <n-skeleton text :repeat="6" />
             </n-card>
           </n-space>
+          <div v-else class="hint">
+            <n-empty size="large" description="当前标签下没有文章">
+              <template #extra>
+                <n-button @click="cur_tag_name = '全部'">
+                  去添加
+                </n-button>
+              </template>
+            </n-empty>
+          </div>
         </n-tab-pane>
       </n-tabs>
     </n-space>
@@ -75,7 +84,7 @@ import DetailComponent from '@/components/detail/DetailComponent.vue'
 import { useCollectStore, Tag } from '@/store/collectStore'
 import { ref, computed, onMounted } from "vue";
 import { FormValidationStatus } from 'naive-ui/es/form/src/interface';
-import { NTabs, NTabPane, NModal, NInput, NButton, useMessage, useDialog, NSpace, NCard, NSkeleton, NCheckbox, NIcon, NResult } from "naive-ui";
+import { NTabs, NTabPane, NModal, NInput, NButton, useMessage, useDialog, NSpace, NCard, NSkeleton, NCheckbox, NIcon, NResult, NEmpty } from "naive-ui";
 
 const collectStore = useCollectStore();
 
@@ -135,6 +144,12 @@ const notAll = computed(() => {
 })
 
 const cur_tag_name = ref("全部");
+
+const handleUpdatedValue = (value: string) => {
+  // console.log('handleUpdatedValue', value);
+  cur_tag_name.value = value;
+  collectStore.active_paper_id = 'paper_id';
+}
 
 const tag_string_array = computed(() => {
   const strs = [];
@@ -266,7 +281,7 @@ const handleCollectedChange = (paper_id: string, collected: boolean) => {
 </script>
 <style scoped>
 .collect-container {
-  /* position: relative; */
+  position: relative;
   /* position: absolute;
   left: 50%;
   transform: translateX(-50%); */
@@ -277,12 +292,19 @@ const handleCollectedChange = (paper_id: string, collected: boolean) => {
   /* margin-left: 80px; */
   /* padding-right: 10px; */
   width: 100vw;
-  /* height: 100%; */
+  height: calc(100vh - 57px - 15px);
   /* width: 1800px; */
   /* overflow-y: hidden; */
 
   .result {
     margin-top: 160px;
+  }
+
+  .hint {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
   .preview {
