@@ -260,7 +260,7 @@ onMounted(() => {
     /* background-color: blue; */
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
 }
 
 .logo {

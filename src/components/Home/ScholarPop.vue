@@ -1,8 +1,8 @@
 <template>
-    <div>
+    <div style="margin-top: 2%;">
         <n-popover class="scholarPop" trigger="hover" scrollable>
             <template #trigger>
-                <n-icon size="40">
+                <n-icon size="32" color="var(--primary-100)">
                     <PeopleCheckmark16Filled />
                 </n-icon>
             </template>
@@ -36,7 +36,7 @@
                     </div>
                 </div>
             </div>
-            <div v-else>
+            <div v-else style="width: 240px;">
                 <n-empty></n-empty>
             </div>
         </n-popover>
