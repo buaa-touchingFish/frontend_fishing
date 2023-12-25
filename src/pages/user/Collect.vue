@@ -28,7 +28,9 @@
               </div>
             </n-space>
             <div v-if="canLoadPreview" style="flex-grow: 1;">
-              <Detail :paper_id="collectStore.active_paper_id" />
+              <div class="detailContainer">
+                <DetailComponent :paper_id="collectStore.active_paper_id" />
+              </div>
             </div>
             <n-card v-else style="background-color: var(--bg-100);">
               <template #header>
@@ -65,7 +67,7 @@
 import { TrashBinOutline } from '@vicons/ionicons5';
 import api from '@/api/axios.ts';
 import ArticleItem from "@/components/userHome/ArticleItem.vue";
-import Detail from '@/pages/Detail.vue'
+import DetailComponent from '@/components/detail/DetailComponent.vue'
 import { useCollectStore, Tag } from '@/store/collectStore'
 import { ref, computed, onMounted } from "vue";
 import { NTabs, NTabPane, NModal, NInput, NButton, useMessage, useDialog, NSpace, NCard, NSkeleton, NCheckbox, NIcon } from "naive-ui";
@@ -284,5 +286,11 @@ const handleDelete = () => {
   /* 默认值为空字符串 */
   font-size: smaller;
   color: red;
+}
+
+.detailContainer {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
 }
 </style>
