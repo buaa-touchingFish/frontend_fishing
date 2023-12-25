@@ -1,38 +1,157 @@
 <template>
     <div class="secondarySearchCardContainer shadow">
-        <div class="type">{{ secondarySearch.type }}</div>
-        <div class="items" v-for="(items,index) in secondarySearch.content.slice(0,3)" :key="index">
-            <div class="itemName">{{ items.name }}</div>
-            <div class="itemCount">({{ items.count }})</div>
+        <div class="type">{{ secondarySearch.title }}</div>
+        <div class="items" v-for="(item,index) in secondarySearch.items?.slice(0,3)" :key="index">
+            <div class="itemName">{{ item.type }}</div>
+            <div class="itemCount">({{ item.count }})</div>
         </div>
         <n-collapse-transition :show="showMore">
-            <div class="items" v-for="(items,index) in secondarySearch.content.slice(3)" :key="index">
-                <div class="itemName">{{ items.name }}</div>
-                <div class="itemCount">({{ items.count }})</div>
+            <div class="items" v-for="(item,index) in secondarySearch.items?.slice(3)" :key="index">
+                <div class="itemName">{{ item.type }}</div>
+                <div class="itemCount">({{ item.count }})</div>
             </div>
         </n-collapse-transition>
-        <div class="more" v-show="secondarySearch.content.length>3" @click="showMore = !showMore">
+        <div class="more" v-show="secondarySearch.items.length>3" @click="showMore = !showMore">
             <n-icon :component="ChevronDown16Regular" :class="{reverse:showMore}"></n-icon>
         </div>
     </div>
 </template>
 
 <script setup lang='ts'>
-import { ref } from 'vue';
+import { onMounted, ref,Ref } from 'vue';
 import { ChevronDown16Regular } from '@vicons/fluent'
 
 const props = defineProps(['secondarySearch'])
 
 type secondarySearchType = {
-    type:string,
-    content:{
-        name:string,
+    title:string,
+    items:{
+        type:string,
         count:number
     }[]
 }
 const showMore = ref(false)
-const secondarySearch:secondarySearchType[] = props.secondarySearch
+const secondarySearch:Ref<secondarySearchType> = ref(props.secondarySearch)
+const secondarySearchLabels:Ref<{[key:string]:any}> = ref({
+    '时间':{
+        '2020-01-01T00:00:00.000Z':{
+            label:'2020以前',
+            isSelected:false
+        },
+        '2021-01-01T00:00:00.000Z':{
+            label:'2020-2021',
+            isSelected:false
+        },
+        '2022-01-01T00:00:00.000Z':{
+            label:'2021-2022',
+            isSelected:false
+        },
+        '2023-01-01T00:00:00.000Z':{
+            label:'2022-2023',
+            isSelected:false
+        },
+    },
+    '语言':{
+        'en':{
+            label:'英语',
+            isSelected:false
+        },
+        'es':{
+            label:'西班牙语',
+            isSelected:false
+        },
+        'de':{
+            label:'德语',
+            isSelected:false
+        },
+        'fr':{
+            label:'法语',
+            isSelected:false
+        },
+        'pt':{
+            label:'葡萄牙语',
+            isSelected:false
+        },
+        'it':{
+            label:'意大利语',
+            isSelected:false
+        },
+        'ja':{
+            label:'朝鲜语',
+            isSelected:false
+        },
+        'tr':{
+            label:'土耳其文',
+            isSelected:false
+        },
+        'zh-cn':{
+            label:'中文',
+            isSelected:false
+        },
+        '':{
+            label:'其他',
+            isSelected:false
+        },
+    },
+    '期刊类型':{
+        'article':{
+            label:'article',
+            isSelected:false
+        },
+        'book-chapter':{
+            label:'book chapter',
+            isSelected:false
+        },
+        'book':{
+            label:'图书',
+            isSelected:false
+        },
+        'dataset':{
+            label:'数据集',
+            isSelected:false
+        },
+        'other':{
+            label:'其他',
+            isSelected:false
+        },
+        'report':{
+            label:'新闻报道',
+            isSelected:false
+        },
+        'reference-entry':{
+            label:'引用条目',
+            isSelected:false
+        },
+        'dissertation':{
+            label:'学位论文',
+            isSelected:false
+        },
+        'editorial':{
+            label:'社论',
+            isSelected:false
+        },
+        'erratum':{
+            label:'勘误表',
+            isSelected:false
+        },
+    },
+    '期刊':{
 
+    }
+})
+onMounted(() => {
+    secondarySearch.value = props.secondarySearch
+    if(secondarySearch.value.title == '期刊'){
+        // for(const item of secondarySearch.value.items){
+        //     secondarySearchLabels.value['期刊'][item.type].label = item.type;
+        //     secondarySearchLabels.value['期刊'][item.type].isSelected = false;
+        // }
+        console.log(3);
+        
+        // console.log(secondarySearchLabels.value['期刊']);
+        
+    }
+})
 </script>
 
 <style scoped>
