@@ -8,7 +8,7 @@
                         <DocumentBulletListMultiple24Filled></DocumentBulletListMultiple24Filled>
                     </n-icon>
                 </template>
-                <n-number-animation ref="numberAnimationInstRef" :from="0" :to="paperCount" :duration="1000" />
+                <n-number-animation ref="numberAnimationInstRef" :from="0" :to="11036659" :duration="1000" />
             </n-statistic>
             <n-statistic class="item" label="记录学者" tabular-nums>
                 <template #prefix>
@@ -16,7 +16,7 @@
                         <PeopleQueue24Filled />
                     </n-icon>
                 </template>
-                <n-number-animation ref="numberAnimationInstRef" :from="0" :to="scholarCount" :duration="1000" />
+                <n-number-animation ref="numberAnimationInstRef" :from="0" :to="12100566" :duration="1000" />
             </n-statistic>
         </div>
     </div>

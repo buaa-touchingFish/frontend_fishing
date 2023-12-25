@@ -7,7 +7,7 @@
                 </n-icon>
             </template>
 
-            <div class="historyBg" v-for="(history, index) in historyList" @click="$router.push('/detail/' + history.key)">
+            <div class="historyBg" v-if="historyList.length > 0" v-for="(history, index) in historyList" @click="$router.push('/detail/' + history.key)">
                 <n-divider v-if="index > 0"></n-divider>
                 <div class="historyItem">
                     <div class="noticeItemLeft">
@@ -24,6 +24,9 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div v-else>
+                <n-empty></n-empty>
             </div>
         </n-popover>
     </div>
@@ -46,7 +49,7 @@ onMounted(async () => {
     let res = await get(message, '/history/get/user', {
     })
     historyList.value = [];
-    res.map((item: any) => {
+    res?.map((item: any) => {
         const history: historyData = {
             key: item.paper_id,
             title: item.paper_name,

@@ -3,7 +3,7 @@
         <div class="recommendCardTop">文献推荐</div>
         <div class="recommend" v-for="recommend in recommendList" :key="recommend.id">
             <div class="titleContainer" :data-title="recommend.title">
-                <div class="title">{{ recommend.title }}</div>
+                <div class="title" @click="$router.push('/detail/'+recommend.id)">{{ recommend.title }}</div>
             </div>
             <div class="clickVolume">
                 <n-icon :size="20" :component="CursorClick20Filled" color='var(--primary-100)'></n-icon>
@@ -25,6 +25,7 @@ const message = useMessage();
 const recommendList:Ref<recommendPaper[]> = ref([]);
 onMounted(async () => {
     recommendList.value = await get(message,'/paper/hot',{})
+    console.log("recommendList:");
     console.log(recommendList);
 })
 </script>
