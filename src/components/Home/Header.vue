@@ -56,7 +56,14 @@
                 <div class="setting">
                     <n-icon size="23" color="var(--primary-100)" :component="Settings32Filled" />
                 </div>
-                <n-switch v-model:value="isDark" secondary @update:value="handleChange" />
+                <n-switch v-model:value="isDark" large secondary @update:value="handleChange">
+                    <template #checked-icon>
+                        <n-icon color="var(--primary-100)" :component="Moon" />
+                    </template>
+                    <template #unchecked-icon>
+                        <n-icon color="var(--primary-100)" :component="Sunny" />
+                    </template>
+                </n-switch>
             </div>
         </div>
     </div>
@@ -67,6 +74,7 @@ import { watch, ref, Ref } from 'vue';
 import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
 import UserInfo from '@/components/Home/UserInfo.vue'
 import { Search12Filled, Settings32Filled } from '@vicons/fluent';
+import { Moon, Sunny } from '@vicons/ionicons5'
 import emitter from '@/eventBus/eventBus';
 import router from '@/router'
 import { useRoute } from 'vue-router'
