@@ -259,7 +259,10 @@ const changePassword = async () => {
 const logout = () => {
     localStorage.removeItem('uid')
     localStorage.removeItem('token')
-    message.success('已退出登录!')
+    message.success('已退出登录!')    
+    if (location.hash === '#/') {
+        location.reload()
+    }
     router.push('/')
 }
 </script>

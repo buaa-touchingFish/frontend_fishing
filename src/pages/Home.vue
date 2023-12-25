@@ -6,9 +6,10 @@
                 <StarBackground></StarBackground>
             </div>
             <div class="homeHeaderDiv">
-                <n-button v-if="!isLogged" class="loginButton" type="primary" @click="$router.push('/login');"
-                    href="/">登录</n-button>
-                <n-button v-if="isLogged" class="loginButton" type="primary" @click="logout" href="/">退出登录</n-button>
+                <n-icon v-if="!isLogged" class="loginButton" size="32" @click="$router.push('/login');">
+                    <VideoPersonSparkle28Regular />
+                </n-icon>
+                <UserInfo style="margin-right: 20%;" v-else></UserInfo>
             </div>
             <div class="homeContentDiv">
                 <div class="homeContentLeft">
@@ -116,10 +117,12 @@ import Header from '@/components/Home/Header.vue'
 import Menu from '@/components/Home/Menu.vue'
 import StarBackground from '@/components/Login/StarBackground.vue';
 // import Clock from '@/components/Clock.vue';
+import UserInfo from '@/components/Home/UserInfo.vue'
 import { useRoute } from 'vue-router'
 import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
 import Stars from '@/components/Home/Stars.vue'
-import { Search12Filled, PeopleQueue24Filled, BuildingSkyscraper20Filled, DocumentBulletList24Filled, ChartMultiple24Filled } from "@vicons/fluent";
+import { Search12Filled, PeopleQueue24Filled, BuildingSkyscraper20Filled, DocumentBulletList24Filled, ChartMultiple24Filled, VideoPersonSparkle28Regular } from "@vicons/fluent";
+
 import router from '@/router';
 import { useMessage } from 'naive-ui';
 import { post } from '@/api/axios';
@@ -307,7 +310,8 @@ const changeShowCard = () => {
 }
 
 .loginButton {
-    margin-right: 20px;
+    margin-right: 20%;
+    cursor: pointer;
 }
 
 .homeContentDiv {
