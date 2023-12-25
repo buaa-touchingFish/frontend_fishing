@@ -41,7 +41,7 @@
 <script setup lang="ts">
 import { Add } from '@vicons/ionicons5'
 import { useCollectStore } from '@/store/collectStore'
-import { ref, computed, defineEmits } from "vue";
+import { ref, computed } from "vue";
 import { NCheckbox, NTag, useMessage, useDialog, NPopover, NButton, NSpace } from "naive-ui";
 
 const props = defineProps({
@@ -83,16 +83,10 @@ const handleContainerClicked = () => {
 
 const computed_check = computed({
   get() {
-    const tag = collectStore.tags.find(item => item.name === props.self_tag_name);
-    if (tag) {
-      return tag.papers_checked.has(props.paper_id ?? 'wrong_id');
-    }
-    return false;
+    return collectStore.paper_checked.has(props.paper_id ?? 'wrong_paper_id');
   },
   set(val) {
-    const tag = collectStore.tags.find(item => item.name === props.self_tag_name);
-    if (val === true) tag?.setPaperChecked(props.paper_id);
-    else tag?.setPaperUnchecked(props.paper_id);
+    collectStore.change_paper_checked(props.paper_id, val);
   }
 })
 

@@ -14,7 +14,7 @@
                     }
                 });" href="/">设置</n-button>
                 <n-button v-if="!isLogged" class="loginButton" type="primary" @click="$router.push('/login');" href="/">登录</n-button>
-                <n-button v-if="isLogged" class="loginButton" type="primary" @click="isLogged = false" href="/">退出登录</n-button>
+                <n-button v-if="isLogged" class="loginButton" type="primary" @click="logout" href="/">退出登录</n-button>
                 <Subscribe class="loginButton"></Subscribe>
                 <Notice class="loginButton"></Notice>
                 <History class="loginButton"></History>
@@ -111,9 +111,11 @@
         <div class="menu">
             <Menu></Menu>
         </div>
-        <div class="main">
-            <router-view></router-view>
-        </div>
+        <n-scrollbar style="max-height: calc(100vh - 57px)">
+            <div class="main">
+                <router-view></router-view>
+            </div>
+        </n-scrollbar>
     </div>
 </template>
 
@@ -135,6 +137,11 @@ import router from '@/router';
 const route = useRoute()
 const iconSize = ref(80)
 const isLogged = ref(false)
+
+const logout = () => {
+    isLogged.value = false; 
+    localStorage.removeItem('uid')
+}
 
 // 判断是否需要展示首页
 const showHome = ref(true)

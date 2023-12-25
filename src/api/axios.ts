@@ -119,5 +119,4 @@ export async function postWithParam(message: MessageApiInjection, url: string, p
     }
 }
 
-
 export default request

@@ -4,7 +4,7 @@
       <n-tabs v-model:value="cur_tag_name" type="card" addable closable @close="handleClose" @add="handleAdd">
         <n-tab-pane v-for="tag in collectStore.tags" :key="tag.name" :closable="notAll(tag.name)" :name="tag.name"
           :tab="tag2String(tag)">
-          <n-space>
+          <n-space style="display: flex; flex-wrap: nowrap;">
             <n-space vertical>
               <div class="export-container">
                 <div class="check-all">
@@ -12,13 +12,13 @@
                     全选
                   </n-checkbox>
                 </div>
-                <n-button text>
+                <n-button text @click="handleDelete">
                   <template #icon>
                     <n-icon>
-                      <Export />
+                      <TrashBinOutline />
                     </n-icon>
                   </template>
-                  导出引文
+                  取消收藏
                 </n-button>
               </div>
               <div v-for="paper in tag.papers" :key="paper.paper_id">
@@ -27,7 +27,11 @@
                   :tags="paper.tags" />
               </div>
             </n-space>
-            <ArticlePreView v-if="canLoadPreview" :paper_id="collectStore.active_paper_id" />
+            <div v-if="canLoadPreview" style="flex-grow: 1;">
+              <div class="detailContainer">
+                <DetailComponent :paper_id="collectStore.active_paper_id" />
+              </div>
+            </div>
             <n-card v-else style="background-color: var(--bg-100);">
               <template #header>
                 <n-space vertical>
@@ -61,10 +65,10 @@
   </div>
 </template>
 <script setup lang="ts">
-import { OpenOutline as Export } from '@vicons/ionicons5';
+import { TrashBinOutline } from '@vicons/ionicons5';
 import api from '@/api/axios.ts';
 import ArticleItem from "@/components/userHome/ArticleItem.vue";
-import ArticlePreView from '@/components/userHome/ArticlePreview.vue'
+import DetailComponent from '@/components/detail/DetailComponent.vue'
 import { useCollectStore, Tag } from '@/store/collectStore'
 import { ref, computed, onMounted } from "vue";
 import { NTabs, NTabPane, NModal, NInput, NButton, useMessage, useDialog, NSpace, NCard, NSkeleton, NCheckbox, NIcon } from "naive-ui";
@@ -76,8 +80,9 @@ const message = useMessage();
 const dialog = useDialog();
 
 onMounted(() => {
-  // collectStore.getAllCollects();
-  collectStore.fakeData();
+  if (collectStore.isFakeData)
+    collectStore.fakeData();
+  else collectStore.getAllCollects();
 })
 
 const handleItemClick = () => {
@@ -88,24 +93,25 @@ const handleItemClick = () => {
 const allChecked = computed({
   get() {
     const tag = collectStore.tags.find(item => item.name === cur_tag_name.value);
-    if (tag) return tag.papers.length === tag.papers_checked.size;
+    if (tag) {
+      for (const paper of tag.papers) {
+        if (!collectStore.paper_checked.has(paper.paper_id)) {
+          return false;
+        }
+      }
+      return true;
+    }
     return false;
   },
   set(val) {
     const tag = collectStore.tags.find(item => item.name === cur_tag_name.value);
-    if (val === true) {
-      if (tag) {
-        tag.papers.forEach(item => tag.setPaperChecked(item.paper_id));
-      }
-    } else {
-      if (tag) {
-        tag.papers.forEach(item => tag.setPaperUnchecked(item.paper_id));
-      }
-    }
+    if (tag)
+      tag.papers.forEach(item => collectStore.change_paper_checked(item.paper_id, val));
   }
 });
 
 const canLoadPreview = computed(() => {
+  // return true;
   return !collectStore.isFakeData && collectStore.active_paper_id !== 'paper_id';
 })
 
@@ -155,16 +161,14 @@ const handleAdd = () => {
 }
 
 const requestCreateNewLabel = async (label_name: string) => {
-  /* const res = await api.post('/collect/label', {
-    params: {
-      user_id: collectStore.user_id,
-      paper_id: '',
-      label_name
-    }
+  const res = await api.post('/collect/label', {
+    // user_id: collectStore.user_id,
+    paper_id: '',
+    label_name: label_name
   });
-  console.log('requestCreateNewLabel', res.data);
-  return res.data.code === 0; */
-  return true;
+  // console.log('requestCreateNewLabel', res.data);
+  return res.data.code === 200;
+  // return true;
 }
 
 const createLabel = () => {
@@ -223,13 +227,43 @@ const handleClose = (name: string) => {
   })
 }
 
+const handleDelete = () => {
+  dialog.warning({
+    title: '取消收藏',
+    content: `将从收藏夹中删除选中的${collectStore.paper_checked.size}篇论文`,
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: () => {
+      collectStore.requestDeletePaper().then((res) => {
+        if (res === true) {
+          collectStore.delete_checked_paper();
+          message.success('取消收藏成功');
+        } else {
+          message.success('取消收藏失败');
+        }
+      })
+    },
+    onNegativeClick: () => {
+      message.info('取消')
+    }
+  })
+}
+
 </script>
 <style scoped>
 .collect-container {
+  /* position: absolute;
+  left: 50%;
+  transform: translateX(-50%); */
   margin-top: 15px;
   margin-bottom: 15px;
-  margin-left: 80px;
-  width: 100%;
+  padding-left: 74px;
+  padding-right: 14px;
+  /* margin-left: 80px; */
+  /* padding-right: 10px; */
+  width: 100vw;
+  /* width: 1800px; */
+  /* overflow-y: hidden; */
 
   .preview {
     width: 200px;
@@ -254,5 +288,11 @@ const handleClose = (name: string) => {
   /* 默认值为空字符串 */
   font-size: smaller;
   color: red;
+}
+
+.detailContainer {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
 }
 </style>

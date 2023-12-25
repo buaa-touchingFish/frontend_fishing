@@ -87,7 +87,7 @@
 <script setup lang='ts'>
 import Comment from '@/components/detail/Comment.vue'
 import PaperItem from '@/components/detail/PaperItem.vue'
-import { ref, onMounted, Ref, defineProps } from 'vue'
+import { ref, onMounted, Ref } from 'vue'
 import Clipboard from 'clipboard'
 import { post } from '@/api/axios'
 import { useMessage } from 'naive-ui'
@@ -262,7 +262,7 @@ function copy() {
 
 <style scoped>
 .detailContainer {
-  width: 65vw;
+  width: 100%;
   /* margin-top: 20px; */
   display: flex;
   flex-direction: column;
