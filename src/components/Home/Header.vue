@@ -53,7 +53,14 @@
                 <Subscribe v-if="ifLogin"></Subscribe>
                 <Notice v-if="ifLogin"></Notice>
                 <History v-if="ifLogin"></History>
-                <n-switch v-model:value="isDark" secondary @update:value="handleChange" />
+                <n-switch v-model:value="isDark" large secondary @update:value="handleChange">
+                    <template #checked-icon>
+                        <n-icon color="var(--primary-100)" :component="Moon" />
+                    </template>
+                    <template #unchecked-icon>
+                        <n-icon color="var(--primary-100)" :component="Sunny" />
+                    </template>
+                </n-switch>
             </div>
         </div>
     </div>
@@ -67,6 +74,7 @@ import Subscribe from '@/components/Home/ScholarPop.vue'
 import Notice from '@/components/Home/NoticePop.vue'
 import History from '@/components/Home/HistoryPop.vue' 
 import { Search12Filled, Settings32Filled } from '@vicons/fluent';
+import { Moon, Sunny } from '@vicons/ionicons5'
 import emitter from '@/eventBus/eventBus';
 import router from '@/router'
 import { useRoute } from 'vue-router'

@@ -3,8 +3,7 @@
         <div class="scholarDivBorder">
             <div class="scholarDiv">
                 <div class="imageDiv">
-                    <n-avatar round :size="128"
-                        src="https://x0.ifengimg.com/res/2020/79AF4AE1EC8333953CBE4B3B3D0529A6E1FB6186_size217_w1080_h1171.jpeg" />
+                    <n-avatar round :size="128" :src="avaPath" />
                     <n-button class="claimButton" @click="subClicked">
                         <n-icon size="24">
                             <AlertOff20Filled v-if="subscribed" />
@@ -92,7 +91,6 @@
                             </div>
                         </div>
                         <div class="briefInfoRightDiv">
-                            暂无个人简介
                             <n-button v-if="!claimed" style="width:fit-content" @click="$router.push({
                                 path: '/claimScholar',
                                 query: {
@@ -154,7 +152,7 @@
                     <n-skeleton v-if="loading" width="100%" :sharp="false" height="100px" style="margin-top: 10px;" />
                     <div v-else v-for="(sch, index) in  scholarInfo?.co_authors " :key="index" class="coScholarDiv">
                         <n-avatar round :size="48" style="margin: 5px;" class="schoAva"
-                            src="https://x0.ifengimg.com/res/2020/79AF4AE1EC8333953CBE4B3B3D0529A6E1FB6186_size217_w1080_h1171.jpeg" />
+                            src="http://s5usfv19s.hb-bkt.clouddn.com/OIP-C.jpg" />
                         <div class="verticalSplitDiv" />
                         <div class="coScholarInfoDiv">
                             <n-ellipsis style="max-width: calc(100%);">
@@ -277,6 +275,7 @@ let scholarInfo: Ref<{ author: Author, papers: Paper[], co_authors: CoAuthor[] }
 const loading = ref(true);
 const subscribed = ref(false);
 const claimed = ref(false);
+const avaPath = ref("http://s5usfv19s.hb-bkt.clouddn.com/OIP-C.jpg");
 onMounted(async () => {
     const r1 = await get(message, '/author/subscribe', { author_id: scholarID.value });
     if (r1)
@@ -371,6 +370,11 @@ onMounted(async () => {
     if (data) {
         scholarInfo.value = data;
         claimed.value = (scholarInfo.value?.author.claim_uid ?? -1) > 0
+        console.log(scholarInfo.value);
+        if (claimed.value) {
+            console.log(scholarInfo.value?.author.claim_uid)
+            avaPath.value = "http://" + await post(message, '/user/getava', { id: scholarInfo.value?.author.claim_uid! });
+        }
         {
             const typeMap = new Map<string, number>();
             const dateMap = new Map<number, number>();
