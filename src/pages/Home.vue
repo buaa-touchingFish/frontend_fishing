@@ -130,7 +130,7 @@ const isLogged = ref(false)
 const message = useMessage()
 
 import { useAxiosStore } from '@/store/axiosStore';
-import { post } from '@/api/axios';
+
 const axiosStore = useAxiosStore()
 const logout = () => {
     isLogged.value = false;
