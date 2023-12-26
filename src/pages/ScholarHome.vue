@@ -15,7 +15,7 @@
                 <div class="verticalSplitDiv"></div>
                 <div class="infoDiv">
                     <div class="nameDiv">
-                        <p class="nameSpan" id="authorName" :style="{viewTransitionName:'scholarDiv'+scholarID}">
+                        <p class="nameSpan" id="authorName">
                             {{ scholarName }}</p>
                         <span class="idSpan">scholarID :
                             {{ scholarID }}
@@ -649,6 +649,7 @@ function back() {
     font-weight: bold;
     color: var(--text-100);
     position: sticky;
+    view-transition-name: scholarName;
 
 }
 
@@ -760,7 +761,7 @@ function back() {
     flex-direction: column;
 }
 
-.paperListDiv > .resultCardContainer {
+.paperListDiv>.resultCardContainer {
     margin-bottom: 0;
     border-radius: 0;
     box-shadow: none;
