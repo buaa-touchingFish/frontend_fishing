@@ -4,19 +4,17 @@
             <span class="ellipsis" v-html="result.title"></span>
         </h1>
         <div class="authors">
-            <div class="author" :data-title="copyResult.authorships[index].author.display_name" v-for="(authorship, index) in result.authorships" :key="index" v-show="index < 5">
-                <span class="ellipsis" 
-                    v-html="authorship.author.display_name" 
-                    @click.stop="$router.push(
-                        {
-                            path:'/scholarHome',
-                            query:{
-                                author_name:copyResult.authorships[index].author.display_name,
-                                author_id:copyResult.authorships[index].author.id,
-                                paper_id:copyResult.id
-                            }
-                        })"
-                ></span>
+            <div class="author" :data-title="copyResult.authorships[index].author.display_name"
+                v-for="(authorship, index) in result.authorships" :key="index" v-show="index < 5">
+                <span class="ellipsis" v-html="authorship.author.display_name" @click.stop="$router.push(
+                    {
+                        path: '/scholarHome',
+                        query: {
+                            author_name: copyResult.authorships[index].author.display_name,
+                            author_id: copyResult.authorships[index].author.id,
+                            paper_id: copyResult.id
+                        }
+                    })"></span>
                 <div v-show="index != 4 && index != result.authorships.length - 1">,&nbsp;&nbsp;</div>
             </div>
         </div>
@@ -30,8 +28,8 @@
                     {
                         path: '/institutionHome',
                         query: {
-                            institutionID: copyResult.publisher.id,
-                            institutionName: copyResult.publisher.display_name
+                            institution_id: copyResult.publisher.id,
+                            institution_name: copyResult.publisher.display_name
                         }
                     })"></span>
             </div>
@@ -80,26 +78,26 @@ onMounted(() => {
 nextTick(() => {
     const query = route.query;
     const replaceString = '<span style="color: var(--primary-100);font-weight: 600;">$&</span>'
-    if(query.keyword){
+    if (query.keyword) {
         const replaceReg = new RegExp(query.keyword as string, 'gi')
-        result.value.title = result.value.title.replace(replaceReg,replaceString)
-        result.value.abstract = result.value.abstract.replace(replaceReg,replaceString)
+        result.value.title = result.value.title.replace(replaceReg, replaceString)
+        result.value.abstract = result.value.abstract.replace(replaceReg, replaceString)
     }
-    if(query.author){
+    if (query.author) {
         const replaceReg = new RegExp(query.author as string, 'gi')
         result.value.authorships.forEach((item) => {
-            item.author.display_name = item.author.display_name.replace(replaceReg,replaceString)
+            item.author.display_name = item.author.display_name.replace(replaceReg, replaceString)
         })
     }
-    if(query.publisher){
+    if (query.publisher) {
         const replaceReg = new RegExp(query.publisher as string, 'gi')
-        result.value.publisher.display_name = result.value.publisher.display_name.replace(replaceReg,replaceString)
+        result.value.publisher.display_name = result.value.publisher.display_name.replace(replaceReg, replaceString)
     }
 })
 
 const gotoDetail = async () => {
-    await post(message,'/history/create',{'paper_id':result.value.id});
-    router.push('/detail/' + result.value.id); 
+    await post(message, '/history/create', { 'paper_id': result.value.id });
+    router.push('/detail/' + result.value.id);
 }
 </script>
 
@@ -326,4 +324,5 @@ const gotoDetail = async () => {
 
 .search-text {
     color: var(--primary-100);
-}</style>
+}
+</style>
