@@ -371,6 +371,7 @@ onMounted(async () => {
     const data = await get(message, "/author", { "author_id": route.query.author_id, "paper_id": route.query.paper_id });
     if (data) {
         scholarInfo.value = data;
+        console.log(scholarInfo.value?.author);
         claimed.value = (scholarInfo.value?.author.claim_uid ?? -1) > 0
         console.log(scholarInfo.value);
         if (claimed.value) {
