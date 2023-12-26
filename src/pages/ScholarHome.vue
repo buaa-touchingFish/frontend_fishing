@@ -153,7 +153,7 @@
                     <div v-else v-for="(sch, index) in  scholarInfo?.co_authors " :key="index" class="coScholarDiv">
                         <n-avatar round :size="48" style="margin: 5px;" class="schoAva"
                             src="http://s5usfv19s.hb-bkt.clouddn.com/OIP-C.jpg" />
-                        <div class="verticalSplitDiv" />
+                        <!-- <div class="verticalSplitDiv" /> -->
                         <div class="coScholarInfoDiv">
                             <n-ellipsis style="max-width: calc(100%);">
                                 <router-link class="coScholarName" :to="{
@@ -166,9 +166,9 @@
                                     {{ sch.display_name }}
                                 </router-link>
                             </n-ellipsis>
-                            <n-ellipsis style="max-width: 100%; margin-bottom: 5px; display: block; color:var(--text-100)"
+                            <n-ellipsis style="max-width: 90%; margin-bottom: 5px; display: block; color:var(--text-100)"
                                 :tooltip="false">
-                                {{ sch.last_known_institution_display_name }}
+                                {{ sch?.last_known_institution_display_name ?? "&nbsp;" }}
                             </n-ellipsis>
                             <div class="horizontalSplitDiv" style="width: calc(100%);" />
                         </div>
@@ -433,7 +433,7 @@ onMounted(async () => {
                 borderWidth: 1
             }
             let maxVal = 0;
-            
+
             dateMap.forEach((val, key) => {
                 yearFilterOption.value.push({
                     label: key.toString(),
@@ -818,7 +818,8 @@ function back() {
 
 .coScholarInfoDiv {
     margin: 5px;
-    width: calc(100% - 48px);
+    width: calc(100% - 80px);
+    max-width: calc(100% - 100px);
 }
 
 .coScholarName {
