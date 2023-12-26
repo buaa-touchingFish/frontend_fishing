@@ -14,7 +14,8 @@
                             path: '/scholarHome',
                             query: {
                                 author_name: authorship.author.display_name,
-                                author_id: authorship.author.id
+                                author_id: authorship.author.id,
+                                paper_id: fileDetail.id
                             }
                         }
                     )">
@@ -69,7 +70,14 @@
 
             <n-popover trigger="hover">
                 <template #trigger>
-                    <n-icon size="40" color="var(--primary-100)" class="follow_buton" @click="changeShowCommentInput">
+                    <n-icon size="40" color="var(--primary-100)" class="follow_buton" 
+                        @click="
+                            ifShowCommentInput = !ifShowCommentInput;
+                            nextTick(() => {
+                                inputRef.focus()
+                            })
+                        "
+                    >
                         <Comment12Regular />
                     </n-icon>
                 </template>
@@ -79,25 +87,12 @@
             <n-popover trigger="hover">
                 <template #trigger>
                     <n-icon size="40" color="var(--primary-100)" class="follow_buton"
-                        v-show="fileDetail.doi != null && fileDetail.doi.length != 0"
-                        @click="link"
+                        @click="getPaper"
                     >
                         <LinkSquare12Regular />
                     </n-icon>
                 </template>
-                <span>链接</span>
-            </n-popover>
-
-            <n-popover trigger="hover">
-                <template #trigger>
-                        <n-icon size="40" color="var(--primary-100)" class="follow_buton"
-                            v-show="fileDetail.oa_url != null && fileDetail.oa_url.length != 0" 
-                            @click="download"
-                        >
-                            <ArrowDownload20Filled />
-                        </n-icon>
-                </template>
-                <span>下载</span>
+                <span>获取</span>
             </n-popover>
 
             <n-popover trigger="hover">
@@ -110,11 +105,14 @@
             </n-popover>
 
             <div class="newComment" v-show="ifShowCommentInput">
-                <n-input v-model:value="newComment" placeholder="请输入评论" type="textarea" :autosize="{
-                    minRows: 2,
-                    maxRows: 5
-                }" />
-                <n-button type="info" class="newCommentButton" @click="publishComment">发布</n-button>
+                <n-input 
+                    v-model:value="newComment" 
+                    placeholder="请输入评论" 
+                    type="textarea" 
+                    :autosize="{minRows: 2,maxRows: 5}"
+                    ref="inputRef"
+                />
+                <n-button color="#3F51B5" class="newCommentButton" @click="publishComment">发布</n-button>
             </div>
         </template>
     </n-card>
@@ -179,7 +177,7 @@
 <script setup lang='ts'>
 import Comment from '@/components/detail/Comment.vue'
 import PaperItem from '@/components/detail/PaperItem.vue'
-import { ref, onMounted, Ref, watch } from 'vue'
+import { ref, onMounted, Ref, watch, nextTick } from 'vue'
 import Clipboard from 'clipboard'
 import { post, get } from '@/api/axios'
 import { useMessage } from 'naive-ui'
@@ -220,6 +218,16 @@ watch(() => props.paper_id, async (newVal) => {
     console.log(res)
     fileDetail.value = res
 
+    res = await post(
+        message, "/paper/iscollect",
+        {
+            "id": fileDetail.value.id
+        }
+    )
+    console.log(res)
+    if(res == undefined) res = false
+    fileDetail.value.isCollected = res
+    
     res = await post(
         message, "/paper/getRel",
         {
@@ -307,6 +315,16 @@ onMounted(async () => {
     )
     console.log(res)
     citation.value = res
+
+    res = await post(
+        message, "/paper/iscollect",
+        {
+            "id": fileDetail.value.id
+        }
+    )
+    console.log(res)
+    if(res == undefined) res = false
+    fileDetail.value.isCollected = res
 })
 
 const quoteMask = ref(false)
@@ -317,7 +335,7 @@ function copy() {
     const clipboard = new Clipboard('.copyCiteButton');
     clipboard.on('success', () => {
         clipboard.destroy()
-        alert("复制成功！");
+        message.success('复制成功')
     })
 }
 
@@ -327,6 +345,10 @@ function changeAppealMask() {
 }
 const appealContent = ref("")
 async function appeal() {
+    if(appealContent.value.length == 0) {
+        message.warning('申诉内容不能为空')
+        return
+    }
     const res = await post(
         message, "/user/create/appeal",
         {
@@ -337,15 +359,19 @@ async function appeal() {
     console.log(res)
     appealMask.value = !appealMask.value
     appealContent.value = ""
+    if(res === null) message.success('申诉成功')
+    if(res === false) message.warning('已经申诉过了')
 }
 
+const inputRef = ref()
 const newComment = ref("")
 const ifShowCommentInput = ref(false)
-function changeShowCommentInput() {
-    ifShowCommentInput.value = !ifShowCommentInput.value
-}
 async function publishComment() {
-    await post(
+    if(newComment.value.length == 0) {
+        message.warning('还没输入评论哦')
+        return
+    }
+    let res = await post(
         message, "/comment",
         {
             "content": newComment.value,
@@ -353,8 +379,10 @@ async function publishComment() {
             // "sender_id": localStorage.getItem("uid"),
         }
     )
+    console.log(res)
+    if(res === null) message.success('评论成功')
 
-    const res = await get(
+    res = await get(
         message, "/comment",
         {
             "paper_id": fileDetail.value.id
@@ -375,8 +403,11 @@ async function collect() {
         }
     )
     console.log(res)
-    fileDetail.value.isCollected = true
-    emit("collectedChange", fileDetail.value.id, true)
+    if(res === null) {
+        fileDetail.value.isCollected = true
+        emit("collectedChange", fileDetail.value.id, true)
+        message.success('收藏成功')
+    }
 }
 async function undoCollect() {
     const res = await post(
@@ -386,17 +417,24 @@ async function undoCollect() {
         }
     )
     console.log(res)
-    fileDetail.value.isCollected = false
-    emit("collectedChange", fileDetail.value.id, false)
+    if(res === null) {
+        fileDetail.value.isCollected = false
+        emit("collectedChange", fileDetail.value.id, false)
+        message.success('取消收藏成功')
+    }
 }
 
-function link() {
-    window.open(fileDetail.value.doi, '_blank')
+function getPaper() {
+    if(fileDetail.value.oa_url != null && fileDetail.value.oa_url.length != 0) {
+        window.open(fileDetail.value.oa_url, '_self')
+    } else if(fileDetail.value.doi != null && fileDetail.value.doi.length != 0) {
+        window.open(fileDetail.value.doi, '_blank')
+    } else {
+        message.warning('我们没有该文献的获取途径')
+    }
 }
 
-function download() {
-    window.open(fileDetail.value.oa_url, '_self')
-}
+
 </script>
 
 <style scoped>

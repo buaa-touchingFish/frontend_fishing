@@ -53,7 +53,7 @@
                 <Subscribe v-if="ifLogin"></Subscribe>
                 <Notice v-if="ifLogin"></Notice>
                 <History v-if="ifLogin"></History>
-                <n-switch v-model:value="isDark" large secondary @update:value="handleChange">
+                <n-switch v-model:value="isDark" size="large" secondary @update:value="handleChange">
                     <template #checked-icon>
                         <n-icon color="var(--primary-100)" :component="Moon" />
                     </template>
@@ -268,7 +268,11 @@ onMounted(() => {
     /* background-color: blue; */
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
+
+    & > *{
+        margin-left: 20px;
+    }
 }
 
 .logo {

@@ -42,25 +42,40 @@
         <div class="abstract" v-html="result.abstract"></div>
         <div class="cardBottom">
             <div class="option">
-                <n-button strong secondary round type="info" class="optionButton" @click.stop=""><n-icon :size="18"
-                        :component="Star20Regular" /><span>收藏</span></n-button>
-                <n-button strong secondary round type="info" class="optionButton" @click.stop=""><n-icon :size="18"
+                <n-button strong secondary round type="info" class="optionButton" @click.stop="collect(true)" v-if="!isCollected">
+                    <n-icon :size="18" :component="Star20Regular" /><span>收藏</span>
+                </n-button>
+                <n-button strong secondary round type="info" class="optionButton" @click.stop="collect(false)" v-if="isCollected">
+                    <n-icon :size="18" :component="Star20Filled" /><span>已收藏</span>
+                </n-button>
+                <n-button strong secondary round type="info" class="optionButton" @click.stop="changeQuoteMask"><n-icon :size="18"
                         :component="AlignLeft16Regular" /><span>引用</span></n-button>
-                <n-button strong secondary round type="info" class="optionButton" @click.stop=""><n-icon :size="18"
+                <n-button strong secondary round type="info" class="optionButton" @click.stop="download"><n-icon :size="18"
                         :component="ArrowDownload16Regular" /><span>全文下载</span></n-button>
             </div>
         </div>
     </div>
+
+    <n-modal v-model:show="quoteMask">
+        <n-card style="width: 600px" title="引用" :bordered="false" size="huge" role="dialog" aria-modal="true">
+            <n-card embedded id="foo">
+                {{ citation }}
+            </n-card>
+            <n-button tertiary type="info" class="modalButton copyCiteButton" @click="copy"
+                data-clipboard-target="#foo">复制</n-button>
+        </n-card>
+    </n-modal>
 </template>
 
 <script setup lang='ts'>
 import { ref, Ref, onMounted, nextTick } from 'vue';
 import { Paper } from '@/models/model'
-import { Star20Regular, AlignLeft16Regular, ArrowDownload16Regular } from '@vicons/fluent'
+import { Star20Regular, Star20Filled, AlignLeft16Regular, ArrowDownload16Regular } from '@vicons/fluent'
 import { useRoute } from 'vue-router'
 import { post } from '@/api/axios'
 import { useMessage } from 'naive-ui'
 import router from '@/router';
+import Clipboard from 'clipboard'
 
 const props = defineProps<{
     result: Paper
@@ -101,11 +116,53 @@ const gotoDetail = async () => {
     await post(message,'/history/create',{'paper_id':result.value.id});
     router.push('/detail/' + result.value.id); 
 }
+
+//收藏引用等
+const isCollected = ref(false)
+const collect = async (coll:boolean) => {
+    if(coll){
+        const res = await post(message,'/collect',{paper_id:result.value.id})
+        isCollected.value = true
+    }else{
+        const res = await post(message,'/collect/delete',{paper_id:[result.value.id]})
+        isCollected.value = false
+    }    
+}
+//引用
+const quoteMask = ref(false)
+const citation: Ref<string> = ref("")
+const changeQuoteMask = async () => {
+    const res = await post(
+        message, "/paper/getcitation",
+        {
+            "id": result.value.id
+        }
+    )
+    citation.value = res
+    quoteMask.value = !quoteMask.value
+}
+function copy() {
+    const clipboard = new Clipboard('.copyCiteButton');
+    clipboard.on('success', () => {
+        clipboard.destroy()
+        alert("复制成功！");
+    })
+}
+//下载
+const download = async () => {
+    const res = await post(message,'/paper/geturl',{id:result.value.id})
+    if(res == 'no' || res == ''){
+        message.warning('暂无该论文全文数据')
+    }else{
+        window.open(res,"_blank")
+    }
+}
+
 </script>
 
 <style scoped>
 .shadow {
-    box-shadow: 0 0 5px 3px #eee;
+    box-shadow: 0 0 5px 3px var(--shadow);
 }
 
 .ellipsis {
