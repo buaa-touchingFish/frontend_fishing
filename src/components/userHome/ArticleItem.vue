@@ -123,7 +123,7 @@ const handleClose = (tag_name: string) => {
           collectStore.delete_tag_from_paper(tag_name, paper.paper_id);
           message.success('删除标签成功');
         } else {
-          message.success('删除标签失败');
+          message.error('删除标签失败');
         }
       })
     },
@@ -150,7 +150,7 @@ const handleAdd = (tag_name: string) => {
       collectStore.add_tag_to_paper(tag_name, paper.paper_id ? paper.paper_id : '');
       message.success('添加标签成功');
     } else {
-      message.success('添加标签失败');
+      message.error('添加标签失败');
     }
   })
 };
