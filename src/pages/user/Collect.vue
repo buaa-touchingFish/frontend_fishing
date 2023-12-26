@@ -292,8 +292,6 @@ const handleCollectedChange = (paper_id: string, collected: boolean) => {
   /* padding-bottom: 200px; */
   /* padding-left: 74px; */
 
-  padding-right: 20px;
-  padding-right: 14px;
   /* margin-left: 80px; */
   /* padding-right: 10px; */
   width: 95vw;
