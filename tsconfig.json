@@ -10,6 +10,9 @@
     "paths": {
       "@/*": ["src/*"]
     },
+
+    "allowJs": true,
+    "outDir": "./dist",
     
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -23,8 +26,8 @@
     "strict": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "src/**/*.vue.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

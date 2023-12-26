@@ -300,7 +300,6 @@ const changeShowCard = () => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* background-image: url('../assets/sky.jpg'); */
     background-color: aliceblue;
 }
 
@@ -464,8 +463,6 @@ const changeShowCard = () => {
     position: absolute;
     left: 25%;
 }
-
-.searchButton {}
 
 .advancedSearchDiv {
     width: 100%;

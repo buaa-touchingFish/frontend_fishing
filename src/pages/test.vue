@@ -15,8 +15,10 @@ document.body.appendChild(app.view as any);
 // app.stage.addChild(container);
 const graphics = new PIXI.Graphics();
 
+
 graphics.lineStyle(4, 0xFFFFFF);
 graphics.beginFill(0x55335A, 1);
+// @ts-ignore
 graphics.drawStar(470, 450, 4, 50,0);
 graphics.endFill();
 

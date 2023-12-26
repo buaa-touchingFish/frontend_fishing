@@ -21,6 +21,16 @@
               </n-tag>
             </template>
             <template #header>
+              <n-button text @click="handleAddNewTag">
+                <template #icon>
+                  <n-icon>
+                    <AddCircleOutline />
+                  </n-icon>
+                </template>
+                新标签
+              </n-button>
+            </template>
+            <template v-if="other_tags.length > 0" #footer>
               <n-space>
                 <div v-for="tag in other_tags">
                   <n-button strong secondary type="info" size="tiny" @click="handleAdd(tag)">{{ tag
@@ -36,13 +46,27 @@
         <div class="citations">被引频次: {{ citations }}</div>
       </div>
     </div>
+    <n-modal v-model:show="showModal" preset="dialog" title="新标签">
+      <div :class="{ label_input: statusIsError }" :style="{ '--pseudo-content': `'${pseudoContent}'` }">
+        <n-input v-modal:value="newCreatingLabel" @input="updateCreatingStatus" :status="creatingStatus"
+          placeholder="请输入标签名" />
+      </div>
+      <template #action>
+        <div>
+          <n-button type="info" @click="createLabel">
+            创建
+          </n-button>
+        </div>
+      </template>
+    </n-modal>
   </div>
 </template>
 <script setup lang="ts">
-import { Add } from '@vicons/ionicons5'
-import { useCollectStore } from '@/store/collectStore'
+import { Add, AddCircleOutline } from '@vicons/ionicons5'
+import { useCollectStore, Tag } from '@/store/collectStore'
 import { ref, computed } from "vue";
-import { NCheckbox, NTag, useMessage, useDialog, NPopover, NButton, NSpace } from "naive-ui";
+import { FormValidationStatus } from 'naive-ui/es/form/src/interface';
+import { NCheckbox, NTag, useMessage, useDialog, NPopover, NButton, NSpace, NIcon } from "naive-ui";
 
 const props = defineProps({
   self_tag_name: String,
@@ -66,7 +90,6 @@ const emit = defineEmits(['itemClick']);
 
 const selected = computed(() => {
   return (
-    props.self_tag_name === collectStore.active_tag_name &&
     props.paper_id === collectStore.active_paper_id
   );
 });
@@ -91,7 +114,7 @@ const computed_check = computed({
 })
 
 const handleClose = (tag_name: string) => {
-  console.log('tag_name', tag_name);
+  // console.log('tag_name', tag_name);
   dialog.warning({
     title: '删除标签',
     content: `将从《${props.title}》删除标签: ${tag_name}`,
@@ -124,16 +147,81 @@ const other_tags = computed(() => {
 })
 
 const handleAdd = (tag_name: string) => {
-  console.log('tag_name', tag_name);
+  // console.log('tag_name', tag_name);
   collectStore.requestAddTag(tag_name, props.paper_id).then((res) => {
     if (res === true) {
-      collectStore.add_tag_to_paper(tag_name, props.paper_id);
+      collectStore.add_tag_to_paper(tag_name, props.paper_id?props.paper_id:'');
       message.success('添加标签成功');
     } else {
       message.success('添加标签失败');
     }
   })
 };
+
+const tag_string_array = computed(() => {
+  const strs = [];
+  for (const tag of collectStore.tags) {
+    strs.push(tag.name);
+  }
+  return strs;
+})
+
+const hasClickedCreateBtn = ref(false);
+const newCreatingLabel = ref('');
+
+const creatingStatus = ref<FormValidationStatus>();
+const updateCreatingStatus = (value: string) => {
+  // console.log(`newCreatingLabel.value=${value}`)
+  newCreatingLabel.value = value;
+  pseudoContent.value = '标签名不能为空';
+  if (hasClickedCreateBtn.value === true) {
+    creatingStatus.value = (value === '' ? 'error' : 'success');
+  }
+}
+
+const pseudoContent = ref('标签名不能为空')
+const statusIsError = computed(() => {
+  return creatingStatus.value === 'error' ? true : false;
+})
+const showModal = ref(false);
+
+const handleAddNewTag = () => {
+  showModal.value = true;
+}
+
+const createLabel = () => {
+  hasClickedCreateBtn.value = true;
+  // console.log(`newCreatingLabel.value=${newCreatingLabel.value}`)
+  // 如果输入为空, 则警告
+  if (newCreatingLabel.value === '') {
+    creatingStatus.value = 'error';
+    pseudoContent.value = '标签名不能为空';
+    return;
+  }
+  // 如果输入的内容和已存在的标签名重复, 也警告
+  const idx = tag_string_array.value.indexOf(newCreatingLabel.value);
+  // console.log(idx);
+  if (idx !== -1) {
+    creatingStatus.value = 'error';
+    pseudoContent.value = '不能创建重复的标签';
+    return;
+  }
+  // 可以创建
+  hasClickedCreateBtn.value = false;
+  showModal.value = false;
+  collectStore.requestAddTag(newCreatingLabel.value, props.paper_id).then((res) => {
+    if (res === true) {
+      const tag: Tag = new Tag(newCreatingLabel.value);
+      collectStore.push_new_tag(tag);
+      collectStore.add_tag_to_paper(tag.name, props.paper_id);
+      message.success(`成功创建并添加标签: ${newCreatingLabel.value}`);
+    } else {
+      message.error('创建标签失败');
+    }
+  }).catch(() => {
+    message.error('创建标签失败');
+  });
+}
 
 </script>
 <style scoped>
@@ -209,5 +297,12 @@ const handleAdd = (tag_name: string) => {
   filter: brightness(95%);
   /* background-color: #c6dafb; */
   cursor: unset;
+}
+
+.label_input::before {
+  content: var(--pseudo-content, '');
+  /* 默认值为空字符串 */
+  font-size: smaller;
+  color: red;
 }
 </style>
