@@ -64,8 +64,7 @@
                                         {{ scholarInfo?.author.works_count }}
                                     </span>
                                 </div>
-                                <n-divider vertical></n-divider>
-                                <div class="infoDataBoxDiv">
+                                <div class="infoDataBoxDiv" style="display:none">
                                     <span class="infoBoxTitleSpan">
                                         <n-icon>
                                             <Eye16Filled />
