@@ -1,5 +1,5 @@
 <template>
-    <n-card class="border">
+    <n-card class="border" :style="{viewTransitionName: 'resultCardDiv'+props.paper_id}">
         <template #header>
             <span class="header" v-html="fileDetail.title">
             </span>
@@ -503,7 +503,6 @@ function getPaper() {
 .border {
     border-radius: 15px;
 }
-
 .keywords{
     font-weight: bold;
 }
