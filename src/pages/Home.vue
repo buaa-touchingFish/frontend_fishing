@@ -6,9 +6,10 @@
                 <StarBackground></StarBackground>
             </div>
             <div class="homeHeaderDiv">
-                <n-icon v-if="!isLogged" class="loginButton" size="32" @click="$router.push('/login');">
+                <!-- <n-icon v-if="!isLogged" class="loginButton" size="32" @click="$router.push('/login');">
                     <VideoPersonSparkle28Regular />
-                </n-icon>
+                </n-icon> -->
+                <n-button v-if="!isLogged" text class="loginButton" @click="$router.push('/login');">去登录</n-button>
                 <UserInfo style="margin-right: 20%;" v-else></UserInfo>
             </div>
             <div class="homeContentDiv">
@@ -88,7 +89,7 @@
                             <n-button class="extraButton" @click="changeShowCard" type="primary">高级搜索</n-button>
                         </div>
                         <div class="advancedSearchDiv" :class="{ advancedSearchRotate: changeCard }">
-                            <n-button class="backButton" @click="changeShowCard">返回</n-button>
+                            <n-icon color="var(--text-100)" class="backButton" size="30" :component="ArrowEnterLeft20Filled" @click="changeCard = !changeCard"/>
                             <AdvancedSearch></AdvancedSearch>
                         </div>
                     </div>
@@ -121,7 +122,7 @@ import UserInfo from '@/components/Home/UserInfo.vue'
 import { useRoute } from 'vue-router'
 import AdvancedSearch from '@/components/search/AdvancedSearch.vue';
 import Stars from '@/components/Home/Stars.vue'
-import { Search12Filled, PeopleQueue24Filled, BuildingSkyscraper20Filled, DocumentBulletList24Filled, ChartMultiple24Filled, VideoPersonSparkle28Regular } from "@vicons/fluent";
+import { Search12Filled, PeopleQueue24Filled, BuildingSkyscraper20Filled, DocumentBulletList24Filled, ChartMultiple24Filled, VideoPersonSparkle28Regular,ArrowEnterLeft20Filled } from "@vicons/fluent";
 
 import router from '@/router';
 import { useMessage } from 'naive-ui';
@@ -174,13 +175,13 @@ const searchComplete = async () => {
         clearTimeout(time);
     }
     time = setTimeout(async () => {
-        res = await post(message,'/paper/suggest',{
-            query:searchValue.value
+        res = await post(message, '/paper/suggest', {
+            query: searchValue.value
         })
-        if(!res || res.length == 0){
+        if (!res || res.length == 0) {
             showComplete.value = false;
-        }else{
-            completeSearchOptions.value = res.map((suffix:string) => {
+        } else {
+            completeSearchOptions.value = res.map((suffix: string) => {
                 return {
                     label: suffix,
                     isSelect: false
@@ -270,7 +271,7 @@ const changeShowCard = () => {
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 5px 10px #ccc, 0 -5px 10px #ccc;
+    box-shadow: 0 5px 10px var(--shadow), 0 -5px 10px var(--shadow);
     z-index: 999;
     view-transition-name: mainHeader;
 }
@@ -280,6 +281,7 @@ const changeShowCard = () => {
     background-color: var(--bg-100);
     position: fixed;
     z-index: 998;
+    display: none;
 }
 
 .main {
@@ -312,6 +314,7 @@ const changeShowCard = () => {
 .loginButton {
     margin-right: 20%;
     cursor: pointer;
+    color: var(--primary-100);
 }
 
 .homeContentDiv {
@@ -337,17 +340,20 @@ const changeShowCard = () => {
 
         .infosTop {
             display: flex;
+            justify-content: center;
         }
 
 
         .infosBottom {
             display: flex;
             margin-top: 10px;
+            justify-content: center;
         }
 
         .info {
             display: flex;
             width: 50%;
+            justify-content: center;
 
             span {
                 margin-left: 5%;
@@ -396,7 +402,7 @@ const changeShowCard = () => {
 
 .search {
     width: 80%;
-    height: 50%;
+    height: 80%;
     position: relative;
     transform-style: preserve-3d;
     perspective: 700px;
@@ -432,6 +438,7 @@ const changeShowCard = () => {
     position: absolute;
     backface-visibility: hidden;
     transition: 1s;
+    z-index: 777;
 }
 
 .extraButton {
@@ -454,13 +461,15 @@ const changeShowCard = () => {
 
 .advancedSearchDiv {
     width: 100%;
-    height: 150%;
+    height: 100%;
     background-color: var(--bg-100);
     border-radius: 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    overflow: auto;
+    z-index: 777;
 
     transform: rotateY(180deg);
     transition: 1s;
@@ -496,8 +505,9 @@ const changeShowCard = () => {
 
 .backButton {
     position: absolute;
-    right: 0;
-    top: 0;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
 }
 
 

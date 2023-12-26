@@ -162,7 +162,7 @@ const download = async () => {
 
 <style scoped>
 .shadow {
-    box-shadow: 0 0 5px 3px #eee;
+    box-shadow: 0 0 5px 3px var(--shadow);
 }
 
 .ellipsis {

@@ -33,7 +33,9 @@ onMounted(async () => {
     const res = await get(message, '/paper/hot', {});
     if (!res) return;
     recommendPapers.value = res;
-
+    for(let res of recommendPapers.value){
+        res.title = res.title.substring(0,80)+'...'
+    } 
 })
 </script>
 
@@ -46,7 +48,7 @@ onMounted(async () => {
     backdrop-filter: blur(10px);
     border-radius: 5px;
 
-    z-index: 666;
+    z-index: 1;
     transition: 0.5s all;
 
     &:hover {
