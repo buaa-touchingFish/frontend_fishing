@@ -18,6 +18,7 @@ export default defineConfig({
           echarts: ['echarts']
         }
       },
+      external: [], // 'jsencrypt'
     },
   }
 })
