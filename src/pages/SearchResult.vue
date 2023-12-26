@@ -154,11 +154,25 @@ onMounted(async () => {
     secondarySearchList.value.push({title:'语言',icon:Earth20Filled,items:res.lan})
     secondarySearchList.value.push({title:'期刊',icon:BookOpen32Filled,items:res.publisher})
     secondarySearchList.value.push({title:'期刊类型',icon:BookmarkMultiple28Filled,items:res.type})
-    resultNumber.value = res.sum;
-    pageCount.value = Math.ceil(resultNumber.value/10);
     showSecondarySearchSkeleton.value = false;
     console.log(res);
     
+})
+onMounted(async () => {
+    const query = route.query;
+    const res = await post(message,'/paper/sum',{
+        "keyword": query.keyword?? '',
+        "author": query.author?? '',
+        "type": query.type?? '',
+        "issn": query.issn?? '',
+        "language": query.language?? '',
+        "institution": query.institution?? '',
+        "publisher": query.publisher?? '',
+        "from_date": query.from_date?? '',
+        "to_date": query.to_date?? ''
+    })
+    resultNumber.value = parseInt(res.sum);
+    pageCount.value = Math.ceil(resultNumber.value/10);
 })
 </script>
 

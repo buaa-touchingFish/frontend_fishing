@@ -17,7 +17,7 @@
             <div class="homeContentDiv">
                 <div class="homeContentLeft">
                     <!-- <Clock></Clock> -->
-                    <img src="@/assets/AcadVista-长款.png" width="400" style="z-index: 1;" />
+                    <img class="logo" src="@/assets/AcadVista-长款.png" width="400" style="z-index: 1;" />
                     <div class="infos">
                         <div class="infosTop">
                             <div class="info">
@@ -333,11 +333,15 @@ const changeShowCard = () => {
     justify-content: center;
     align-items: center;
 
+    .logo{
+    }
+
     .infos {
         z-index: 1;
         display: flex;
         flex-direction: column;
         color: white;
+        margin-bottom: 50px;
 
         width: 60%;
 
@@ -409,6 +413,7 @@ const changeShowCard = () => {
     position: relative;
     transform-style: preserve-3d;
     perspective: 700px;
+    z-index: 777;
 }
 
 .completeSearchOption {

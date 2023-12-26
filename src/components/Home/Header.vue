@@ -1,7 +1,7 @@
 <template>
     <div class="headerDiv">
         <span class="optTitleDiv">
-            {{ title }}
+            <n-ellipsis style="max-width: 100%;">{{ title }}</n-ellipsis>
         </span>
         <div class="headerContainer">
             <div class="headerLeft">
@@ -233,15 +233,16 @@ onMounted(() => {
 }
 
 .optTitleDiv {
-    width: 180px;
-    max-width: 180px;
+    width: 160px;
+    max-width: 160px;
     font-size: 16pt;
     position: absolute;
     line-height: 50px;
     -webkit-line-clamp: 1;
     white-space: nowrap;
     overflow: hidden;
-    left: 20px;
+    left: 40px;
+    top: -4px;
     text-overflow: ellipsis;
     color: var(--text-100);
 }

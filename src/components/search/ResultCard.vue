@@ -52,17 +52,16 @@
                         :component="ArrowDownload16Regular" /><span>资源获取</span></n-button>
             </div>
         </div>
-    </div>
-
-    <n-modal v-model:show="quoteMask">
-        <n-card style="width: 600px" title="引用" :bordered="false" size="huge" role="dialog" aria-modal="true">
-            <n-card embedded id="foo">
-                {{ citation }}
+        <n-modal v-model:show="quoteMask">
+            <n-card style="width: 600px" title="引用" :bordered="false" size="huge" role="dialog" aria-modal="true">
+                <n-card embedded id="foo">
+                    {{ citation }}
+                </n-card>
+                <n-button tertiary type="info" class="modalButton copyCiteButton" @click="copy"
+                    data-clipboard-target="#foo">复制</n-button>
             </n-card>
-            <n-button tertiary type="info" class="modalButton copyCiteButton" @click="copy"
-                data-clipboard-target="#foo">复制</n-button>
-        </n-card>
-    </n-modal>
+        </n-modal>
+    </div>
 </template>
 
 <script setup lang='ts'>

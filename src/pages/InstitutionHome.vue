@@ -7,7 +7,7 @@
                 </div>
                 <div class="rightDiv">
                     <span class="titleSpan textColor" id="institutionName">
-                        {{ institutionName }}
+                        <n-ellipsis style="max-width: 100%;">{{ institutionName }}</n-ellipsis>
                     </span>
                     <span class="idSpan textColor">
                         InstitutionID : {{ institutionID }}
@@ -391,6 +391,8 @@ class Random {
 .titleSpan {
     font-size: xx-large;
     font-weight: 500;
+    padding-right: 30px;
+    box-sizing: border-box;
 }
 
 .idSpan {
@@ -434,6 +436,7 @@ class Random {
 .paperCountDiv {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     height: 280px;
     width: 32%;
     background-color: var(--bg-100);
@@ -461,6 +464,8 @@ class Random {
     width: 90%;
     height: 80%;
     align-self: center;
+    display: flex;
+    align-items: center;
 }
 
 .loadingSpin {
@@ -468,7 +473,8 @@ class Random {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-height: 100px
+    min-height: 100px;
+    height:fit-content
 }
 
 .authorsDiv {
@@ -477,6 +483,8 @@ class Random {
     width: 70%;
     background-color: var(--bg-100);
     height: fit-content;
+    padding: 20px 0;
+    box-sizing: border-box;
 }
 
 .fieldsDiv {

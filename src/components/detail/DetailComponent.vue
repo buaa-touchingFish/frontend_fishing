@@ -1,8 +1,7 @@
 <template>
     <n-card class="border">
         <template #header>
-            <span class="header">
-                {{ fileDetail.title }}
+            <span class="header" v-html="fileDetail.title">
             </span>
         </template>
         <n-grid :x-gap="12" :y-gap="8" :cols="24">

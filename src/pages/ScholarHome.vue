@@ -761,7 +761,7 @@ function back() {
     flex-direction: column;
 }
 
-.paperListDiv>.resultCardContainer {
+.paperListDiv > .resultCardContainer {
     margin-bottom: 0;
     border-radius: 0;
     box-shadow: none;
