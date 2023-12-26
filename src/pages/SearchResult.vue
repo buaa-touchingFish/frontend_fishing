@@ -164,7 +164,7 @@ onMounted(async () => {
 
 <style scoped>
 .shadow{
-    box-shadow: 0 0 5px 3px #ddd;
+    box-shadow: 0 0 5px 3px var(--shadow);
 }
 .searchRasultContainer{
     width: 75%;
@@ -190,6 +190,7 @@ onMounted(async () => {
 }
 .resultNumber{
     margin-left: 5px;
+    color: var(--text-100);
 }
 .sort{
     margin-right: 5px;
@@ -202,6 +203,7 @@ onMounted(async () => {
 .sortIcon{
     display: flex;
     align-items: center;
+    color: var(--text-100);
 }
 .recommend{
     width: 23%;
@@ -218,7 +220,7 @@ onMounted(async () => {
     width: fit-content;
     padding: 10px;
     border-radius: 10px;
-    background-color: white;
+    background-color: var(--bg-100);
     margin: 0 auto 20px;
 }
 </style>

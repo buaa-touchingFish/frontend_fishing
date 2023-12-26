@@ -73,6 +73,7 @@ emitter.on("themeChange", (data: any) => {
       colorStyle.setProperty('--bg-rendering', '#454545');
       colorStyle.setProperty('background-color', '#0c1117');
       colorStyle.setProperty('--card-cover', '#454545');
+      colorStyle.setProperty('--shadow', 'transparent');
       // colorStyle.setProperty('--bg-100', '#454545');
       // colorStyle.setProperty('--bg-200', '#2d2d2d');
       // colorStyle.setProperty('--bg-300', '#1E1E1E');
@@ -94,6 +95,7 @@ emitter.on("themeChange", (data: any) => {
       colorStyle.setProperty('--bg-rendering', '#e5ecf6');
       colorStyle.setProperty('background-color', '#FFFFFF');
       colorStyle.setProperty('--card-cover', '#dedeff');
+      colorStyle.setProperty('--shadow', '#ddd');
     }
   });
 
@@ -120,6 +122,7 @@ if (isDarkTheme.matches) { // 是深色
   --bg-300: #cccccc;
   --bg-rendering: #e5ecf6;
   --card-cover: #dedeff;
+  --shadow:#ddd
 }
 
 .fafaffa {
@@ -134,6 +137,6 @@ if (isDarkTheme.matches) { // 是深色
   --bg-200: #2d2d2d;
   --bg-300: #454545;
   --card-cover: rgb(225, 234, 243);
-
+  --shadow:transparent
 }
 </style>

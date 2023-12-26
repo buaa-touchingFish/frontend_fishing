@@ -32,7 +32,7 @@ onMounted(async () => {
 
 <style scoped>
 .shadow {
-    box-shadow: 0 0 5px 3px #ddd;
+    box-shadow: 0 0 5px 3px var(--shadow);
 }
 
 .recommendCardContainer {
@@ -41,7 +41,7 @@ onMounted(async () => {
     padding-bottom: 20px;
     box-sizing: border-box;
     border-radius: 10px;
-    background-color: white;
+    background-color: var(--bg-100);
 }
 
 .recommendCardTop {
@@ -50,6 +50,7 @@ onMounted(async () => {
     font-size: 17px;
     display: flex;
     align-items: center;
+    color: var(--text-100);
 }
 
 .recommend {
@@ -59,6 +60,7 @@ onMounted(async () => {
     flex-direction: column;
     position: relative;
     border-top: 1px solid #E8ECF3;
+    color: var(--text-100);
 }
 
 .recommend:nth-child(2) {
