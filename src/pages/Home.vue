@@ -17,7 +17,7 @@
             <div class="homeContentDiv">
                 <div class="homeContentLeft">
                     <!-- <Clock></Clock> -->
-                    <img class="logo" src="@/assets/AcadVista-长款.png" width="400" style="z-index: 1;" />
+                    <img class="logo" src="@/assets/AcadVista-1.png" width="400" style="z-index: 1;" />
                     <div class="infos">
                         <div class="infosTop">
                             <div class="info">
