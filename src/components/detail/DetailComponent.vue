@@ -1,13 +1,15 @@
 <template>
     <n-card class="border" :style="{viewTransitionName: 'resultCardDiv'+props.paper_id}">
         <template #header>
-            <span class="header" v-html="fileDetail.title">
+            <n-skeleton  v-if="showSkeleton" width="80%" :round="true" height="30px"></n-skeleton>
+            <span class="header" v-html="fileDetail.title" v-else>
             </span>
         </template>
         <n-grid :x-gap="12" :y-gap="8" :cols="24">
             <n-grid-item :span="2" class="constFont">作者:</n-grid-item>
             <n-grid-item :span="22">
-                <n-space :size="[16, 0]">
+                <n-skeleton v-if="showSkeleton"  width="100%" :round="true" text></n-skeleton>
+                <n-space :size="[16, 0]" v-else>
                     <span class="author" v-for="(authorship, index) in fileDetail.authorships" :key=index @click="$router.push(
                         {
                             path: '/scholarHome',
@@ -24,11 +26,17 @@
             </n-grid-item>
 
             <n-grid-item :span="2" class="constFont">摘要:</n-grid-item>
-            <n-grid-item :span="22">{{ fileDetail.abstract }}</n-grid-item>
+            <n-grid-item :span="22">
+                <n-skeleton v-if="showSkeleton"  width="100%" :round="true" text :repeat="5"></n-skeleton>
+                <span v-else>
+                    {{ fileDetail.abstract }}
+                </span>
+            </n-grid-item>
 
             <n-grid-item :span="2" class="constFont">关键词:</n-grid-item>
             <n-grid-item :span="22" class="keywords">
-                <n-space :size="[16, 0]">
+                <n-skeleton  width="100%" :round="true" text :repeat="3" v-if="showSkeleton"></n-skeleton>
+                <n-space :size="[16, 0]" v-else>
                     <span v-for="(word, index) in fileDetail.keywords" :key=index>
                         {{ word }};
                     </span>
@@ -36,7 +44,12 @@
             </n-grid-item>
 
             <n-grid-item :span="2" class="constFont">时间:</n-grid-item>
-            <n-grid-item :span="22">{{ fileDetail.publication_date }}</n-grid-item>
+            <n-grid-item :span="22">
+                <n-skeleton  width="100%" :round="true" text v-if="showSkeleton"></n-skeleton>
+                <span v-else>
+                    {{ fileDetail.publication_date }}
+                </span>
+            </n-grid-item>
         </n-grid>
 
         <template #footer>
@@ -308,7 +321,9 @@ const citedCountByYearOption = {
     borderRadius: 3,
     backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-100')
 };
+const showSkeleton = ref(false)
 onMounted(async () => {
+    showSkeleton.value = true
     const paperId = props.paper_id
     let res = await post(
         message, "/paper/single",
@@ -364,6 +379,8 @@ onMounted(async () => {
     console.log(res)
     if(res == undefined) res = false
     fileDetail.value.isCollected = res
+
+    showSkeleton.value = false
     
     const random = new Random(fileDetail.value.id);
     citedCountByYear.value.labels = ["2019", "2020", "2021", "2022", "2023"];
@@ -431,7 +448,8 @@ async function appeal() {
     appealMask.value = !appealMask.value
     appealContent.value = ""
     if(res === null) message.success('申诉成功')
-    if(res === false) message.warning('已经申诉过了')
+    else if(res === false) message.warning('已经申诉过了')
+    else message.warning('尚未登录，请先登录')
 }
 
 const inputRef = ref()
@@ -452,6 +470,7 @@ async function publishComment() {
     )
     console.log(res)
     if(res === null) message.success('评论成功')
+    else message.warning('尚未登录，请先登录')
 
     res = await get(
         message, "/comment",
@@ -478,6 +497,8 @@ async function collect() {
         fileDetail.value.isCollected = true
         emit("collectedChange", fileDetail.value.id, true)
         message.success('收藏成功')
+    } else {
+        message.warning('尚未登录，请先登录')
     }
 }
 async function undoCollect() {
