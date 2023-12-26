@@ -14,11 +14,11 @@
                     </span>
                     <n-skeleton v-if="loading" width="200px" height="26px" :sharp="false" />
                     <span v-else class="urlSpan textColor">
-                        type:{{ res?.institution?.type??'unknown' }}
+                        type:{{ res?.institution?.type ?? 'unknown' }}
                     </span>
                     <n-skeleton v-if="loading" width="200px" height="26px" :sharp="false" />
                     <a v-else class="typeSpan textColor" :href="res?.institution?.homepage_url">
-                        {{ res?.institution?.homepage_url??'暂无该机构主页信息' }}
+                        {{ res?.institution?.homepage_url ?? '暂无该机构主页信息' }}
                     </a>
                 </div>
             </div>
@@ -29,7 +29,7 @@
                     收录学者
                     <n-skeleton v-if="loading" style="margin-left: 20px;" height="100%" width="60px" />
                     <span v-else style="margin-left: 20px; color: var(--primary-100);">
-                        {{ res?.authorList?.length??0 }}
+                        {{ res?.authorList?.length ?? 0 }}
                     </span>
                 </div>
                 <div class="firstCountDiv textColor">
@@ -38,7 +38,7 @@
                     论文总数
                     <n-skeleton v-if="loading" style="margin-left: 20px;" height="100%" width="60px" />
                     <span v-else style="margin-left: 20px; color: var(--primary-100);">
-                        {{ res?.institution?.works_count??0 }}</span>
+                        {{ res?.institution?.works_count ?? 0 }}</span>
                 </div>
                 <div class="firstCountDiv textColor">
                     <n-icon color="var(--primary-100)" style="align-self: center; padding-right: 2px;"
@@ -46,7 +46,7 @@
                     被引用次数
                     <n-skeleton v-if="loading" style="margin-left: 20px;" height="100%" width="60px" />
                     <span v-else style="margin-left: 20px; color: var(--primary-100);">
-                        {{ res?.institution?.cited_by_count??0 }}</span>
+                        {{ res?.institution?.cited_by_count ?? 0 }}</span>
                 </div>
             </div>
         </div>
@@ -296,7 +296,7 @@ onMounted(async () => {
     const random = new Random(res.value?.institution?.id);
     {
         paperCountByYear.value.labels = ["2019", "2020", "2021", "2022", "2023"];
-        const halfPaperCount = (res.value?.institution?.works_count ?? 0) / 8;
+        const halfPaperCount = Math.floor((res.value?.institution?.works_count ?? 0) / 8);
         const p1 = random.next(halfPaperCount) + halfPaperCount,
             p2 = random.next(halfPaperCount) + halfPaperCount,
             p3 = random.next(halfPaperCount) + halfPaperCount,
@@ -309,7 +309,7 @@ onMounted(async () => {
     }
     {
         citedCountByYear.value.labels = ["2019", "2020", "2021", "2022", "2023"];
-        const halfPaperCount = (res.value?.institution?.cited_by_count ?? 0) / 8;
+        const halfPaperCount = Math.floor((res.value?.institution?.cited_by_count ?? 0) / 8);
         const p1 = random.next(halfPaperCount) + halfPaperCount,
             p2 = random.next(halfPaperCount) + halfPaperCount,
             p3 = random.next(halfPaperCount) + halfPaperCount,
@@ -474,7 +474,7 @@ class Random {
     flex-direction: column;
     justify-content: center;
     min-height: 100px;
-    height:fit-content
+    height: fit-content
 }
 
 .authorsDiv {

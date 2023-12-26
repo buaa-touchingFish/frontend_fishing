@@ -136,9 +136,9 @@
                             :options="cityOrTimeFilterOption" @update:value="filterChanged" />
                     </div>
                     <n-skeleton v-if="loading" width="100%" style="margin-top: 5px;" height="220px" :sharp="false" />
-                    <div class="paperListDiv" v-else v-for="i in filterPapers" :key="i.id">
+                    <div class="paperListDiv" v-else v-for="(i, index) in filterPapers" :key="i.id">
                         <ResultCard :result="i" />
-                        <div class="horizontalSplitDiv" />
+                        <div class="horizontalSplitDiv" v-show="index != filterPapers.length - 1" />
                     </div>
                 </div>
             </div>
@@ -170,7 +170,8 @@
                                 :tooltip="false">
                                 {{ sch?.last_known_institution_display_name ?? "暂无机构" }}
                             </n-ellipsis>
-                            <div class="horizontalSplitDiv" style="width: calc(100%);" />
+                            <div class="horizontalSplitDiv" style="width: calc(100%);"
+                                v-show="index != scholarInfo?.co_authors.length - 1" />
                         </div>
                     </div>
                 </div>
