@@ -6,10 +6,12 @@
                 <StarBackground></StarBackground>
             </div>
             <div class="homeHeaderDiv">
-                <!-- <n-icon v-if="!isLogged" class="loginButton" size="32" @click="$router.push('/login');">
-                    <VideoPersonSparkle28Regular />
-                </n-icon> -->
-                <n-button v-if="!isLogged" text class="loginButton" @click="$router.push('/login');">去登录</n-button>
+                
+                <n-button v-if="!isLogged" size="large" text class="loginButton" @click="$router.push('/login');">
+                    <n-icon size="25">
+                        <VideoPersonSparkle28Regular />
+                    </n-icon>&nbsp;去登录
+                </n-button>
                 <UserInfo style="margin-right: 20%;" v-else></UserInfo>
             </div>
             <div class="homeContentDiv">
@@ -335,6 +337,7 @@ const changeShowCard = () => {
         z-index: 1;
         display: flex;
         flex-direction: column;
+        color: white;
 
         width: 60%;
 

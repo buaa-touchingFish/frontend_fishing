@@ -1,6 +1,9 @@
 <template>
     <div class="secondarySearchCardContainer shadow">
-        <div class="type">{{ secondarySearchLabels.title }}</div>
+        <div class="type">
+            <n-icon :size="20" :component="secondarySearchLabels.icon"/>&nbsp;
+            <span>{{ secondarySearchLabels.title }}</span>
+        </div>
         <div class="items" :class="{select:item.isSelect}" v-for="(item,index) in secondarySearchLabels.items.slice(0,3)" :key="index" @click="search(item)">
             <div class="itemName"><n-ellipsis style="max-width: 100%;">{{ item.label }}</n-ellipsis></div>
             <div class="itemCount">({{ item.count }})</div>
@@ -35,7 +38,7 @@ type secondarySearchType = {
 }
 const showMore = ref(false)
 const secondarySearch = ref(props.secondarySearch);
-const secondarySearchLabels = ref({title:secondarySearch.value.title,items:[]})
+const secondarySearchLabels = ref({title:secondarySearch.value.title,icon:secondarySearch.value.icon,items:[]})
 onMounted(() => {
     secondarySearch.value = props.secondarySearch
     const lan = route.query.language;
@@ -142,6 +145,8 @@ const search = (item:any) => {
     width: 100%;
     font-size: 16px;
     color: var(--primary-100);
+    display: flex;
+    align-items: center;
 }
 .items{
     margin-bottom: 1px;

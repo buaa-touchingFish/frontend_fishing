@@ -146,6 +146,8 @@ onMounted(async () => {
     color: white;
     margin-top: 5px;
     margin-left: 10px;
+    height: 70px;
+    overflow: hidden;
 }
 
 .star1 {

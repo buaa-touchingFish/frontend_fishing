@@ -60,7 +60,7 @@ import { Paper } from '@/models/model'
 import { useRoute } from 'vue-router'
 import { post } from '@/api/axios';
 import { useMessage } from 'naive-ui';
-import { ArrowSort16Filled } from '@vicons/fluent'
+import { ArrowSort16Filled,CalendarLtr16Filled,Earth20Filled,BookmarkMultiple28Filled,BookOpen32Filled } from '@vicons/fluent'
 
 const message = useMessage()
 const route = useRoute()
@@ -150,10 +150,10 @@ onMounted(async () => {
             "to_date": query.to_date?? ''
         }
     )
-    secondarySearchList.value.push({title:'时间',items:res.date})
-    secondarySearchList.value.push({title:'语言',items:res.lan})
-    secondarySearchList.value.push({title:'期刊',items:res.publisher})
-    secondarySearchList.value.push({title:'期刊类型',items:res.type})
+    secondarySearchList.value.push({title:'时间',icon:CalendarLtr16Filled,items:res.date})
+    secondarySearchList.value.push({title:'语言',icon:Earth20Filled,items:res.lan})
+    secondarySearchList.value.push({title:'期刊',icon:BookOpen32Filled,items:res.publisher})
+    secondarySearchList.value.push({title:'期刊类型',icon:BookmarkMultiple28Filled,items:res.type})
     resultNumber.value = res.sum;
     pageCount.value = Math.ceil(resultNumber.value/10);
     showSecondarySearchSkeleton.value = false;
