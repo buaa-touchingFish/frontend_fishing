@@ -193,7 +193,7 @@ function handleChange(value: boolean) {
 }
 watch(() => route.query, (newValue) => {
     if (newValue.keyword) {
-        searchValue.value = newValue.keyword as string
+        searchValue.value = (newValue.keyword as string).split('@')[0]
         additionValue.value = '文章'
         return;
     }

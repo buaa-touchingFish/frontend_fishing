@@ -409,7 +409,7 @@ const changeShowCard = () => {
 
 .search {
     width: 80%;
-    height: 80%;
+    height: 100%;
     position: relative;
     transform-style: preserve-3d;
     perspective: 700px;
