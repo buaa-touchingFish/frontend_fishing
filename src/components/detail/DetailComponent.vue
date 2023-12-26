@@ -14,7 +14,8 @@
                             path: '/scholarHome',
                             query: {
                                 author_name: authorship.author.display_name,
-                                author_id: authorship.author.id
+                                author_id: authorship.author.id,
+                                paper_id: fileDetail.id
                             }
                         }
                     )">

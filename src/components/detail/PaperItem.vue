@@ -18,7 +18,8 @@
                         path:'/scholarHome',
                         query:{
                             author_name:author.display_name,
-                            author_id:author.id
+                            author_id:author.id,
+                            paper_id:paperItem.id
                         }
                     }
                 )"
