@@ -1,7 +1,7 @@
 <template>
     <div class="advancedSearchContainer">
-        <n-form ref="formRef" :model="searchCardModel" rules="" label-placement="left" label-width="80" size="small">
-            <n-form-item label="关键词领域" path="keyword">
+        <n-form ref="formRef" :model="searchCardModel" rules="" label-placement="left" label-width="100" size="small">
+            <n-form-item label="关键词" path="keyword">
                 <n-input v-model:value="searchCardModel.keyword" placeholder="请输入关键词" @keyup.enter="search" />
             </n-form-item>
             <n-form-item label="作者" path="author">
@@ -20,6 +20,9 @@
             </n-form-item>
             <n-form-item label="出版物" path="publication">
                 <n-input v-model:value="searchCardModel.publication" placeholder="请输入出版期刊名称" @keyup.enter="search" />
+            </n-form-item>
+            <n-form-item label="领域" path="field">
+                <n-input v-model:value="searchCardModel.field" placeholder="" @keyup.enter="search" />
             </n-form-item>
             <n-form-item label="语言" path="publication">
                 <n-popselect v-model:value="language" style="width: 400px;" :options="languageOptions" trigger="click"
@@ -58,6 +61,7 @@ interface SearchCardModelType {
     issn: string
     type: string
     language: string
+    field: string
 }
 
 const searchCardModel = ref<SearchCardModelType>({
@@ -68,7 +72,8 @@ const searchCardModel = ref<SearchCardModelType>({
     publication: '',
     issn: '',
     type: '',
-    language: ''
+    language: '',
+    field:''
 })
 const languageOptions = [
     {
@@ -181,7 +186,7 @@ const search = async () => {
     router.push({
         path:'/search',
         query:{
-            "keyword": searchCardModel.value.keyword,
+            "keyword": searchCardModel.value.keyword + '@' + searchCardModel.value.field,
             "author": searchCardModel.value.author,
             "type": type.value,
             "issn": searchCardModel.value.issn,
