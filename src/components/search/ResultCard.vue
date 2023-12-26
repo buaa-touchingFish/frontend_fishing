@@ -1,5 +1,5 @@
 <template>
-    <div class="resultCardContainer shadow" @click="gotoDetail">
+    <div class="resultCardContainer shadow" :style="{viewTransitionName: 'resultCardDiv'+result.id}" @click="gotoDetail">
         <h1 class="title hoverTitle" :data-title="copyResult.title">
             <span class="ellipsis" v-html="result.title"></span>
         </h1>
@@ -84,6 +84,7 @@ const result: Ref<Paper> = ref(props.result)
 const copyResult: Ref<Paper> = ref(props.result)
 
 onMounted(() => {
+    isClicked.value = false
     result.value = props.result
     result.value.abstract = result.value.abstract.length >= 150 ? result.value.abstract.substring(0, 150) + "..." : result.value.abstract
     copyResult.value = JSON.parse(JSON.stringify(props.result))
@@ -110,6 +111,7 @@ nextTick(() => {
 })
 
 const gotoDetail = async () => {
+    isClicked.value = true
     await post(message, '/history/create', { 'paper_id': result.value.id });
     router.push('/detail/' + result.value.id);
 }
@@ -154,6 +156,8 @@ const download = async () => {
         window.open(res,"_blank")
     }
 }
+//动画
+const isClicked = ref(false)
 
 </script>
 
@@ -218,7 +222,6 @@ const download = async () => {
         transition: 0.2s all linear;
     }
 }
-
 .title {
     width: 100%;
     height: 50px;
