@@ -94,7 +94,8 @@ export const useCollectStore = defineStore("collect", () => {
     return res.data.code === 200;
     // return true;
   };
-  const add_tag_to_paper = (tag_name: string, paper_id: string) => {
+  const add_tag_to_paper = (tag_name: string, paper_id: string | undefined) => {
+    if (paper_id === undefined) return;
     const paper = papers.value.find((item) => item.paper_id === paper_id);
     if (paper === undefined) return;
     paper.tags.push(tag_name);
