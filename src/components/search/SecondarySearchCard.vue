@@ -179,7 +179,7 @@ const search = (item:any) => {
     }
 }
 .select{
-    background-color: var(--primary-200);
+    background-color: var(--primary-300);
 }
 .itemName{
     width: 70%;

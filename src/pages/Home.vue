@@ -109,6 +109,7 @@
         <n-scrollbar style="max-height: calc(100vh - 57px)">
             <div class="main">
                 <router-view></router-view>
+                <n-back-top :right="100" />
             </div>
         </n-scrollbar>
     </div>

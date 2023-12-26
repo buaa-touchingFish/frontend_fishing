@@ -48,7 +48,7 @@ onMounted(async () => {
     backdrop-filter: blur(10px);
     border-radius: 5px;
 
-    z-index: 1;
+    z-index: 555;
     transition: 0.5s all;
 
     &:hover {

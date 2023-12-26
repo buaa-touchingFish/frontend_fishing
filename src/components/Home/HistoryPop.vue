@@ -56,6 +56,7 @@ onMounted(async () => {
         }
         historyList.value.push(history)
     })
+    historyList.value.reverse()
 })
 
 </script>

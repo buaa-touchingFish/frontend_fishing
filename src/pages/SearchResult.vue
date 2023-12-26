@@ -28,7 +28,6 @@
         <div class="recommend">
             <ReconmmendCard></ReconmmendCard>
         </div>
-        <n-back-top :right="100" />
     </div>
     <div class="searchRasultContainer" v-else>
         <div class="secondarySearch">

@@ -85,7 +85,7 @@ onMounted(() => {
 
 nextTick(() => {
     const query = route.query;
-    const replaceString = '<span style="color: var(--primary-100);font-weight: 600;">$&</span>'
+    const replaceString = '<em style="color: var(--primary-100);font-weight: 600;">$&</em>'
     if (query.keyword) {
         const replaceReg = new RegExp(query.keyword as string, 'gi')
         result.value.title = result.value.title.replace(replaceReg, replaceString)

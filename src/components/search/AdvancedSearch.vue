@@ -187,7 +187,7 @@ const search = async () => {
             "issn": searchCardModel.value.issn,
             "language": language.value,
             "institution": searchCardModel.value.institution,
-            "publisher": searchCardModel.value.publication,
+            "publisher": '\"display_name\":\"'+searchCardModel.value.publication+'\"',
             "from_date": from_date !== null ? (from_date.getFullYear() + '-' + (from_date.getMonth() <= 8 ? '0' + (from_date.getMonth() + 1) : (from_date.getMonth() + 1)) + '-' + '01') : '',
             "to_date": to_date !== null ? (to_date.getFullYear() + '-' + (to_date.getMonth() <= 8 ? '0' + (to_date.getMonth() + 1) : (to_date.getMonth() + 1)) + '-' + '01') : '',
         }
