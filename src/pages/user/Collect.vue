@@ -24,9 +24,7 @@
                   </n-button>
                 </div>
                 <div v-for="paper in tag.papers" :key="paper.paper_id">
-                  <ArticleItem @item-click="handleItemClick" :self_tag_name="tag.name" :paper_id="paper.paper_id"
-                    :title="paper.title" :author="paper.authors[0]" :journal="paper.journal" :citations="paper.citations"
-                    :tags="paper.tags" />
+                  <ArticleItem @item-click="handleItemClick" :self_tag_name="tag.name" :paper="paper" />
                 </div>
               </n-space>
               <div v-if="canLoadPreview" style="flex-grow: 1;">
@@ -83,7 +81,7 @@ import { TrashBinOutline } from '@vicons/ionicons5';
 import api from '@/api/axios.ts';
 import ArticleItem from "@/components/userHome/ArticleItem.vue";
 import DetailComponent from '@/components/detail/DetailComponent.vue'
-import { useCollectStore, Tag } from '@/store/collectStore'
+import { useCollectStore, Tag, Paper } from '@/store/collectStore'
 import { ref, computed, onMounted } from "vue";
 import { FormValidationStatus } from 'naive-ui/es/form/src/interface';
 import { NTabs, NTabPane, NModal, NInput, NButton, useMessage, useDialog, NSpace, NCard, NSkeleton, NCheckbox, NIcon, NResult, NEmpty } from "naive-ui";
