@@ -1,6 +1,6 @@
 <template>
     <div style="margin-top: 2%;cursor: pointer;">
-        <n-popover class="noticePop" trigger="hover" scrollable>
+        <n-popover class="noticePop" trigger="hover" scrollable style="height: 300px;">
             <template #trigger>
                 <n-icon size="32" color="var(--primary-100)">
                     <CommentNote20Filled />

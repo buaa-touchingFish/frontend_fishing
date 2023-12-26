@@ -51,7 +51,7 @@
                 <n-button strong secondary round type="info" class="optionButton" @click.stop="changeQuoteMask"><n-icon :size="18"
                         :component="AlignLeft16Regular" /><span>引用</span></n-button>
                 <n-button strong secondary round type="info" class="optionButton" @click.stop="download"><n-icon :size="18"
-                        :component="ArrowDownload16Regular" /><span>全文下载</span></n-button>
+                        :component="ArrowDownload16Regular" /><span>资源获取</span></n-button>
             </div>
         </div>
     </div>
@@ -380,7 +380,11 @@ const download = async () => {
         margin-left: 3px;
     }
 }
-
+.modalButton {
+    float: right;
+    margin-top: 10px;
+}
 .search-text {
     color: var(--primary-100);
-}</style>
+}
+</style>
