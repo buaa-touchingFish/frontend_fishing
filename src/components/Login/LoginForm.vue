@@ -439,7 +439,8 @@ const login = (e: MouseEvent) => {
             if (res.uid <= 20) {
                 router.push('/admin')
             } else {
-                router.push('/')
+                // router.push('/')
+                router.back()
             }
 
         } else {
