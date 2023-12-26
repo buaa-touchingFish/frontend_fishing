@@ -14,7 +14,7 @@
                             author_id: copyResult.authorships[index].author.id,
                             paper_id: copyResult.id
                         }
-                    })"></span>
+                    })" :style="{viewTransitionName:'scholarDiv'+authorship.author.id}"></span>
                 <div v-show="index != 4 && index != result.authorships.length - 1">,&nbsp;&nbsp;</div>
             </div>
         </div>
@@ -24,14 +24,7 @@
             </div>
             <div class="publisher" :data-title="copyResult.publisher?.display_name"
                 v-show="copyResult.publisher && copyResult.publisher.display_name != '暂无' && copyResult.publisher.display_name != null">
-                <span class="ellipsis" v-html="result.publisher?.display_name" @click.stop="$router.push(
-                    {
-                        path: '/institutionHome',
-                        query: {
-                            institution_id: copyResult.publisher.id,
-                            institution_name: copyResult.publisher.display_name
-                        }
-                    })"></span>
+                <span class="ellipsis" v-html="result.publisher?.display_name"></span>
             </div>
             <div class="cited_by_count">
                 被引量：{{ result.cited_by_count }}
@@ -302,10 +295,10 @@ const isClicked = ref(false)
         display: block;
         width: 100%;
 
-        &:hover {
+        /* &:hover {
             color: var(--primary-200);
             text-decoration: underline;
-        }
+        } */
     }
 }
 

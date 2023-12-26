@@ -15,7 +15,7 @@
                 <div class="verticalSplitDiv"></div>
                 <div class="infoDiv">
                     <div class="nameDiv">
-                        <p class="nameSpan" id="authorName">
+                        <p class="nameSpan" id="authorName" :style="{viewTransitionName:'scholarDiv'+scholarID}">
                             {{ scholarName }}</p>
                         <span class="idSpan">scholarID :
                             {{ scholarID }}
@@ -648,7 +648,6 @@ function back() {
     font-size: 22pt;
     font-weight: bold;
     color: var(--text-100);
-    view-transition-name: scholarName;
     position: sticky;
 
 }
