@@ -1,6 +1,6 @@
 <template>
     <div class="advancedSearchContainer">
-        <n-form ref="formRef" :model="searchCardModel" rules="" label-placement="left" label-width="100" size="small">
+        <n-form ref="formRef" :model="searchCardModel" rules="" label-placement="left" label-width="80" size="small">
             <n-form-item label="关键词" path="keyword">
                 <n-input v-model:value="searchCardModel.keyword" placeholder="请输入关键词" @keyup.enter="search" />
             </n-form-item>
@@ -199,18 +199,20 @@ const search = async () => {
     })
 }
 onMounted(() => {
-    searchCardModel.value.keyword = (route.query.keyword ??"") as string
+    searchCardModel.value.keyword = (route.query.keyword ? (route.query.keyword as string).split('@')[0] : "") as string
     searchCardModel.value.author = (route.query.author ??"") as string
     searchCardModel.value.institution = (route.query.institution ??"") as string
     searchCardModel.value.publication = (route.query.publication ??"") as string
     searchCardModel.value.issn = (route.query.issn ??"") as string
     searchCardModel.value.type = (route.query.type ??"") as string
     searchCardModel.value.language = (route.query.language ??"") as string
+    searchCardModel.value.field = (route.query.keyword ? ((route.query.keyword as string).split('@').length > 1 ? (route.query.keyword as string).split('@')[1] : "") : "") as string
 })
 </script>
 
 <style scoped>
 .advancedSearchContainer {
+    width: 100%;
     display: flex;
     align-items: center;
     flex-direction: column;
