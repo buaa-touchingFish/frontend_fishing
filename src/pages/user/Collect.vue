@@ -1,63 +1,65 @@
 <template>
   <div class="collect-container">
-    <n-space>
-      <n-tabs v-if="hasCollect" v-model:value="cur_tag_name" :on-update:value="handleUpdatedValue" type="card" addable
-        closable @close="handleClose" @add="handleAdd">
-        <n-tab-pane v-for="tag in collectStore.tags" :key="tag.name" :closable="notAll(tag.name)" :name="tag.name"
-          :tab="tag2String(tag)">
-          <n-space v-if="tag?.papers.length > 0" style="display: flex; flex-wrap: nowrap;">
-            <n-space vertical>
-              <div class="export-container">
-                <div class="check-all">
-                  <n-checkbox v-model:checked="allChecked">
-                    全选
-                  </n-checkbox>
+    <div class="collect-box">
+      <n-space>
+        <n-tabs v-if="hasCollect" v-model:value="cur_tag_name" :on-update:value="handleUpdatedValue" type="card" addable
+          closable @close="handleClose" @add="handleAdd">
+          <n-tab-pane v-for="tag in collectStore.tags" :key="tag.name" :closable="notAll(tag.name)" :name="tag.name"
+            :tab="tag2String(tag)">
+            <n-space v-if="tag?.papers.length > 0" style="display: flex; flex-wrap: nowrap;">
+              <n-space vertical>
+                <div class="export-container">
+                  <div class="check-all">
+                    <n-checkbox v-model:checked="allChecked">
+                      全选
+                    </n-checkbox>
+                  </div>
+                  <n-button text @click="handleDelete">
+                    <template #icon>
+                      <n-icon>
+                        <TrashBinOutline />
+                      </n-icon>
+                    </template>
+                    取消收藏
+                  </n-button>
                 </div>
-                <n-button text @click="handleDelete">
-                  <template #icon>
-                    <n-icon>
-                      <TrashBinOutline />
-                    </n-icon>
-                  </template>
-                  取消收藏
-                </n-button>
+                <div v-for="paper in tag.papers" :key="paper.paper_id">
+                  <ArticleItem @item-click="handleItemClick" :self_tag_name="tag.name" :paper_id="paper.paper_id"
+                    :title="paper.title" :author="paper.authors[0]" :journal="paper.journal" :citations="paper.citations"
+                    :tags="paper.tags" />
+                </div>
+              </n-space>
+              <div v-if="canLoadPreview" style="flex-grow: 1;">
+                <div class="detailContainer">
+                  <DetailComponent :paper_id="collectStore.active_paper_id" @collectedChange="handleCollectedChange" />
+                </div>
               </div>
-              <div v-for="paper in tag.papers" :key="paper.paper_id">
-                <ArticleItem @item-click="handleItemClick" :self_tag_name="tag.name" :paper_id="paper.paper_id"
-                  :title="paper.title" :author="paper.authors[0]" :journal="paper.journal" :citations="paper.citations"
-                  :tags="paper.tags" />
-              </div>
+              <n-card v-else style="background-color: var(--bg-100);">
+                <template #header>
+                  <n-space vertical>
+                    <n-skeleton text width="50vw" />
+                    <n-skeleton text width="50vw" />
+                    <n-skeleton text width="50vw" />
+                    <n-skeleton text width="50vw" />
+                  </n-space>
+                  <n-skeleton text width="80px" :repeat="3" />
+                </template>
+                <n-skeleton text :repeat="6" />
+              </n-card>
             </n-space>
-            <div v-if="canLoadPreview" style="flex-grow: 1;">
-              <div class="detailContainer">
-                <DetailComponent :paper_id="collectStore.active_paper_id" @collectedChange="handleCollectedChange" />
-              </div>
+            <div v-else class="hint">
+              <n-empty size="large" description="当前标签下没有文章">
+                <template #extra>
+                  <n-button @click="cur_tag_name = '全部'">
+                    去添加
+                  </n-button>
+                </template>
+              </n-empty>
             </div>
-            <n-card v-else style="background-color: var(--bg-100);">
-              <template #header>
-                <n-space vertical>
-                  <n-skeleton text width="50vw" />
-                  <n-skeleton text width="50vw" />
-                  <n-skeleton text width="50vw" />
-                  <n-skeleton text width="50vw" />
-                </n-space>
-                <n-skeleton text width="80px" :repeat="3" />
-              </template>
-              <n-skeleton text :repeat="6" />
-            </n-card>
-          </n-space>
-          <div v-else class="hint">
-            <n-empty size="large" description="当前标签下没有文章">
-              <template #extra>
-                <n-button @click="cur_tag_name = '全部'">
-                  去添加
-                </n-button>
-              </template>
-            </n-empty>
-          </div>
-        </n-tab-pane>
-      </n-tabs>
-    </n-space>
+          </n-tab-pane>
+        </n-tabs>
+      </n-space>
+    </div>
     <div v-if="!hasCollect" class="result">
       <n-result status="404" title="还没有收藏" description="把文章加入收藏夹试试" size="huge" />
     </div>
@@ -289,15 +291,21 @@ const handleCollectedChange = (paper_id: string, collected: boolean) => {
   left: 50%;
   transform: translateX(-50%); */
   margin-top: 15px;
-  margin-bottom: 15px;
-  padding-left: 74px;
+  /* padding-bottom: 200px; */
+  /* padding-left: 74px; */
+
+  padding-right: 20px;
   padding-right: 14px;
   /* margin-left: 80px; */
   /* padding-right: 10px; */
-  width: 100vw;
+  width: 95vw;
   height: calc(100vh - 57px - 15px);
   /* width: 1800px; */
   /* overflow-y: hidden; */
+
+  .collect-box {
+    padding-bottom: 20px;
+  }
 
   .result {
     margin-top: 160px;
