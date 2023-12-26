@@ -14,7 +14,7 @@
                             author_id: copyResult.authorships[index].author.id,
                             paper_id: copyResult.id
                         }
-                    })" :style="{viewTransitionName:'scholarDiv'+authorship.author.id}"></span>
+                    })"></span>
                 <div v-show="index != 4 && index != result.authorships.length - 1">,&nbsp;&nbsp;</div>
             </div>
         </div>
