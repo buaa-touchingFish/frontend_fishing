@@ -238,6 +238,7 @@ const changeAvatar = () => {
 }
 
 //修改密码
+import { encodeStr } from '@/utils/encryption'
 const changePasswordModal = ref(false);
 const changePasswordModel = ref({ oldPassword: '', newPassword: '' });
 const changePasswordRules = {
@@ -253,8 +254,8 @@ const changePassword = async () => {
         message,
         '/user/changepwd1',
         {
-            "oldpwd": changePasswordModel.value.oldPassword,
-            "newpwd": changePasswordModel.value.newPassword,
+            "oldpwd": encodeStr(changePasswordModel.value.oldPassword),
+            "newpwd": encodeStr(changePasswordModel.value.newPassword),
         });
     if (res!=null && !res) {
         return;

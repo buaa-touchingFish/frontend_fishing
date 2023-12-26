@@ -26,7 +26,7 @@
                                 </n-icon>
                                 <span>
                                     <span>学者</span>
-                                    <n-number-animation :from="0" :to="12100566" :duration="1000" />
+                                    <n-number-animation :from="0" :to="5100566" :duration="1000" />
                                 </span>
                             </div>
                             <div class="info">
@@ -35,7 +35,7 @@
                                 </n-icon>
                                 <span>
                                     <span>机构</span>
-                                    <n-number-animation :from="0" :to="20182" :duration="1000" />
+                                    <n-number-animation :from="0" :to="200182" :duration="1000" />
                                 </span>
                             </div>
                         </div>
@@ -46,7 +46,7 @@
                                 </n-icon>
                                 <span>
                                     <span>论文</span>
-                                    <n-number-animation :from="0" :to="11036659" :duration="1000" />
+                                    <n-number-animation :from="0" :to="21036659" :duration="1000" />
                                 </span>
                             </div>
                             <div class="info">
@@ -55,7 +55,7 @@
                                 </n-icon>
                                 <span>
                                     <span>领域</span>
-                                    <n-number-animation :from="0" :to="78963" :duration="1000" />
+                                    <n-number-animation :from="0" :to="47896" :duration="1000" />
                                 </span>
                             </div>
                         </div>
