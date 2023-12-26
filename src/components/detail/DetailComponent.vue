@@ -496,9 +496,9 @@ async function undoCollect() {
 }
 
 function getPaper() {
-    if(fileDetail.value.oa_url != null && fileDetail.value.oa_url.length != 0) {
+    if(fileDetail.value.oa_url != null && fileDetail.value.oa_url.length != 0 && fileDetail.value.oa_url != "nul") {
         window.open(fileDetail.value.oa_url, '_self')
-    } else if(fileDetail.value.doi != null && fileDetail.value.doi.length != 0) {
+    } else if(fileDetail.value.doi != null && fileDetail.value.doi.length != 0 && fileDetail.value.doi != "nul") {
         window.open(fileDetail.value.doi, '_blank')
     } else {
         message.warning('我们没有该文献的获取途径')
