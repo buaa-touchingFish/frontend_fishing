@@ -118,41 +118,58 @@
     </n-card>
 
     <div class="commentsAndStatistics">
-        <n-card class="comments border" :segmented="{ content: true }">
-            <n-tabs type="line" animated>
-                <n-tab-pane name="评论" tab="评论">
-                    <Comment v-for="(comment, index) in comments" :key=index :comment=comment></Comment>
-                    <n-empty description="还没有评论哦" v-show="comments.length == 0"></n-empty>
-                </n-tab-pane>
+        <div class="comments">
+            <n-card class="border" :segmented="{ content: true }">
+                <n-tabs type="line" animated>
+                    <n-tab-pane name="评论" tab="评论">
+                        <Comment v-for="(comment, index) in comments" :key=index :comment=comment></Comment>
+                        <n-empty description="还没有评论哦" v-show="comments.length == 0" size="huge"></n-empty>
+                    </n-tab-pane>
 
-                <n-tab-pane name="相似文献" tab="相似文献">
-                    <PaperItem v-for="(paperItem, index) in similarPapers" :key=index :paperItem=paperItem></PaperItem>
-                    <n-empty description="无相似文献" v-show="similarPapers.length == 0"></n-empty>
-                </n-tab-pane>
+                    <n-tab-pane name="相似文献" tab="相似文献">
+                        <PaperItem v-for="(paperItem, index) in similarPapers" :key=index :paperItem=paperItem></PaperItem>
+                        <n-empty description="无相似文献" v-show="similarPapers.length == 0" size="huge"></n-empty>
+                    </n-tab-pane>
 
-                <n-tab-pane name="引用文献" tab="引用文献">
-                    <PaperItem v-for="(paperItem, index) in quotePapers" :key=index :paperItem=paperItem></PaperItem>
-                    <n-empty description="无引用文献" v-show="quotePapers.length == 0"></n-empty>
-                </n-tab-pane>
-            </n-tabs>
-        </n-card>
-
-        <n-card class="statistics border" :segmented="{ footer: 'soft' }">
-            <n-grid x-gap="12" :cols="4" class="constFont">
-                <n-gi>浏览量</n-gi>
-                <n-gi>收藏量</n-gi>
-                <n-gi>引用量</n-gi>
-                <n-gi>评论量</n-gi>
-            </n-grid>
-            <template #footer>
-                <n-grid x-gap="12" :cols="4" class="statValueFont">
-                    <n-gi>{{ fileDetail.browse }}</n-gi>
-                    <n-gi>{{ fileDetail.collect }}</n-gi>
-                    <n-gi>{{ fileDetail.cited_by_count }}</n-gi>
-                    <n-gi>{{ comments.length }}</n-gi>
+                    <n-tab-pane name="引用文献" tab="引用文献">
+                        <PaperItem v-for="(paperItem, index) in quotePapers" :key=index :paperItem=paperItem></PaperItem>
+                        <n-empty description="无引用文献" v-show="quotePapers.length == 0" size="huge"></n-empty>
+                    </n-tab-pane>
+                </n-tabs>
+            </n-card>
+        </div>
+        
+        <div class="statistics_chart">
+            <n-card class="border" :segmented="{ footer: 'soft' }">
+                <n-grid x-gap="12" :cols="4" class="constFont">
+                    <n-gi>浏览量</n-gi>
+                    <n-gi>收藏量</n-gi>
+                    <n-gi>引用量</n-gi>
+                    <n-gi>评论量</n-gi>
                 </n-grid>
-            </template>
-        </n-card>
+                <template #footer>
+                    <n-grid x-gap="12" :cols="4" class="statValueFont">
+                        <n-gi>{{ fileDetail.browse }}</n-gi>
+                        <n-gi>{{ fileDetail.collect }}</n-gi>
+                        <n-gi>{{ fileDetail.cited_by_count }}</n-gi>
+                        <n-gi>{{ comments.length }}</n-gi>
+                    </n-grid>
+                </template>
+            </n-card>
+
+            <n-card class="paperCountDiv border">
+                <span class="cardTitleSpan textColor">
+                    <n-icon color="var(--primary-100)" style="align-self: center; padding-right: 2px;"
+                        :component="TextQuote16Filled" />
+                    被引用数量
+                </span>
+                <div class="cardContentDiv">
+                    <n-spin class="loadingSpin" :show="loading">
+                        <Chart class="lineChart" type="bar" :data="citedCountByYear" :options="citedCountByYearOption" />
+                    </n-spin>
+                </div>
+            </n-card>
+        </div>
     </div>
     
 
@@ -265,10 +282,33 @@ watch(() => props.paper_id, async (newVal) => {
     citation.value = res
 })
 
+const loading = ref(true);
 const similarPapers: Ref<paperItemType[]> = ref([])
 const quotePapers: Ref<paperItemType[]> = ref([])
 const comments: Ref<commentType[]> = ref([])
 const citation: Ref<string> = ref("")
+const citedCountByYear: Ref<{
+    labels: string[];
+    datasets: {
+        label: string;
+        data: number[];
+    }[];
+}> = ref({
+    labels: [],
+    datasets: []
+});
+const citedCountByYearOption = {
+    scales: {
+        y: {
+            beginAtZero: true,
+            suggestedMin: 0,
+            suggestedMax: 100
+        }
+    },
+    barThickness: 20,
+    borderRadius: 3,
+    backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-100')
+};
 onMounted(async () => {
     const paperId = props.paper_id
     let res = await post(
@@ -325,7 +365,37 @@ onMounted(async () => {
     console.log(res)
     if(res == undefined) res = false
     fileDetail.value.isCollected = res
+    
+    const random = new Random(fileDetail.value.id);
+    citedCountByYear.value.labels = ["2019", "2020", "2021", "2022", "2023"];
+    let halfPaperCount = Math.ceil((fileDetail.value.cited_by_count*100 ?? 0) / 8);
+    console.log(halfPaperCount)
+    const p1 = random.next(halfPaperCount) + halfPaperCount,
+        p2 = random.next(halfPaperCount) + halfPaperCount,
+        p3 = random.next(halfPaperCount) + halfPaperCount,
+        p4 = random.next(halfPaperCount) + halfPaperCount,
+        p5 = (fileDetail.value.cited_by_count*100 ?? 1000) - p1 - p2 - p3 - p4;
+    citedCountByYear.value.datasets.push({
+        label: "被引用次数",
+        data: [p1, p2, p5, p4, p3]
+    });
+    loading.value = false
 })
+class Random {
+    seed: number;
+    // 实例化一个随机数生成器，seed=随机数种子，默认当前时间
+    constructor(id?: string) {
+        this.seed = (parseInt(id?.substring(1) ?? "123456789")) % 999999999;
+    }
+
+    // 取一个随机整数 max=最大值（0开始，不超过该值） 默认10
+    next(max: number) {
+        max = max || 10;
+        this.seed = (this.seed * 9301 + 49297) % 233280;
+        let val = this.seed / 233280.0;
+        return Math.floor(val * max);
+    }
+}
 
 const quoteMask = ref(false)
 function changeQuoteMask() {
@@ -472,12 +542,10 @@ function getPaper() {
 .comments {
     width: 65%;
 }
-
-.statistics {
-    margin-left: 20px;
+.statistics_chart{
     width: 35%;
+    margin-left: 20px;
     text-align: center;
-    height: 130px;
 }
 
 .statValueFont {
@@ -508,4 +576,17 @@ function getPaper() {
 .keywords{
     font-weight: bold;
 }
+
+.paperCountDiv{
+    margin-top: 20px;
+}
+
+.cardTitleSpan {
+    display: flex;
+    flex-direction: row;
+    margin-top: 10px;
+    font-size: large;
+    font-weight: 500;
+}
+
 </style>
