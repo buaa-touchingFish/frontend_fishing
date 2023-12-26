@@ -1,6 +1,9 @@
 <template>
     <div class="secondarySearchCardContainer shadow">
-        <div class="type">{{ secondarySearchLabels.title }}</div>
+        <div class="type">
+            <n-icon :size="20" :component="secondarySearchLabels.icon"/>&nbsp;
+            <span>{{ secondarySearchLabels.title }}</span>
+        </div>
         <div class="items" :class="{select:item.isSelect}" v-for="(item,index) in secondarySearchLabels.items.slice(0,3)" :key="index" @click="search(item)">
             <div class="itemName"><n-ellipsis style="max-width: 100%;">{{ item.label }}</n-ellipsis></div>
             <div class="itemCount">({{ item.count }})</div>
@@ -35,12 +38,14 @@ type secondarySearchType = {
 }
 const showMore = ref(false)
 const secondarySearch = ref(props.secondarySearch);
-const secondarySearchLabels = ref({title:secondarySearch.value.title,items:[]})
+const secondarySearchLabels = ref({title:secondarySearch.value.title,icon:secondarySearch.value.icon,items:[]})
 onMounted(() => {
     secondarySearch.value = props.secondarySearch
     const lan = route.query.language;
-    const to_date = route.query.to_data;
-    const publisher = route.query.publisher;
+    const to_date = route.query.to_date as string;
+    let publisher = route.query.publisher as string;
+    publisher = publisher?.substring(publisher.indexOf(':')+1)
+    publisher = publisher?.substring(1,publisher.length-1)
     const type = route.query.type;
     if(secondarySearch.value.title == '期刊'){
         for(const i of secondarySearch.value.items){
@@ -51,46 +56,55 @@ onMounted(() => {
                 isSelect:i.publisher.display_name == publisher
             })
         }
+        secondarySearchLabels.value.items.sort((a,b) => {if(a.isSelect)return -1;})
     }else if(secondarySearch.value.title == '时间'){
         for(const i of secondarySearch.value.items){
-            let label ;
+            let label,isSelect;
             switch (i.type as string) {
                 case '2020-01-01T00:00:00.000Z':
-                    label = '2020之前'
+                    label = '2020年之前'
+                    isSelect = to_date == '2020-01-01'
                     break;
                 case '2021-01-01T00:00:00.000Z':
                     label = '2020-2021'
+                    isSelect = to_date == '2021-01-01'
                     break;
                 case '2022-01-01T00:00:00.000Z':
                     label = '2021-2022'
+                    isSelect = to_date == '2022-01-01'
                     break;
                 case '2023-01-01T00:00:00.000Z':
                     label = '2022-2023'
+                    isSelect = to_date == '2023-01-01'
                     break;
                 default:
                     label =  i.type;
+                    isSelect = to_date != '2023-01-01' && to_date?.substring(0,4) == '2023'
                     break;
             };
             secondarySearchLabels.value.items.unshift({
                 label: label,
                 count:i.count,
-                isSelect:false
+                isSelect:isSelect
             })
         }
+        secondarySearchLabels.value.items.sort((a,b) => {if(a.isSelect)return -1;})
     }else if(secondarySearch.value.title == '期刊类型'){
         for(const i of secondarySearch.value.items){
             secondarySearchLabels.value.items.push({label:i.type,count:i.count,isSelect:i.type == type})
         }
+        secondarySearchLabels.value.items.sort((a,b) => {if(a.isSelect)return -1;})
     }else{
         for(const i of secondarySearch.value.items){
             secondarySearchLabels.value.items.push({label:i.type,count:i.count,isSelect:i.type == lan})
         }
+        secondarySearchLabels.value.items.sort((a,b) => {if(a.isSelect)return -1;})
     }
 })
 const search = (item:any) => {
     let from,to;
     if(secondarySearchLabels.value.title == '时间'){
-        if(item.label == '2020之前'){
+        if(item.label == '2020年之前'){
             from = '2000-01-01'
             to = '2020-01-01'
         }else if(item.label == '2020-2021'){
@@ -102,10 +116,12 @@ const search = (item:any) => {
         }else if(item.label == '2022-2023'){
             from = '2022-01-01'
             to = '2023-01-01'
-        }else if(item.label == '2023至今'){
+        }else if(item.label == '2023年至今'){
             from = '2023-01-01'
             let now = new Date()
             to = now.getFullYear()+'-'+ (now.getMonth() <= 8 ? '0' + (now.getMonth() + 1) : (now.getMonth() + 1)) + '-' + '01'
+            console.log(to);
+            
         }
     }
     router.push({
@@ -117,9 +133,9 @@ const search = (item:any) => {
             "issn": route.query.issn??'',
             "language": secondarySearchLabels.value.title == '语言'? (item.isSelect? '' :  item.label) : route.query.language??'',
             "institution": route.query.institution??'',
-            "publisher": secondarySearchLabels.value.title == '期刊'? JSON.stringify({id:item.id,display_name:item.label}) : route.query.publisher??'',
-            "from_date": secondarySearchLabels.value.title == '时间'? from : route.query.from_date??'',
-            "to_date": secondarySearchLabels.value.title == '时间'? to : route.query.to_date??'',
+            "publisher": secondarySearchLabels.value.title == '期刊'? (item.isSelect? '' : '\"display_name\":\"'+item.label+'\"') : route.query.publisher??'',
+            "from_date": secondarySearchLabels.value.title == '时间'? (item.isSelect? '' : from) : route.query.from_date??'',
+            "to_date": secondarySearchLabels.value.title == '时间'? (item.isSelect? '' : to) : route.query.to_date??'',
         }
     })
 }
@@ -142,6 +158,8 @@ const search = (item:any) => {
     width: 100%;
     font-size: 16px;
     color: var(--primary-100);
+    display: flex;
+    align-items: center;
 }
 .items{
     margin-bottom: 1px;

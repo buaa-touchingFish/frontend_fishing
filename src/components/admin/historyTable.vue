@@ -16,6 +16,7 @@ type RowData = {
     time: string
     handle_time: string
     type: string
+    status: string
 }
 
 const message = useMessage();
@@ -33,6 +34,7 @@ onMounted(async () => {
         const row: RowData = {
             key: item.claimRequest.id,
             type: '门户认领',
+            status: item.claimRequest.status === 1 ? '通过' : '拒绝',
             handle_time: item.claimRequest.handle_time,
             username: item.user.username,
             time: item.claimRequest.create_time,
@@ -47,6 +49,7 @@ onMounted(async () => {
         const row: RowData = {
             key: item.paperAppeal.id,
             type: '文章申诉',
+            status: item.paperAppeal.status === 1 ? '通过' : '拒绝',
             handle_time: item.paperAppeal.handle_time,
             username: item.user.username,
             time: item.paperAppeal.create_time,
@@ -65,6 +68,10 @@ const columns: DataTableColumns = [
     {
         title: '事务类型',
         key: 'type',
+    },
+    {
+        title: '结果',
+        key: 'status',
     },
     {
         title: '申请时间',

@@ -6,16 +6,18 @@
                 <StarBackground></StarBackground>
             </div>
             <div class="homeHeaderDiv">
-                <!-- <n-icon v-if="!isLogged" class="loginButton" size="32" @click="$router.push('/login');">
-                    <VideoPersonSparkle28Regular />
-                </n-icon> -->
-                <n-button v-if="!isLogged" text class="loginButton" @click="$router.push('/login');">去登录</n-button>
+                
+                <n-button v-if="!isLogged" size="large" text class="loginButton" @click="$router.push('/login');">
+                    <n-icon size="25">
+                        <VideoPersonSparkle28Regular />
+                    </n-icon>&nbsp;去登录
+                </n-button>
                 <UserInfo style="margin-right: 20%;" v-else></UserInfo>
             </div>
             <div class="homeContentDiv">
                 <div class="homeContentLeft">
                     <!-- <Clock></Clock> -->
-                    <img src="@/assets/AcadVista-长款.png" width="400" style="z-index: 1;" />
+                    <img class="logo" src="@/assets/AcadVista-1.png" width="400" style="z-index: 1;" />
                     <div class="infos">
                         <div class="infosTop">
                             <div class="info">
@@ -24,7 +26,7 @@
                                 </n-icon>
                                 <span>
                                     <span>学者</span>
-                                    <n-number-animation :from="0" :to="12100566" :duration="1000" />
+                                    <n-number-animation :from="0" :to="5100566" :duration="1000" />
                                 </span>
                             </div>
                             <div class="info">
@@ -33,7 +35,7 @@
                                 </n-icon>
                                 <span>
                                     <span>机构</span>
-                                    <n-number-animation :from="0" :to="20182" :duration="1000" />
+                                    <n-number-animation :from="0" :to="200182" :duration="1000" />
                                 </span>
                             </div>
                         </div>
@@ -44,7 +46,7 @@
                                 </n-icon>
                                 <span>
                                     <span>论文</span>
-                                    <n-number-animation :from="0" :to="11036659" :duration="1000" />
+                                    <n-number-animation :from="0" :to="21036659" :duration="1000" />
                                 </span>
                             </div>
                             <div class="info">
@@ -53,7 +55,7 @@
                                 </n-icon>
                                 <span>
                                     <span>领域</span>
-                                    <n-number-animation :from="0" :to="78963" :duration="1000" />
+                                    <n-number-animation :from="0" :to="47896" :duration="1000" />
                                 </span>
                             </div>
                         </div>
@@ -298,7 +300,6 @@ const changeShowCard = () => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* background-image: url('../assets/sky.jpg'); */
     background-color: aliceblue;
 }
 
@@ -331,10 +332,15 @@ const changeShowCard = () => {
     justify-content: center;
     align-items: center;
 
+    .logo{
+    }
+
     .infos {
         z-index: 1;
         display: flex;
         flex-direction: column;
+        color: white;
+        margin-bottom: 50px;
 
         width: 60%;
 
@@ -406,6 +412,7 @@ const changeShowCard = () => {
     position: relative;
     transform-style: preserve-3d;
     perspective: 700px;
+    z-index: 777;
 }
 
 .completeSearchOption {
@@ -456,8 +463,6 @@ const changeShowCard = () => {
     position: absolute;
     left: 25%;
 }
-
-.searchButton {}
 
 .advancedSearchDiv {
     width: 100%;

@@ -173,6 +173,9 @@ const search = async () => {
         }
         if (searchCardModel.value.timestamp[1] !== null) {
             to_date = new Date(searchCardModel.value.timestamp[1])
+            if (to_date > Date.now()) {
+                to_date = Date.now()
+            }
         }
     }
     router.push({

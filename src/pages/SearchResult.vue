@@ -60,7 +60,7 @@ import { Paper } from '@/models/model'
 import { useRoute } from 'vue-router'
 import { post } from '@/api/axios';
 import { useMessage } from 'naive-ui';
-import { ArrowSort16Filled } from '@vicons/fluent'
+import { ArrowSort16Filled,CalendarLtr16Filled,Earth20Filled,BookmarkMultiple28Filled,BookOpen32Filled } from '@vicons/fluent'
 
 const message = useMessage()
 const route = useRoute()
@@ -150,15 +150,29 @@ onMounted(async () => {
             "to_date": query.to_date?? ''
         }
     )
-    secondarySearchList.value.push({title:'时间',items:res.date})
-    secondarySearchList.value.push({title:'语言',items:res.lan})
-    secondarySearchList.value.push({title:'期刊',items:res.publisher})
-    secondarySearchList.value.push({title:'期刊类型',items:res.type})
-    resultNumber.value = res.sum;
-    pageCount.value = Math.ceil(resultNumber.value/10);
+    secondarySearchList.value.push({title:'时间',icon:CalendarLtr16Filled,items:res.date})
+    secondarySearchList.value.push({title:'语言',icon:Earth20Filled,items:res.lan})
+    secondarySearchList.value.push({title:'期刊',icon:BookOpen32Filled,items:res.publisher})
+    secondarySearchList.value.push({title:'期刊类型',icon:BookmarkMultiple28Filled,items:res.type})
     showSecondarySearchSkeleton.value = false;
     console.log(res);
     
+})
+onMounted(async () => {
+    const query = route.query;
+    const res = await post(message,'/paper/sum',{
+        "keyword": query.keyword?? '',
+        "author": query.author?? '',
+        "type": query.type?? '',
+        "issn": query.issn?? '',
+        "language": query.language?? '',
+        "institution": query.institution?? '',
+        "publisher": query.publisher?? '',
+        "from_date": query.from_date?? '',
+        "to_date": query.to_date?? ''
+    })
+    resultNumber.value = parseInt(res.sum);
+    pageCount.value = Math.ceil(resultNumber.value/10);
 })
 </script>
 

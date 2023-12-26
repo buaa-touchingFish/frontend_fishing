@@ -1,12 +1,12 @@
 <template>
     <div class="headerDiv">
         <span class="optTitleDiv">
-            {{ title }}
+            <n-ellipsis style="max-width: 100%;">{{ title }}</n-ellipsis>
         </span>
         <div class="headerContainer">
             <div class="headerLeft">
                 <div class="logo" @click="$router.push('/')">
-                    <img src="../../assets/AcadVista-长款.png" width="150"/>
+                    <img src="@/assets/AcadVista-1.png" width="150"/>
                 </div>
                 <div class="searchInput">
                     <n-popover :show="showComplete" placement="bottom" trigger="manual" :show-arrow="false" raw>
@@ -233,15 +233,16 @@ onMounted(() => {
 }
 
 .optTitleDiv {
-    width: 180px;
-    max-width: 180px;
+    width: 160px;
+    max-width: 160px;
     font-size: 16pt;
     position: absolute;
     line-height: 50px;
     -webkit-line-clamp: 1;
     white-space: nowrap;
     overflow: hidden;
-    left: 20px;
+    left: 40px;
+    top: -4px;
     text-overflow: ellipsis;
     color: var(--text-100);
 }

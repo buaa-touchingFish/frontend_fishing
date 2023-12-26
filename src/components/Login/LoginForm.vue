@@ -415,20 +415,23 @@ const forgetRules: FormRules = {
 const userStore = useUserStore();
 const userstore = storeToRefs(userStore);
 const axiosStore = useAxiosStore();
+
+import { encodeStr } from '@/utils/encryption'
 const login = (e: MouseEvent) => {
     e.preventDefault()
     loginFormRef.value?.validate(async (errors) => {
         if (!errors) {
+            console.log("encry:" + encodeStr(loginModel.value.password));
+            
             let res = await post(message, "/user/login", {
                 "username": loginModel.value.name,
-                "password": loginModel.value.password,
+                "password": encodeStr(loginModel.value.password),
             })
             if (res === false) {
                 return;
             }
 
             const token = res.jwt
-            // TODO:加token和userstore保存信息
             axiosStore.updateAuthorizationHeader(token)
             userstore.curUser = res.uid
             localStorage.setItem('token', token)
@@ -474,6 +477,7 @@ const submitRegisterCaptcha = async () => {
         if (!res) {
             return;
         }
+        message.success('发送成功')
     } else {
         message.warning('请填写邮箱')
     }
@@ -485,13 +489,14 @@ const register = (e: MouseEvent) => {
         if (!errors) {
             let res = await post(message, '/user/register', {
                 "username": registerModel.value.username,
-                "password": registerModel.value.password,
+                "password": encodeStr(registerModel.value.password),
                 "email": registerModel.value.email,
                 "captcha": registerModel.value.captcha,
             })
             if (res === false) {
                 return
             }
+            message.success('注册成功')
             forgetFormStyle.value = hideStyle
             registerFormStyle.value = hideStyle
             setTimeout(() => {
@@ -542,7 +547,7 @@ const forget = (e: MouseEvent) => {
             let res = await post(message, "/user/changepwd", {
                 "email": forgetModel.value.email,
                 "captcha": forgetModel.value.captcha,
-                "new_pwd": forgetModel.value.password,
+                "new_pwd": encodeStr(forgetModel.value.password),
             })
             if (res === false) {
                 return

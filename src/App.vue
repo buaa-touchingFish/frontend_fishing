@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { GlobalTheme, GlobalThemeOverrides, NConfigProvider, darkTheme, NDialogProvider } from 'naive-ui'
-import './animationStyle.css'
+import '@/animationStyle.css'
 import { useRoute } from 'vue-router';
 import { ref, Ref } from 'vue'
 import emitter from '@/eventBus/eventBus';

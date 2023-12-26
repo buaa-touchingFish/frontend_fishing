@@ -1,6 +1,6 @@
 <template>
     <div style="margin-top: 2%;cursor: pointer;">
-        <n-popover class="historyPop" trigger="hover" scrollable>
+        <n-popover class="historyPop" trigger="hover" scrollable style="height: 300px;">
             <template #trigger>
                 <n-icon size="32" color="var(--primary-100)">
                     <Clock28Filled />

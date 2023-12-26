@@ -35,7 +35,7 @@
                                 <n-icon size="22">
                                     <BuildingHome20Filled />
                                 </n-icon>
-                                {{ scholarInfo?.author.last_known_institution?.display_name }}
+                                {{ scholarInfo?.author.last_known_institution?.display_name ?? "暂无机构" }}
                             </span>
                             <div class="infoDataDiv">
                                 <div class="infoDataBoxDiv">
@@ -136,9 +136,9 @@
                             :options="cityOrTimeFilterOption" @update:value="filterChanged" />
                     </div>
                     <n-skeleton v-if="loading" width="100%" style="margin-top: 5px;" height="220px" :sharp="false" />
-                    <div class="paperListDiv" v-else v-for="i in filterPapers" :key="i.id">
+                    <div class="paperListDiv" v-else v-for="(i, index) in filterPapers" :key="i.id">
                         <ResultCard :result="i" />
-                        <div class="horizontalSplitDiv" />
+                        <div class="horizontalSplitDiv" v-show="index != filterPapers.length - 1" />
                     </div>
                 </div>
             </div>
@@ -153,7 +153,7 @@
                     <div v-else v-for="(sch, index) in  scholarInfo?.co_authors " :key="index" class="coScholarDiv">
                         <n-avatar round :size="48" style="margin: 5px;" class="schoAva"
                             src="http://s5usfv19s.hb-bkt.clouddn.com/OIP-C.jpg" />
-                        <div class="verticalSplitDiv" />
+                        <!-- <div class="verticalSplitDiv" /> -->
                         <div class="coScholarInfoDiv">
                             <n-ellipsis style="max-width: calc(100%);">
                                 <router-link class="coScholarName" :to="{
@@ -166,11 +166,12 @@
                                     {{ sch.display_name }}
                                 </router-link>
                             </n-ellipsis>
-                            <n-ellipsis style="max-width: 100%; margin-bottom: 5px; display: block; color:var(--text-100)"
+                            <n-ellipsis style="max-width: 90%; margin-bottom: 5px; display: block; color:var(--text-100)"
                                 :tooltip="false">
-                                {{ sch.last_known_institution_display_name }}
+                                {{ sch?.last_known_institution_display_name ?? "暂无机构" }}
                             </n-ellipsis>
-                            <div class="horizontalSplitDiv" style="width: calc(100%);" />
+                            <div class="horizontalSplitDiv" style="width: calc(100%);"
+                                v-show="index != scholarInfo?.co_authors.length - 1" />
                         </div>
                     </div>
                 </div>
@@ -433,7 +434,7 @@ onMounted(async () => {
                 borderWidth: 1
             }
             let maxVal = 0;
-            
+
             dateMap.forEach((val, key) => {
                 yearFilterOption.value.push({
                     label: key.toString(),
@@ -505,7 +506,7 @@ onMounted(async () => {
                     layout: 'force',
                     data: chartData.nodes,
                     links: chartData.links,
-                    roam: false,
+                    roam: true,
                     zoom: 2.0
                     // force: {
                     //     repulsion: 300, // Adjust as needed
@@ -648,8 +649,8 @@ function back() {
     font-size: 22pt;
     font-weight: bold;
     color: var(--text-100);
-    view-transition-name: scholarName;
     position: sticky;
+    view-transition-name: scholarName;
 
 }
 
@@ -818,7 +819,8 @@ function back() {
 
 .coScholarInfoDiv {
     margin: 5px;
-    width: calc(100% - 48px);
+    width: calc(100% - 80px);
+    max-width: calc(100% - 100px);
 }
 
 .coScholarName {
