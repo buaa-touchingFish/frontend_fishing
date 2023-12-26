@@ -431,6 +431,10 @@ const logout = () => {
     & span{
         font-size: 16px;
     }
+
+    &:hover{
+        color: var(--primary-100);
+    }
 }
 .collectNumber{
     font-size: 23px;

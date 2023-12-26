@@ -4,11 +4,11 @@
       <n-checkbox v-model:checked="computed_check" @click.stop></n-checkbox>
     </div>
     <div class="right-container">
-      <div class="title">{{ title }}</div>
-      <div class="author-journal">{{ author }} -《{{ journal }}》</div>
+      <div class="title">{{ paper.title }}</div>
+      <div class="author-journal">{{ paper.authors[0] }} -《{{ paper.journal }}》</div>
       <div class="card-footer">
         <div class="tag-container">
-          <n-tag v-for="tag in tags" closable type="info" size="small" @close="handleClose(tag)">{{ tag }}</n-tag>
+          <n-tag v-for="tag in paper.tags" closable type="info" size="small" @close="handleClose(tag)">{{ tag }}</n-tag>
           <n-popover trigger="hover" placement="bottom-start">
             <template #trigger>
               <n-tag class="add-tag" type="info" size="small">
@@ -43,7 +43,7 @@
             </template> -->
           </n-popover>
         </div>
-        <div class="citations">被引频次: {{ citations }}</div>
+        <div class="citations">被引频次: {{ paper.citations }}</div>
       </div>
     </div>
     <n-modal v-model:show="showModal" preset="dialog" title="新标签">
@@ -63,20 +63,17 @@
 </template>
 <script setup lang="ts">
 import { Add, AddCircleOutline } from '@vicons/ionicons5'
-import { useCollectStore, Tag } from '@/store/collectStore'
+import { useCollectStore, Tag, Paper } from '@/store/collectStore'
 import { ref, computed } from "vue";
 import { FormValidationStatus } from 'naive-ui/es/form/src/interface';
 import { NCheckbox, NTag, useMessage, useDialog, NPopover, NButton, NSpace, NIcon } from "naive-ui";
 
 const props = defineProps({
   self_tag_name: String,
-  paper_id: String,
-  title: String,
-  author: String,
-  journal: String,
-  citations: Number,
-  tags: Array as () => string[],
+  paper: Paper,
 });
+
+const paper = props.paper;
 
 const message = useMessage();
 const dialog = useDialog();
@@ -90,14 +87,14 @@ const emit = defineEmits(['itemClick']);
 
 const selected = computed(() => {
   return (
-    props.paper_id === collectStore.active_paper_id
+    paper.paper_id === collectStore.active_paper_id
   );
 });
 
 const handleContainerClicked = () => {
-  // console.log("container clicked", props.self_tag_idx, props.self_paper_idx);
+  // console.log("container clicked", paper.self_tag_idx, paper.self_paper_idx);
   collectStore.set_active_tag_name(props.self_tag_name);
-  collectStore.set_active_paper_id(props.paper_id);
+  collectStore.set_active_paper_id(paper.paper_id);
   emit('itemClick');
   // console.log("active idx", collectStore.active_tag_idx, collectStore.active_paper_idx);
   // console.log("self idx", props.self_tag_idx, props.self_paper_idx);
@@ -106,10 +103,10 @@ const handleContainerClicked = () => {
 
 const computed_check = computed({
   get() {
-    return collectStore.paper_checked.has(props.paper_id ?? 'wrong_paper_id');
+    return collectStore.paper_checked.has(paper.paper_id ?? 'wrong_paper_id');
   },
   set(val) {
-    collectStore.change_paper_checked(props.paper_id, val);
+    collectStore.change_paper_checked(paper.paper_id, val);
   }
 })
 
@@ -117,13 +114,13 @@ const handleClose = (tag_name: string) => {
   // console.log('tag_name', tag_name);
   dialog.warning({
     title: '删除标签',
-    content: `将从《${props.title}》删除标签: ${tag_name}`,
+    content: `将从《${paper.title}》删除标签: ${tag_name}`,
     positiveText: '确定',
     negativeText: '取消',
     onPositiveClick: () => {
-      collectStore.requestDeleteTag(tag_name, props.paper_id).then((res) => {
+      collectStore.requestDeleteTag(tag_name, paper.paper_id).then((res) => {
         if (res === true) {
-          collectStore.delete_tag_from_paper(tag_name, props.paper_id);
+          collectStore.delete_tag_from_paper(tag_name, paper.paper_id);
           message.success('删除标签成功');
         } else {
           message.success('删除标签失败');
@@ -138,8 +135,8 @@ const handleClose = (tag_name: string) => {
 
 const other_tags = computed(() => {
   const allSet = new Set(collectStore.all_tags);
-  if (props.tags) {
-    for (const tag of props.tags) {
+  if (paper.tags) {
+    for (const tag of paper.tags) {
       allSet.delete(tag);
     }
   }
@@ -148,9 +145,9 @@ const other_tags = computed(() => {
 
 const handleAdd = (tag_name: string) => {
   // console.log('tag_name', tag_name);
-  collectStore.requestAddTag(tag_name, props.paper_id).then((res) => {
+  collectStore.requestAddTag(tag_name, paper.paper_id).then((res) => {
     if (res === true) {
-      collectStore.add_tag_to_paper(tag_name, props.paper_id?props.paper_id:'');
+      collectStore.add_tag_to_paper(tag_name, paper.paper_id ? paper.paper_id : '');
       message.success('添加标签成功');
     } else {
       message.success('添加标签失败');
@@ -209,11 +206,11 @@ const createLabel = () => {
   // 可以创建
   hasClickedCreateBtn.value = false;
   showModal.value = false;
-  collectStore.requestAddTag(newCreatingLabel.value, props.paper_id).then((res) => {
+  collectStore.requestAddTag(newCreatingLabel.value, paper.paper_id).then((res) => {
     if (res === true) {
       const tag: Tag = new Tag(newCreatingLabel.value);
       collectStore.push_new_tag(tag);
-      collectStore.add_tag_to_paper(tag.name, props.paper_id);
+      collectStore.add_tag_to_paper(tag.name, paper.paper_id);
       message.success(`成功创建并添加标签: ${newCreatingLabel.value}`);
     } else {
       message.error('创建标签失败');

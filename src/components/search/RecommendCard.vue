@@ -7,7 +7,7 @@
             </div>
             <div class="clickVolume">
                 <n-icon :size="20" :component="CursorClick20Filled" color='var(--primary-100)'></n-icon>
-                &nbsp;点击量：{{ recommend.browse }}
+                &nbsp;今日点击量：{{ recommend.browse }}
             </div>
         </div>
     </div>

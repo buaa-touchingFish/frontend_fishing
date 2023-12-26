@@ -436,10 +436,12 @@ const login = (e: MouseEvent) => {
             userstore.curUser = res.uid
             localStorage.setItem('token', token)
             localStorage.setItem('uid', res.uid)
+            message.success('登录成功')
             if (res.uid <= 20) {
                 router.push('/admin')
             } else {
-                router.push('/')
+                // router.push('/')
+                router.back()
             }
 
         } else {
@@ -534,6 +536,7 @@ const submitForgetCaptcha = async () => {
         if (res === false) {
             return
         }
+        message.success('发送成功')
     } else {
         message.error('请先填写邮箱')
     }
@@ -552,6 +555,7 @@ const forget = (e: MouseEvent) => {
             if (res === false) {
                 return
             }
+            message.success('修改成功')
             forgetFormStyle.value = hideStyle
             registerFormStyle.value = hideStyle
             setTimeout(() => {

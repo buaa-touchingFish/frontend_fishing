@@ -1,7 +1,7 @@
 <template>
     <div class="advancedSearchContainer">
         <n-form ref="formRef" :model="searchCardModel" rules="" label-placement="left" label-width="80" size="small">
-            <n-form-item label="关键词" path="keyword">
+            <n-form-item label="关键词领域" path="keyword">
                 <n-input v-model:value="searchCardModel.keyword" placeholder="请输入关键词" @keyup.enter="search" />
             </n-form-item>
             <n-form-item label="作者" path="author">
