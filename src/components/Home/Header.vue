@@ -6,7 +6,7 @@
         <div class="headerContainer">
             <div class="headerLeft">
                 <div class="logo" @click="$router.push('/')">
-                    <img src="../../assets/AcadVista-长款.png" width="150"/>
+                    <img src="@/assets/AcadVista-1.png" width="150"/>
                 </div>
                 <div class="searchInput">
                     <n-popover :show="showComplete" placement="bottom" trigger="manual" :show-arrow="false" raw>

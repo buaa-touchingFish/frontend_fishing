@@ -4,7 +4,7 @@
             <StarBackground />
         </div>
         <div class="logo" @click="$router.push('/')">
-            <img src="@/assets/AcadVista-长款.png" width="200" />
+            <img src="@/assets/AcadVista-1.png" width="200" />
         </div>
         <div class="login-in-container">
 

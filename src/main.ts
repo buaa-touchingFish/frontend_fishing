@@ -15,6 +15,8 @@ app.use(pinia)
     .use(naive)
     .use(router)
     .use(PrimeVue, { ripple: true })
+
+
 app.component("PButton", Button)
     .component("Chart", Chart)
     .component("Dock", Dock)

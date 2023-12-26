@@ -127,7 +127,7 @@ const handleAdd = (tag_name: string) => {
   console.log('tag_name', tag_name);
   collectStore.requestAddTag(tag_name, props.paper_id).then((res) => {
     if (res === true) {
-      collectStore.add_tag_to_paper(tag_name, props.paper_id);
+      collectStore.add_tag_to_paper(tag_name, props.paper_id?props.paper_id:'');
       message.success('添加标签成功');
     } else {
       message.success('添加标签失败');

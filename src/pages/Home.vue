@@ -14,7 +14,7 @@
             <div class="homeContentDiv">
                 <div class="homeContentLeft">
                     <!-- <Clock></Clock> -->
-                    <img src="@/assets/AcadVista-长款.png" width="400" style="z-index: 1;" />
+                    <img src="@/assets/AcadVista-1.png" width="400" style="z-index: 1;" />
                     <div class="infos">
                         <div class="infosTop">
                             <div class="info">
@@ -296,7 +296,6 @@ const changeShowCard = () => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* background-image: url('../assets/sky.jpg'); */
     background-color: aliceblue;
 }
 
@@ -449,8 +448,6 @@ const changeShowCard = () => {
     position: absolute;
     left: 25%;
 }
-
-.searchButton {}
 
 .advancedSearchDiv {
     width: 100%;
