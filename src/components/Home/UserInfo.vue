@@ -63,6 +63,12 @@
                 </n-icon>
                 <span>我的学者门户</span>
             </div>
+            <div v-if="uid < 20" class="scholar" @click="$router.push({path: '/admin',});">
+                <n-icon color="var(-primary--100)" size="20">
+                    <PersonSettings20Filled></PersonSettings20Filled>
+                </n-icon>
+                <span>管理中心</span>
+            </div>
             <div class="operations">
                 <n-button round type="info" @click="changePasswordModal = true">
                     修改密码
@@ -119,7 +125,7 @@
 import { onMounted,ref } from 'vue';
 import { get,post } from '@/api/axios'
 import { NIcon, NButton, NAvatar, useMessage, UploadCustomRequestOptions } from 'naive-ui'
-import { Camera20Filled,CalligraphyPen20Regular, Door16Filled } from '@vicons/fluent'
+import { Camera20Filled,CalligraphyPen20Regular, Door16Filled,PersonSettings20Filled } from '@vicons/fluent'
 import 'vue-cropper/dist/index.css';
 import { VueCropper } from 'vue-cropper';
 import router from '@/router';
@@ -143,6 +149,7 @@ const author_id = ref('')
 const author_name = ref('')
 const subscribeNumber = ref(0)
 const collectNumber = ref(0)
+const uid = ref(0)
 const getInfo = async () => {
     const res = await get(message,'/user/getInfo',{})
     if(!res){
@@ -156,6 +163,7 @@ const getInfo = async () => {
     author_name.value = res.author_name;
     changeForm.value[0] = res.username;
     changeForm.value[1] = res.phone;
+    uid.value = parseInt(localStorage.getItem('uid'))
 }
 onMounted(async () => {
     await getInfo()
@@ -449,8 +457,12 @@ const logout = () => {
     align-items: center;
     cursor: pointer;
 
+    &:hover{
+        color: var(--primary-100);
+    }
+
     span {
-        margin-left: 10%;
+        margin-left: 5%;
     }
 }
 
@@ -466,6 +478,7 @@ const logout = () => {
     height: 10%;
     display:flex;
     justify-content:space-between;
+    margin: 10px 0;
 }
 
 .changeAvatarButtons {
