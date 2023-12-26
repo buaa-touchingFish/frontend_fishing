@@ -218,7 +218,8 @@ const chartOptions = {
         y: {
             beginAtZero: true,
             suggestedMin: 0,
-            suggestedMax: 100
+            suggestedMax: 100,
+            minInterval: 1
         }
     },
     barThickness: 20,

@@ -52,6 +52,7 @@ async function sendEmail() {
     if (res != null && !res) {
         return;
     }
+    message.info("验证码已发送，请查收 :-)");
 }
 const customRequest = async ({
     file,
@@ -69,15 +70,19 @@ const customRequest = async ({
         showModal.value = false;
         location.reload();
         onError();
+        message.error("认领失败 :-( ");
         return;
     }
     onFinish();
     showModal.value = false;
+    message.error("请求已发送，等待管理员审查");
     back();
 }
 async function submitInfo() {
-    if (emailStr.value == '' || captchaStr.value == '')
+    if (emailStr.value == '' || captchaStr.value == '') {
+        message.error("请检查输入信息");
         return;
+    }
     uploader.value?.submit();
 }
 onMounted(() => {
