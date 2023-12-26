@@ -14,7 +14,8 @@
                             path: '/scholarHome',
                             query: {
                                 author_name: authorship.author.display_name,
-                                author_id: authorship.author.id
+                                author_id: authorship.author.id,
+                                paper_id: fileDetail.id
                             }
                         }
                     )">
@@ -111,7 +112,7 @@
                     :autosize="{minRows: 2,maxRows: 5}"
                     ref="inputRef"
                 />
-                <n-button type="info" class="newCommentButton" @click="publishComment">发布</n-button>
+                <n-button color="#3F51B5" class="newCommentButton" @click="publishComment">发布</n-button>
             </div>
         </template>
     </n-card>
@@ -334,7 +335,7 @@ function copy() {
     const clipboard = new Clipboard('.copyCiteButton');
     clipboard.on('success', () => {
         clipboard.destroy()
-        alert("复制成功！");
+        message.success('复制成功')
     })
 }
 
@@ -344,6 +345,10 @@ function changeAppealMask() {
 }
 const appealContent = ref("")
 async function appeal() {
+    if(appealContent.value.length == 0) {
+        message.warning('申诉内容不能为空')
+        return
+    }
     const res = await post(
         message, "/user/create/appeal",
         {
@@ -354,6 +359,8 @@ async function appeal() {
     console.log(res)
     appealMask.value = !appealMask.value
     appealContent.value = ""
+    if(res === null) message.success('申诉成功')
+    if(res === false) message.warning('已经申诉过了')
 }
 
 const inputRef = ref()
@@ -364,7 +371,7 @@ async function publishComment() {
         message.warning('还没输入评论哦')
         return
     }
-    await post(
+    let res = await post(
         message, "/comment",
         {
             "content": newComment.value,
@@ -372,8 +379,10 @@ async function publishComment() {
             // "sender_id": localStorage.getItem("uid"),
         }
     )
+    console.log(res)
+    if(res === null) message.success('评论成功')
 
-    const res = await get(
+    res = await get(
         message, "/comment",
         {
             "paper_id": fileDetail.value.id
@@ -397,6 +406,7 @@ async function collect() {
     if(res === null) {
         fileDetail.value.isCollected = true
         emit("collectedChange", fileDetail.value.id, true)
+        message.success('收藏成功')
     }
 }
 async function undoCollect() {
@@ -410,6 +420,7 @@ async function undoCollect() {
     if(res === null) {
         fileDetail.value.isCollected = false
         emit("collectedChange", fileDetail.value.id, false)
+        message.success('取消收藏成功')
     }
 }
 
@@ -419,7 +430,7 @@ function getPaper() {
     } else if(fileDetail.value.doi != null && fileDetail.value.doi.length != 0) {
         window.open(fileDetail.value.doi, '_blank')
     } else {
-        message.warning('无法获取')
+        message.warning('我们没有该文献的获取途径')
     }
 }
 
