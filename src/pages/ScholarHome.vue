@@ -35,7 +35,7 @@
                                 <n-icon size="22">
                                     <BuildingHome20Filled />
                                 </n-icon>
-                                {{ scholarInfo?.author.last_known_institution?.display_name }}
+                                {{ scholarInfo?.author.last_known_institution?.display_name ?? "暂无机构" }}
                             </span>
                             <div class="infoDataDiv">
                                 <div class="infoDataBoxDiv">
@@ -136,9 +136,9 @@
                             :options="cityOrTimeFilterOption" @update:value="filterChanged" />
                     </div>
                     <n-skeleton v-if="loading" width="100%" style="margin-top: 5px;" height="220px" :sharp="false" />
-                    <div class="paperListDiv" v-else v-for="i in filterPapers" :key="i.id">
+                    <div class="paperListDiv" v-else v-for="(i, index) in filterPapers" :key="i.id">
                         <ResultCard :result="i" />
-                        <div class="horizontalSplitDiv" />
+                        <div class="horizontalSplitDiv" v-show="index != filterPapers.length - 1" />
                     </div>
                 </div>
             </div>
@@ -168,9 +168,10 @@
                             </n-ellipsis>
                             <n-ellipsis style="max-width: 90%; margin-bottom: 5px; display: block; color:var(--text-100)"
                                 :tooltip="false">
-                                {{ sch?.last_known_institution_display_name ?? "&nbsp;" }}
+                                {{ sch?.last_known_institution_display_name ?? "暂无机构" }}
                             </n-ellipsis>
-                            <div class="horizontalSplitDiv" style="width: calc(100%);" />
+                            <div class="horizontalSplitDiv" style="width: calc(100%);"
+                                v-show="index != scholarInfo?.co_authors.length - 1" />
                         </div>
                     </div>
                 </div>
@@ -505,7 +506,7 @@ onMounted(async () => {
                     layout: 'force',
                     data: chartData.nodes,
                     links: chartData.links,
-                    roam: false,
+                    roam: true,
                     zoom: 2.0
                     // force: {
                     //     repulsion: 300, // Adjust as needed
