@@ -72,88 +72,84 @@ const searchCardModel = ref<SearchCardModelType>({
 })
 const languageOptions = [
     {
-        label: 'en',
-        value: 'en'
+        label: '英语',
+        value: '英语'
     },
     {
-        label: 'es',
-        value: 'es'
+        label: '西班牙语',
+        value: '西班牙语'
     },
     {
-        label: 'de',
-        value: 'de'
+        label: '德语',
+        value: '德语'
     },
     {
-        label: 'fr',
-        value: 'fr'
+        label: '法语',
+        value: '法语'
     },
     {
-        label: 'tr',
-        value: 'tr'
+        label: '土耳其语',
+        value: '土耳其语'
     },
     {
-        label: 'pt',
-        value: 'pt'
+        label: '葡萄牙语',
+        value: '葡萄牙语'
     },
     {
-        label: 'zh-cn',
-        value: 'zh-cn'
+        label: '中文',
+        value: '中文'
     },
     {
-        label: 'ja',
-        value: 'ja'
+        label: '朝鲜语',
+        value: '朝鲜语'
     },
     {
-        label: 'it',
-        value: 'it'
+        label: '意大利语',
+        value: '意大利语'
     },
     {
-        label: 'null',
-        value: ''
+        label: '其他',
+        value: '其他'
     },
 ]
 const language = ref('')
 
 const typeOptions = [
     {
-        label: 'article',
-        value: 'article'
+        label: '文章',
+        value: '文章'
     },
     {
-        label: 'book',
-        value: 'book-chapter'
+        label: '书籍章节',
+        value: '书籍章节'
     },
     {
-        label: 'book',
-        value: 'book'
+        label: '书籍',
+        value: '书籍'
     },
     {
-        label: 'reference-entry',
-        value: 'reference-entry'
+        label: '参考条目',
+        value: '参考条目'
     },
     {
-        label: 'dataset',
-        value: 'dataset'
+        label: '数据集',
+        value: '数据集'
     },
     {
-        label: 'dissertation',
-        value: 'dissertation'
+        label: '学位论文',
+        value: '学位论文'
     },
     {
-        label: 'erratum',
-        value: 'erratum'
+        label: '勘误',
+        value: '勘误'
     },
     {
-        label: 'editorial',
-        value: 'editorial'
+        label: '副文本(paratext)',
+        value: '副文本(paratext)'
     },
     {
-        label: 'other',
-        value: 'other'
-    },
-    {
-        label: 'null',
-        value: ''
+        label: '其他',
+        value: '其他'
     },
 ]
 const type = ref('')

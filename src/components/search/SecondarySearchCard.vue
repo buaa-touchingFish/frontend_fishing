@@ -71,7 +71,7 @@ onMounted(() => {
                     label =  i.type;
                     break;
             };
-            secondarySearchLabels.value.items.push({
+            secondarySearchLabels.value.items.unshift({
                 label: label,
                 count:i.count,
                 isSelect:false
@@ -113,9 +113,9 @@ const search = (item:any) => {
         query:{
             "keyword": route.query.keyword??'',
             "author": route.query.author??'',
-            "type": secondarySearchLabels.value.title == '期刊类型'? item.label : route.query.type??'',
+            "type": secondarySearchLabels.value.title == '期刊类型'? (item.isSelect? '' :  item.label) : route.query.type??'',
             "issn": route.query.issn??'',
-            "language": secondarySearchLabels.value.title == '语言'? item.label : route.query.language??'',
+            "language": secondarySearchLabels.value.title == '语言'? (item.isSelect? '' :  item.label) : route.query.language??'',
             "institution": route.query.institution??'',
             "publisher": secondarySearchLabels.value.title == '期刊'? JSON.stringify({id:item.id,display_name:item.label}) : route.query.publisher??'',
             "from_date": secondarySearchLabels.value.title == '时间'? from : route.query.from_date??'',
@@ -127,7 +127,7 @@ const search = (item:any) => {
 
 <style scoped>
 .shadow{
-    box-shadow: 0 0 5px 3px #ddd;
+    box-shadow: 0 0 5px 3px black;
 }
 .secondarySearchCardContainer{
     width: 100%;
@@ -135,13 +135,13 @@ const search = (item:any) => {
     margin-bottom: 20px;
     padding: 10px;
     box-sizing: border-box;
-    background-color: white;
+    background-color: var(--bg-100);
     position: relative;
 }
 .type{
     width: 100%;
     font-size: 16px;
-    color: #999;
+    color: var(--primary-100);
 }
 .items{
     margin-bottom: 1px;
@@ -153,6 +153,7 @@ const search = (item:any) => {
     font-size: 13px;
     cursor: pointer;
     transition: 0.1s all linear;
+    color: var(--text-100);
 
     &:hover{
         background-color: #eee;
@@ -175,6 +176,7 @@ const search = (item:any) => {
     align-items: center;
     cursor: pointer;
     transition: 0.1s all linear;
+    color: var(--text-100);
 
     &:hover{
         background-color: #eee;
