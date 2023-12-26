@@ -30,7 +30,7 @@
                 新标签
               </n-button>
             </template>
-            <template #footer>
+            <template v-if="other_tags.length > 0" #footer>
               <n-space>
                 <div v-for="tag in other_tags">
                   <n-button strong secondary type="info" size="tiny" @click="handleAdd(tag)">{{ tag
@@ -90,7 +90,6 @@ const emit = defineEmits(['itemClick']);
 
 const selected = computed(() => {
   return (
-    props.self_tag_name === collectStore.active_tag_name &&
     props.paper_id === collectStore.active_paper_id
   );
 });
@@ -115,7 +114,7 @@ const computed_check = computed({
 })
 
 const handleClose = (tag_name: string) => {
-  console.log('tag_name', tag_name);
+  // console.log('tag_name', tag_name);
   dialog.warning({
     title: '删除标签',
     content: `将从《${props.title}》删除标签: ${tag_name}`,
@@ -148,7 +147,7 @@ const other_tags = computed(() => {
 })
 
 const handleAdd = (tag_name: string) => {
-  console.log('tag_name', tag_name);
+  // console.log('tag_name', tag_name);
   collectStore.requestAddTag(tag_name, props.paper_id).then((res) => {
     if (res === true) {
       collectStore.add_tag_to_paper(tag_name, props.paper_id);

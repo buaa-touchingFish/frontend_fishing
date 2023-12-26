@@ -69,6 +69,10 @@ export const useCollectStore = defineStore("collect", () => {
   const papers = ref([] as Paper[]);
   const paper_checked = ref(new Set<string>());
   const isFakeData = ref(false);
+  const get_tag_by_name = (tag_name: string | undefined) => {
+    if (tag_name === undefined) return;
+    return tags.value.find((item) => item.name === tag_name);
+  };
   const set_active_tag_name = (active_tag_name1: string | undefined) => {
     if (active_tag_name1 === undefined) return;
     // console.log('active_tag_name1', active_tag_name1);
@@ -256,6 +260,7 @@ export const useCollectStore = defineStore("collect", () => {
     tags,
     isFakeData,
     paper_checked,
+    get_tag_by_name,
     set_active_tag_name,
     set_active_paper_id,
     getAllCollects,

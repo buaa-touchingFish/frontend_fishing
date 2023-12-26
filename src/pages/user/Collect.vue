@@ -94,7 +94,10 @@ const dialog = useDialog();
 onMounted(() => {
   // if (collectStore.isFakeData)
   //   collectStore.fakeData();
-  collectStore.getAllCollects();
+  collectStore.getAllCollects().then(() => {
+    // console.log('quanbu', collectStore.tags);
+    collectStore.active_paper_id = collectStore.get_tag_by_name('全部')?.papers[0]?.paper_id;
+  });
 })
 
 const hasCollect = computed(() => {
@@ -148,7 +151,7 @@ const cur_tag_name = ref("全部");
 const handleUpdatedValue = (value: string) => {
   // console.log('handleUpdatedValue', value);
   cur_tag_name.value = value;
-  collectStore.active_paper_id = 'paper_id';
+  collectStore.active_paper_id = collectStore.get_tag_by_name(value)?.papers[0]?.paper_id;
 }
 
 const tag_string_array = computed(() => {
