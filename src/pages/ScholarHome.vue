@@ -35,7 +35,7 @@
                                 <n-icon size="22">
                                     <BuildingHome20Filled />
                                 </n-icon>
-                                {{ scholarInfo?.author.last_known_institution?.display_name }}
+                                {{ scholarInfo?.author.last_known_institution?.display_name ?? "暂无机构" }}
                             </span>
                             <div class="infoDataDiv">
                                 <div class="infoDataBoxDiv">
@@ -168,7 +168,7 @@
                             </n-ellipsis>
                             <n-ellipsis style="max-width: 90%; margin-bottom: 5px; display: block; color:var(--text-100)"
                                 :tooltip="false">
-                                {{ sch?.last_known_institution_display_name ?? "&nbsp;" }}
+                                {{ sch?.last_known_institution_display_name ?? "暂无机构" }}
                             </n-ellipsis>
                             <div class="horizontalSplitDiv" style="width: calc(100%);" />
                         </div>
@@ -505,7 +505,7 @@ onMounted(async () => {
                     layout: 'force',
                     data: chartData.nodes,
                     links: chartData.links,
-                    roam: false,
+                    roam: true,
                     zoom: 2.0
                     // force: {
                     //     repulsion: 300, // Adjust as needed
