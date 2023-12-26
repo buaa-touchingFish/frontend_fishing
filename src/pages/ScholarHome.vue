@@ -366,7 +366,7 @@ onMounted(async () => {
         window.addEventListener('popstate', back, false);
     }
     io.observe(document.getElementById("authorName")!);
-    const data = await get(message, "/author", { "author_id": route.query.author_id, "paper_id": route.query.paper_id ?? "" });
+    const data = await get(message, "/author", { "author_id": route.query.author_id, "paper_id": route.query.paper_id });
     if (data) {
         scholarInfo.value = data;
         claimed.value = (scholarInfo.value?.author.claim_uid ?? -1) > 0
@@ -381,12 +381,22 @@ onMounted(async () => {
             const newPapers = scholarInfo.value?.papers.sort((a, b) => {
                 return new Date(a.publication_date).getTime() - new Date(b.publication_date).getTime()
             });
-            newPapers?.slice(newPapers?.length - 20, undefined).forEach((paper) => {
+            console.log(newPapers);
+
+            // newPapers?.slice(newPapers?.length - 20, undefined).forEach((paper) => {
+
+            newPapers?.forEach((paper) => {
                 const name = transLabelName.get(paper.type) ?? '';
                 typeMap.set(name, (typeMap.get(name) ?? 0) + 1);
                 const year = new Date(paper.publication_date).getFullYear();
                 dateMap.set(year, (dateMap.get(year) ?? 0) + 1);
             });
+            console.log(typeMap);
+            const newDateMap = []
+            if (dateMap.size > 10) {
+                //const start = dateMap.size - 9;
+
+            }
             var typeVals: {
                 label: string;
                 data: number[];
@@ -423,6 +433,7 @@ onMounted(async () => {
                 borderWidth: 1
             }
             let maxVal = 0;
+            
             dateMap.forEach((val, key) => {
                 yearFilterOption.value.push({
                     label: key.toString(),
@@ -462,7 +473,7 @@ onMounted(async () => {
             const result = await get(message, "/author", { "author_id": item.id }) as { author: Author, papers: Paper[], co_authors: CoAuthor[] };
             if (!result) return;
             result.co_authors.forEach((item1) => {
-                console.log(item1);
+                //console.log(item1);
                 if (!mapper.has(item1.display_name))
                     mapper.set(item1.display_name, 10);
                 chartData.links.push({

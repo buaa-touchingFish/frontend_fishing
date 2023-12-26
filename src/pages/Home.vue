@@ -174,13 +174,13 @@ const searchComplete = async () => {
         clearTimeout(time);
     }
     time = setTimeout(async () => {
-        res = await post(message,'/paper/suggest',{
-            query:searchValue.value
+        res = await post(message, '/paper/suggest', {
+            query: searchValue.value
         })
-        if(!res || res.length == 0){
+        if (!res || res.length == 0) {
             showComplete.value = false;
-        }else{
-            completeSearchOptions.value = res.map((suffix:string) => {
+        } else {
+            completeSearchOptions.value = res.map((suffix: string) => {
                 return {
                     label: suffix,
                     isSelect: false
@@ -280,6 +280,7 @@ const changeShowCard = () => {
     background-color: var(--bg-100);
     position: fixed;
     z-index: 998;
+    display: none;
 }
 
 .main {
