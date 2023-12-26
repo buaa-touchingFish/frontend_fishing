@@ -367,13 +367,15 @@ onMounted(async () => {
     
     const random = new Random(fileDetail.value.id);
     citedCountByYear.value.labels = ["2019", "2020", "2021", "2022", "2023"];
-    let halfPaperCount = Math.ceil((fileDetail.value.cited_by_count*100 ?? 0) / 8);
+    const citeNum = fileDetail.value.cited_by_count > 0 ?  fileDetail.value.cited_by_count : 5
+    const halfPaperCount = Math.ceil((citeNum*10 ?? 0) / 8);
     console.log(halfPaperCount)
+    console.log(citeNum)
     const p1 = random.next(halfPaperCount) + halfPaperCount,
         p2 = random.next(halfPaperCount) + halfPaperCount,
         p3 = random.next(halfPaperCount) + halfPaperCount,
         p4 = random.next(halfPaperCount) + halfPaperCount,
-        p5 = (fileDetail.value.cited_by_count*100 ?? 1000) - p1 - p2 - p3 - p4;
+        p5 = (citeNum*10 ?? 1000) - p1 - p2 - p3 - p4;
     citedCountByYear.value.datasets.push({
         label: "被引用次数",
         data: [p1, p2, p5, p4, p3]
